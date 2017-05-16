@@ -15,7 +15,7 @@ import java.util.Map;
 
 public class JDBC {
 	public static void main(String[] args) throws Exception {
-		
+		    
 		Statement conn = GetJdbc.getPostgreConnection();
 		String sql = "select codevalue, formalname from t_code where codekbn = '07' and status = '0'";
 		ResultSet result = conn.executeQuery(sql);

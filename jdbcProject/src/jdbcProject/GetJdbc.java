@@ -7,6 +7,8 @@ import java.sql.Statement;
 public class GetJdbc {
 	//加载Mysql连接
 	
+	
+	
 	public static void main(String[] args) throws Exception {
 		getPostgreConnection();
 	}
