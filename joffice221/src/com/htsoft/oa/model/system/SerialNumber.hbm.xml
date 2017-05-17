@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping> 
+  <class name="com.htsoft.oa.model.system.SerialNumber" table="serial_number" select-before-update="false" dynamic-update="false" dynamic-insert="false" optimistic-lock="version"> 
+    <id name="numberId" column="NUMBERID" type="java.lang.Long" length="19"> 
+      <generator class="native"></generator> 
+    </id>  
+    <property name="name" type="java.lang.String" update="true" insert="true" access="property" column="NAME" length="50" not-null="false" unique="false"/>  
+    <property name="alias" type="java.lang.String" update="true" insert="true" access="property" column="ALIAS" length="20" not-null="false" unique="false"/>  
+    <property name="regulation" type="java.lang.String" update="true" insert="true" access="property" column="REGULATION" length="100" not-null="false" unique="false"/>  
+    <property name="genType" type="java.lang.Short" update="true" insert="true" access="property" column="GENTYPE" length="22" not-null="false" unique="false"/>  
+    <property name="noLength" type="java.lang.Integer" update="true" insert="true" access="property" column="NOLENGTH" length="22" not-null="false" unique="false"/>  
+    <property name="curDate" type="java.lang.String" update="true" insert="true" access="property" column="CURDATE" length="10" not-null="false" unique="false"/>  
+    <property name="initValue" type="java.lang.Integer" update="true" insert="true" access="property" column="INITVALUE" length="22" not-null="false" unique="false"/>  
+    <property name="curValue" type="java.lang.Integer" update="true" insert="true" access="property" column="CURVALUE" length="22" not-null="false" unique="false"/>  
+    <property name="step" type="java.lang.Short" update="true" insert="true" access="property" column="STEP" length="22" not-null="false" unique="false"/> 
+  </class> 
+</hibernate-mapping>

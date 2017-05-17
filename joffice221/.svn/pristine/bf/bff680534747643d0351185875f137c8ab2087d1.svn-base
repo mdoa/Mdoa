@@ -1,0 +1,28 @@
+下面的步骤是用来打war包的，如下：
+
+1.先在build.xml里执行copyWeb的脚本，复制web内容
+
+2. toOracle任务:把model里的hbm文件转换成支持oracle数据库的格式
+
+3. toNormal任务:把model里的hbm文件转换成支持MySql,Sql Server数据库的格式
+
+4.如果转化了不同的数据类型，还需在classes目录下的conf下找到jdbc.properties文件，修改相应的jbbc数据库连接池内容。
+
+5.最后点击"war-joffice"的脚本，生成war包，然后放在tomcat的webapps目录下，启动tomcat就可以自行解压运行。
+
+6.点击"copyHbm"是复制model中的所有*.hbm文件，用来备份model里的代码
+
+
+
+
+
+选择另个 hbm_converter.xml的执行文件，是把项目中的开发代码的model里的hbm文件转换成对应的数据格式
+
+步骤：
+
+1. 如果要备份先前的model类，那先点击copyHbm的执行脚本，就可以复制在当前目录下面build/model
+
+2. toOracle任务:把model里的hbm文件转换成支持oracle数据库的格式
+
+3. toNormal任务:把model里的hbm文件转换成支持MySql,Sql Server数据库的格式
+

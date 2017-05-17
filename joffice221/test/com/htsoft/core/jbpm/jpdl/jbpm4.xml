@@ -1,0 +1,181 @@
+<diagram xmlns:bg="bpm.graphic" xmlns:ciied="com.ibm.ilog.elixir.diagram" xmlns:fg="flash.geom">
+  <bg:StartEvent id="startEvent1" height="51" width="36" x="130" y="60">
+    <label>开始</label>
+    <ports>
+      <ciied:Port id="port1" clipOnShape="true" movable="false">
+        <id>CENTER</id>
+      </ciied:Port>
+      <ciied:Port id="port2" x="1">
+        <id>RIGHT</id>
+      </ciied:Port>
+      <ciied:Port id="port3" y="1">
+        <id>BOTTOM</id>
+      </ciied:Port>
+    </ports>
+  </bg:StartEvent>
+  <bg:SubProcess id="subProcess1" automaticGraphLayout="false" expandedHeight="240" expandedWidth="240" height="240" width="240" x="320" y="110">
+    <label>子流程1</label>
+    <ports>
+      <ciied:Port id="port4" clipOnShape="true" movable="false">
+        <id>CENTER</id>
+      </ciied:Port>
+      <ciied:Port id="port5" y="0">
+        <id>TOP</id>
+      </ciied:Port>
+      <ciied:Port id="port6" y="1">
+        <id>BOTTOM</id>
+      </ciied:Port>
+    </ports>
+  </bg:SubProcess>
+  <bg:SequenceFlow id="sequenceFlow1" endPort="port5" startPort="port2">
+    <fallbackEndPoint>
+      <fg:Point id="point1" x="424" y="193"/>
+    </fallbackEndPoint>
+    <fallbackStartPoint>
+      <fg:Point id="point2"/>
+    </fallbackStartPoint>
+    <label>to 子流程1</label>
+  </bg:SequenceFlow>
+  <bg:Gateway id="gateway1" height="50" width="50" x="20" y="280">
+    <handler>com.htsoft.oa.workflow.handler.DecisionHandlerImpl</handler>
+    <label>决策1</label>
+    <ports>
+      <ciied:Port id="port7" clipOnShape="true" movable="false">
+        <id>CENTER</id>
+      </ciied:Port>
+      <ciied:Port id="port8" y="0">
+        <id>TOP</id>
+      </ciied:Port>
+      <ciied:Port id="port9" y="1">
+        <id>BOTTOM</id>
+      </ciied:Port>
+    </ports>
+  </bg:Gateway>
+  <bg:Gateway id="gateway2" height="50" width="50" x="100" y="400">
+    <gatewayType>AND</gatewayType>
+    <label>合并1</label>
+    <ports>
+      <ciied:Port id="port10" clipOnShape="true" movable="false">
+        <id>CENTER</id>
+      </ciied:Port>
+      <ciied:Port id="port11" x="0">
+        <id>LEFT</id>
+      </ciied:Port>
+      <ciied:Port id="port12" x="1">
+        <id>RIGHT</id>
+      </ciied:Port>
+      <ciied:Port id="port13" y="1">
+        <id>BOTTOM</id>
+      </ciied:Port>
+    </ports>
+  </bg:Gateway>
+  <bg:Gateway id="gateway3" height="50" width="50" x="130" y="210">
+    <gatewayType>OR</gatewayType>
+    <label>同步1</label>
+    <ports>
+      <ciied:Port id="port14" clipOnShape="true" movable="false">
+        <id>CENTER</id>
+      </ciied:Port>
+      <ciied:Port id="port15" y="0">
+        <id>TOP</id>
+      </ciied:Port>
+      <ciied:Port id="port16" x="0">
+        <id>LEFT</id>
+      </ciied:Port>
+      <ciied:Port id="port17" x="1">
+        <id>RIGHT</id>
+      </ciied:Port>
+    </ports>
+  </bg:Gateway>
+  <bg:Gateway id="gateway4" height="50" width="50" x="220" y="300">
+    <label>决策2</label>
+    <ports>
+      <ciied:Port id="port18" clipOnShape="true" movable="false">
+        <id>CENTER</id>
+      </ciied:Port>
+      <ciied:Port id="port19" y="0">
+        <id>TOP</id>
+      </ciied:Port>
+      <ciied:Port id="port20" y="1">
+        <id>BOTTOM</id>
+      </ciied:Port>
+    </ports>
+  </bg:Gateway>
+  <bg:SequenceFlow id="sequenceFlow2" endPort="port15" startPort="port3">
+    <fallbackEndPoint>
+      <fg:Point id="point3" x="156" y="225"/>
+    </fallbackEndPoint>
+    <fallbackStartPoint>
+      <fg:Point id="point4"/>
+    </fallbackStartPoint>
+    <label>to 同步1</label>
+  </bg:SequenceFlow>
+  <bg:SequenceFlow id="sequenceFlow3" endPort="port8" startPort="port16">
+    <fallbackEndPoint>
+      <fg:Point id="point5" x="49" y="285"/>
+    </fallbackEndPoint>
+    <fallbackStartPoint>
+      <fg:Point id="point6"/>
+    </fallbackStartPoint>
+    <label>to 决策1</label>
+  </bg:SequenceFlow>
+  <bg:SequenceFlow id="sequenceFlow4" endPort="port19" startPort="port17">
+    <fallbackEndPoint>
+      <fg:Point id="point7" x="248" y="314"/>
+    </fallbackEndPoint>
+    <fallbackStartPoint>
+      <fg:Point id="point8"/>
+    </fallbackStartPoint>
+    <label>to 决策2</label>
+  </bg:SequenceFlow>
+  <bg:SequenceFlow id="sequenceFlow5" endPort="port11" startPort="port9">
+    <fallbackEndPoint>
+      <fg:Point id="point9" x="108" y="431"/>
+    </fallbackEndPoint>
+    <fallbackStartPoint>
+      <fg:Point id="point10"/>
+    </fallbackStartPoint>
+    <label>to 合并1</label>
+  </bg:SequenceFlow>
+  <bg:SequenceFlow id="sequenceFlow6" endPort="port12" startPort="port20">
+    <fallbackEndPoint>
+      <fg:Point id="point11" x="146" y="430"/>
+    </fallbackEndPoint>
+    <fallbackStartPoint>
+      <fg:Point id="point12"/>
+    </fallbackStartPoint>
+    <label>to 合并1</label>
+  </bg:SequenceFlow>
+  <bg:EndEvent id="endEvent1" height="51" width="36" x="440" y="480">
+    <label>结束1</label>
+    <ports>
+      <ciied:Port id="port21" clipOnShape="true" movable="false">
+        <id>CENTER</id>
+      </ciied:Port>
+      <ciied:Port id="port22" x="0">
+        <id>LEFT</id>
+      </ciied:Port>
+      <ciied:Port id="port23" y="0">
+        <id>TOP</id>
+      </ciied:Port>
+    </ports>
+  </bg:EndEvent>
+  <bg:SequenceFlow id="sequenceFlow7" endPort="port22" startPort="port13">
+    <fallbackEndPoint>
+      <fg:Point id="point13" x="446" y="499"/>
+    </fallbackEndPoint>
+    <fallbackStartPoint>
+      <fg:Point id="point14"/>
+    </fallbackStartPoint>
+    <label>to 结束1</label>
+  </bg:SequenceFlow>
+  <bg:SequenceFlow id="sequenceFlow8" endPort="port23" startPort="port6">
+    <fallbackEndPoint>
+      <fg:Point id="point15" x="458" y="488"/>
+    </fallbackEndPoint>
+    <fallbackStartPoint>
+      <fg:Point id="point16"/>
+    </fallbackStartPoint>
+    <label>to 结束1</label>
+  </bg:SequenceFlow>
+</diagram>

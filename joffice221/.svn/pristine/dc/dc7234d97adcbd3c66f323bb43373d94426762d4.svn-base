@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<b:beans xmlns="http://www.springframework.org/schema/security" 
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xmlns:b="http://www.springframework.org/schema/beans"
+		xsi:schemaLocation="http://www.springframework.org/schema/beans 
+		http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+		http://www.springframework.org/schema/security 
+		http://www.springframework.org/schema/security/spring-security-2.0.4.xsd">	
+    
+    <!-- 本地认证入口 -->
+  	<b:bean id="serviceProperties" class="org.springframework.security.ui.cas.ServiceProperties">
+	    <b:property name="service" value="${cas.client.login}"/>
+	    <b:property name="sendRenew" value="false"/>
+  	</b:bean>
+	
+	<!-- 登录权限过滤 -->
+	<b:bean id="casProcessingFilter" class="org.springframework.security.ui.cas.CasProcessingFilter">
+  		<custom-filter after="CAS_PROCESSING_FILTER"/>
+  		<b:property name="authenticationManager" ref="authenticationManager"/>
+  		<b:property name="authenticationFailureUrl" value="/"/>
+  		<b:property name="defaultTargetUrl" value="/"/>
+	</b:bean>
+	
+	<!-- 单点登陆入口 -->
+	<b:bean id="casProcessingFilterEntryPoint" 
+    class="org.springframework.security.ui.cas.CasProcessingFilterEntryPoint">
+  		<b:property name="loginUrl" value="${cas.login}"/>
+  		<b:property name="serviceProperties" ref="serviceProperties"/>
+	</b:bean>
+	
+	<!-- 认证代理 -->
+	<b:bean id="casAuthenticationProvider" 
+	class="org.springframework.security.providers.cas.CasAuthenticationProvider">
+	    <custom-authentication-provider/>
+	    <b:property name="userDetailsService" ref="appUserDao"/>
+	    <b:property name="serviceProperties" ref="serviceProperties" />
+	    <b:property name="ticketValidator">
+	      	<b:bean class="org.jasig.cas.client.validation.Cas20ServiceTicketValidator">
+				<b:constructor-arg index="0" value="${cas.validator}" />
+	    	</b:bean>
+	    </b:property>
+	    <b:property name="key" value="an_id_for_this_auth_provider_only" />
+  	</b:bean>
+
+</b:beans>

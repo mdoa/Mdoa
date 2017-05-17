@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Menus id="Mod_Archives" text="公文管理" iconCls="mod-archives"> 
+  <Items id="Archives" text="公文管理" iconCls="menu-archive-issue"> 
+    <Item id="ArchFlowConfView" text="公文配置" iconCls="menu-archive-setting"/>  
+    <Item id="ArchiveTypeTempView" text="公文类别、模板管理" iconCls="menu-archive-template">
+       <Function id="_ArchivesTempAdd" text="添加公文模板" iconCls="btn-add"/>
+       <Function id="_ArchviesTempDel" text="删除公文模板" iconCls="btn-del"/>
+       <Function id="_ArchivesTempEdit" text="编辑" iconCls="btn-edit"/>
+       <Function id="_ArchiveTypeTempQuery" text="查看在线模板" iconCls="btn-readdocument"/>
+    </Item>
+    <Item id="ArchivesMonitor" text="公文流程监控" iconCls="menu-archive-monitor">  
+    	 <Function id="_ArchivesIssueHasten" text="催办" iconCls="btn-archives-remind"/>
+    </Item>
+  </Items> 
+</Menus>

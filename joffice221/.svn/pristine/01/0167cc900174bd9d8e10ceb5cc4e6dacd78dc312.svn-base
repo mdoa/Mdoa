@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Menus id="Mod_ent" text="企业管理" iconCls="mod-ent">
+	<Items id="Ent" text="企业管理" iconCls="menu-ent">
+		
+</Items>
+</Menus>

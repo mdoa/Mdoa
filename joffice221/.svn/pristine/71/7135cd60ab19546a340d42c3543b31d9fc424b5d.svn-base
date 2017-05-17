@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping> 
+  <class name="com.htsoft.oa.model.flow.ProNodeSet" table="pro_node_set" select-before-update="false" dynamic-update="false" dynamic-insert="false" optimistic-lock="version"> 
+    <id name="setId" column="setId" type="java.lang.Long" length="19"> 
+      <generator class="native"></generator> 
+    </id>  
+    <property name="deployId" type="java.lang.String" update="true" insert="true" access="property" column="deployId" length="128" not-null="true" unique="false"/>  
+    <property name="jbpmDefId" type="java.lang.String" update="true" insert="true" access="property" column="jbpmDefId" length="64" not-null="true" unique="false"/>  
+    <property name="nodeName" type="java.lang.String" update="true" insert="true" access="property" column="nodeName" length="256" not-null="true" unique="false"/>  
+    <property name="nodeType" type="java.lang.Short" update="true" insert="true" access="property" column="nodeType" length="5" not-null="false" unique="false"/>  
+    <property name="joinNodeName" type="java.lang.String" update="true" insert="true" access="property" column="joinNodeName" length="256" not-null="false" unique="false"/>  
+    <property name="isAllowBack" type="java.lang.Short" update="true" insert="true" access="property" column="isAllowBack" length="5" not-null="false" unique="false"/>  
+    <!-- imported bi-directional many-to-one association to ProDefinition -->  
+    <many-to-one name="proDefinition" class="com.htsoft.oa.model.flow.ProDefinition" not-null="false" fetch="select"> 
+      <column name="defId"/> 
+    </many-to-one> 
+  </class> 
+</hibernate-mapping>

@@ -1,0 +1,36 @@
+关于MySql版本的代码变更说明
+
+	本代码结构原为Oracle版本，若变更为MySQL版本，需要进行以下步骤进行修改
+	
+	1.执行metadata/db/mysql下的建库脚本
+	2.修改resources/conf/jdbc.properties里的内容，注意MySql的数据库版本，若为5.1（不包括5.1）之前的版本，
+	  其hibernate.dialect则为org.hibernate.dialect.MySQLInnoDBDialect，5.1之后的版本，则应该设置为org.hibernate.dialect.MySQL5InnoDBDialect
+	  	
+	  	如下所示:
+		jdbc.driverClassName=com.mysql.jdbc.Driver
+		jdbc.url=jdbc:mysql://localhost:3306/oa?useUnicode=true&amp;characterEncoding=utf-8
+		hibernate.dialect=org.hibernate.dialect.MySQLInnoDBDialect
+		#org.hibernate.dialect.MySQL5InnoDBDialect  for mysql 5.5
+		jdbc.username=root
+		jdbc.password=root
+	
+	3.在eclipse的ant视图中，打开metadata\setup\hbm_converter.xml，执行其toNormal任务，表示把Hibernate的映射实体转化MySql或SqlServer的映射类型。
+	
+	4.代码生成器的修改说明
+	
+	  修改metadata\codegen\generator.properties下的mysql连接，如把以下：
+	    jdbcDriver=oracle.jdbc.OracleDriver
+		dbUrl=jdbc:oracle:thin:@localhost:1521:ORCL
+		
+		useCaseSensitiveNames=False
+		
+		换成
+		jdbcDriver=com.mysql.jdbc.Driver
+		dbUrl=jdbc:mysql://localhost:3306/joffice2
+		useCaseSensitiveNames=True
+	  同时修改templates\common\hbm.xml.vm的58行，换成下面代码
+	  <generator class="native"/>
+       ##<generator class="sequence">
+	   ##     <param name="sequence">S_${sqlTable.table}</param>
+	   ##</generator> 
+	

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<project name="cxf_wsdl2java" basedir=".">
+	<!--从官网下载 （http://cxf.apache.org/download.html） cxf 放在指定的目录 -->
+	<property name="cxf.home" location="D:\apache-cxf-2.7.0" />
+	<path id="cxf.classpath">
+		<fileset dir="${cxf.home}/lib">
+			<include name="*.jar" />
+		</fileset>
+	</path>
+	<target name="WSDL2Java">
+		<java classname="org.apache.cxf.tools.wsdlto.WSDLToJava" fork="true">
+			<arg value="-client" />
+			<arg value="-d" />
+			<!--生成文件的路径，这是相对路径-->
+			<arg value="src" />
+			<!--指定webservice的路径 -->
+			<arg value="http://localhost:8080/joffice/ws/CsoService?wsdl" />
+			<classpath>
+				<path refid="cxf.classpath" />
+			</classpath>
+		</java>
+	</target>
+</project>

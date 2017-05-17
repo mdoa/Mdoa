@@ -1,0 +1,792 @@
+1.功能模块[附件上传] -- [2011-09-27PM]
+	a.问题:
+		附件没有类型上传失败，例如:office插件中,附件上传操作,在初始化数据的时候没有在global_type表中添加一个数据
+	     解决方法:
+     	向[global_type]表中添加一条初始化数据
+     	
+ 2.重要修复  2011-09-30
+       在流程跳转一下步时，若目标节点为分支节点，并且在执行过程中没有选择人员，这时需要修正会出错，原因是初始时，有一函数参数传错。
+   修正如下：
+   ProcessNextForm.js中
+   genForkDecUserAssign方法内，
+   for(var i=0;i<outers.length;i++){
+					this.userJumpPanel.add(this.genUserFieldSel.call(this,outers[i]),i);
+   }
+   //把以上方法改成以下方法调用即可
+   this.userJumpPanel.add(this.genUserFieldSel.call(this,outers[i],i));
+   
+   
+ 3.修复编辑用户资料时，上传图片保存后，再次编辑显示不出来。 2011-09-30
+ 直接修改UserFormPanel.js，在37行代码处
+ 	this.requiredPanel.loadData({
+				url:__ctxPath+'/system/loadAppUser.do?userId='+this.userId,
+				root:'data',
+				preName:'appUser',
+				scope:this,
+				success:function(resp,options){
+					var photo=this.getCmpByName('appUser.photo').getValue();
+					if(photo!='' && photo!=null){
+						this.photoPanel.body.update('<img src="' + __ctxPath + '/attachFiles/' + photo + '"  width="100%" height="100%"/>');	
+					}
+				}
+			});
+			
+			其中是加上以下代码：
+                scope:this,
+				success:function(resp,options){
+					var photo=this.getCmpByName('appUser.photo').getValue();
+					if(photo!='' && photo!=null){
+						this.photoPanel.body.update('<img src="' + __ctxPath + '/attachFiles/' + photo + '"  width="100%" height="100%"/>');	
+					}
+				}
+ 4.修改选择在线表单编辑信息时，datetime类型格式为yyyy-MM-dd HH:mm:ss不能显示时分秒。  2011-09-30
+	 在js/core/ux/AppUtil.js第484行，
+	修改以下代码：
+	var format=element.getAttribute('dataformat');
+	即把原来的dateformat改成dataformat	 
+	
+	
+5. 在ie浏览器，预览时，显示不了正确的结果
+在AppUtil.js中，把416行，即
+if(!name){
+	name='';
+}
+name=name.replace(/(^\s*)|(\s*$)/g, "");//去掉两边的空格
+这句代码前，加上以下代码：
+
+6. 当部门实体名带空格时，加一trim过滤，以显示部门树
+在DepartmentAction中，98行后面 dep.getDepName()加多一个.trim()
+
+
+7.当公文上传多个模板，不能删除公文模板是修改下sql语句，把DOC_FILE表还有archive_template的与附件进行删除关联，在数据库工具上修改即可
+
+8.公文模板点击查看不出内容，需要在ArchTemplateAction.java类的list（）方法中加上fieldId的值，加在"tempPath"值前面的代码如下所示：
+   buff.append("\"fileId\":" + gson.toJson(at.getFileId())+ ",");
+   除了在上面的修改，还需要在OfficeTemplateView.js中，在最前面的this.docPanel中添加"fileId:fileId"，整个代码如下所示：
+   var OfficeTemplateView = function(fileId,docPath, readOnly, callback) {
+	this.docPath = docPath;
+	this.readOnly = readOnly == null ? false : readOnly;
+	this.docPanel= new NtkOfficePanel({
+		showToolbar : false,
+		height : 420,
+		fileId:fileId
+	});
+   
+9.在公文模板上传附件不成功时，需要改动下file_attach表的字段长度，如果是oracle的就修改"fileName"的字段长度为128，如果是在mysql和sqlServer数据库的修改"fileType"
+的字段长度为164，在数据库工具上修改即可
+
+10.公告管理模块的关于在公司首页失效显示和状态修改，需要修改以下内容：
+
+先在NewsDao中添加"public List<News> findImageCommonNews(Long sectionId,PagingBean pb);"的一个方法，再在
+NewsDaoImplNewsDaoImpl实现这个方法代码如下：@Override
+	public List<News> findImageCommonNews(Long sectionId,PagingBean pb) {
+		String hql="from News vo where vo.section.sectionId = ? " +
+				"and (vo.expTime>? or vo.expTime = null) " +
+				"and vo.isNotice = 0 order by vo.updateTime desc";
+		return findByHql(hql,new Object[]{sectionId,DateUtil.strToDate()},pb);
+	}
+	
+然后分别修改下findImageNews和findBySearch的俩个方法，在findBySearch添加如下hql语句：
+
+       hql.append(" and (n.expTime>? or n.expTime = null)");
+		params.add(DateUtil.strToDate());
+		
+最后在findImageNews將里面的hql语句改成如下：
+		String hql="from News vo where vo.section.sectionId = ? " +
+				"and (vo.expTime>? or vo.expTime = null) order by vo.updateTime desc";
+		return findByHql(hql,new Object[]{sectionId,DateUtil.strToDate()},pb);
+		
+然后在service里分别将添加上的方法复制调用，另外还需要在NewsAction类的list()方法中添加下面代码：
+
+List<News> list= newsService.getAll(filter); //在这行的代码下面添加
+		Date curTime = DateUtil.strToDate();
+		for(News n:list){
+			if(n.getStatus()==1&&n.getExpTime()!=null
+					&&n.getExpTime().getTime()<=curTime.getTime()){
+				n.setStatus(Constants.FLAG_DISABLE);
+				newsService.save(n);
+			}
+		}
+
+另外还需要在web/pages/indexpages/newListPage.jsp中将
+	"List<News> list = newsService.findImageNews(new Long(sectionId),pb);"
+	
+代码改成下面的代码：
+List<News> list = newsService.findImageCommonNews(new Long(sectionId),pb);
+
+
+11：修改【人事管理】中的请假登记显示空值的问题
+
+在archive/ErrandsRegisterAction.java中的list()方法中添加个判断if(processRun!=null){}
+也就在ProcessRun processRun=processRunService.get(er.getRunId());代码下面添加，
+注意的是在if(processRun.getPiId()!=null){}前多加个上面的判断
+
+12：修改【发文流程】里面的"修改公文"中 的查看模板显示不出问题
+
+在web-info/FlowForm/中的发文流程的Template.vm，在var jsArr中多加个下面的引用
+   " __ctxPath + '/js/archive/OfficeTemplateView.js',"
+
+13: 日期:2011-12-22 
+  	修改人:陈尚轩、李迅宇
+  	修改模块:流程管理
+  	BUG描述:1)有分支的流程在执行分支任务时在 processForm表 出现多条相同的任务数据 ,2)有会签的流程
+  			多人会签时并执行在会签的结点时 processForm表 只有一条记录,与期望结果不相符.
+  	原因与解决: 1)分支流程在doNextStep()方法中的  List<Task> tasks=getTaskWithSubTask(processRun.getPiId());把
+  			当前所有活动结点都取出来,并再一次生成processForm记录,所以产生多条相同记录,有方法中加入
+  			ProcessForm existForm=processFormService.getByTaskId(task.getId());
+			if(existForm!=null) continue;
+			来过虑数据,则可解决些BUG
+		  2)会签流程在doNextStep()方法中的 List<Task> tasks=getTaskWithSubTask(processRun.getPiId());未取会签子任务,
+		          已修正.
+  	相关文件:JbpmServiceImpl.java 中 doNextStep()方法
+  	
+  	
+ 14：日期：2012-01-04
+ 	 修改人：陈尚轩、蔡俊杰
+ 	 修改模块：流程管理
+ 	 bug描述：1、在子流程和父流程并牵扯到会签功能的自由跳转的时候，自由跳转出错
+ 	 		  2、在子流程里面选择跳转步骤的时候，跳转至父流程的选择框会重复出现
+ 	 解决：在JbpmServiceImpl.java中的completeSignSubTask（）方法中，在taskService.setVariables(parentTask.getId(),varsMap);这代码后面，添加下面代码：
+ 	 
+  			if(StringUtils.isNotEmpty(signalName)){//
+						//完成父任务
+						taskService.completeTask(parentTask.getId(),signalName);
+					}else{
+						jumpTaskToAnother(parentTask, destName, variables);
+					}
+					
+					
+		在这else条件下的taskService.completeTask(subTask.getId());代码后面复制添加上面的代码
+		
+	另外还修改个ProcessNextForm.js里面的自由跳转中的代码，如：在nextStep的自由跳转中，将原先的代码改成以下代码：
+			if(this.isFreeJump){//若为自由跳转
+				var tranTo=this.freeTransCombo.getValue();  //这里把signalName改成了var tranTo
+				var store=this.freeTransCombo.getStore();
+				for(var i=0;i<store.getCount();i++){
+					var data=store.getAt(i).data;
+					if(data.signalName==tranTo){  //同样的这里也是把signalName改成tranTo
+						destName=data.destName;
+						break;
+					}
+				}
+  			}
+  	
+ 15：日期：2012-02-16
+ 	 修改人：蔡俊杰
+ 	 修改模块：流程管理
+ 	 bug描述：1、开始节点  进入决策时，流程启动失败
+
+ 	 解决：
+		DecisionHandlerImpl.java
+		第68行 				it.eval(proHandleComp.getExeCode()==null?"":proHandleComp.getExeCode());
+		
+		ProHandleComp.java
+		变量 HANDLE_TYPE_HANDLER1 去掉
+		
+		ProHandleCompAction.java
+		public String getCode()
+		
+		ProcessNodeSetting.js
+       	
+16:日期：2012-02-17
+  	 修改人：陈尚轩
+  	 bug描述：1.在父流程与子流程，子流程结束后跳出紧跟着主流的结束节点报错
+  	 解决：JbpmServiceImpl.java
+	第1546行    添加  这句判断 boolean isEndParentProcess=isProcessInstanceEnd(parentPi.getId());
+	
+17.日期 2012-02-20
+修改人:
+bug描述 进入部门人员设置时，保存部门信息，organization表的path字段清空，导致在添加用户时，选择部门后保存将会有错误，其错误类似null1003字符串不能转为数字
+
+解决办法：
+在DepForm.js中，去掉path的隐藏域
+	52行去掉这个
+	{
+	            	xtype:'hidden',
+	            	name:'organization.path',
+	            	id:'path'
+	}
+	     
+18.日期2012-02-23
+   修改人：hcy
+   bug描述：在表单选择部门和员工选择时候，页面会报没定义
+   解决办法：
+   
+   在AppUtil.js中的2014行，将原来的var record = store.getAt(grid.clickRow);改成下面的
+   var record = store.getAt(row);
+   
+   另外还需在2059行，同样以上修改
+   
+19:日期2012-02-24
+   bug描述：当子流程执行中，也要实习自由跳转的时候，修改下面的代码
+   在ProcessNextForm.js的847行上面，加上以下代码：
+ //自由跳转的目标节点是否为结束节点
+			var isEndNode=false;
+			if(this.freeJumpNodeType && this.freeJumpNodeType.indexOf('end')!=-1){
+				isEndNode=true;
+			}
+	//将设置里面父流程的任务改成下面代码：	
+if((!this.isFreeJump || isEndNode) && this.parentJumpPathCombo )
+    
+    
+  在删除960的代码：this.freeJumpNodeType=record.data.destType;
+   
+   
+ 20：日期：2012-03-21
+     bug修改:在公文模板上传模板的附件类型中，选择发文管理的“公文类别、模板管理”类型时，会报fileType字段太长了，所以
+ 要在数据库里面改动file_attach表的fileType字段长度
+
+21：日期：2012-03-22
+  bug修改:在部门计划中，换个用户去查看会报planId发生歧义
+在 中，修改64行的将代码改成下面所示：sb.append(" order by wp."+sort+" "+dir);
+   
+22： 打开某用户编辑。再打开系统组织架构设置，修改某组织主要负责人。再保存用户信息编辑，更新出错。
+1. UserOrgAction.java 第70行 方法 find()
+	sb.append("{userOrgId:'").append(userOrg.getUserOrgId())
+	.append("',orgId:'").append(userOrg.getOrganization().getOrgId())
+	.append("',orgName:'").append(userOrg.getOrganization().getOrgName())
+	.append("',isPrimary:'").append(userOrg.getIsPrimary())
+	.append("',isCharge:'").append(userOrg.getIsCharge()).append("'},");
+
+2. UserFormPanel.js
+第224行
+{name : 'isCharge',
+type : 'int'}
+
+第252行 this.depGridPanel=new HT.EditorGridPanel添加
+,{header:'是否主要负责人',
+	id:'orgCharge',
+	renderer:function(val){
+		return val==1 ? 1 : 0;
+	},
+	value : 0,
+	hidden:true}
+
+第517行 setPrimary:function(combo,record,index)
+	if(primaryFlag&&combo.value==1){
+		Ext.getCmp('orgPrimary').setValue(0);
+		Ext.ux.Toast.msg('操作信息', '只能有一个主岗位');
+		primaryFlag = false;
+		return;
+	}
+	if(combo.value==0){
+		Ext.getCmp('orgCharge').setValue(0);
+	}
+	
+3. UserOrgService.java
+添加 public void updOrgCharge(String uids);
+
+4. UserOrgServiceImpl.java
+添加	public void updOrgCharge(String uids){
+		dao.updOrgCharge(uids);
+	}
+
+5. UserOrgDao.java
+添加  public void updOrgCharge(String uids);
+
+6. UserOrgDaoImpl.java
+添加	public void updOrgCharge(String uids){
+		String hql = "update UserOrg uo set uo.isCharge=0,uo.isPrimary=0 where uo.appUser.userId in ("+uids+") ";
+		getSession().createQuery(hql).executeUpdate();
+	}
+
+7. OrganizationAction.java 
+方法 public String save()
+第175行，第205行  userOrgService.updOrgCharge(chargeIds);
+
+8. AppUserAction.java
+方法 public String saveOrUpdate()
+第927行  userOrgService.delCascade(appUser.getUserId(), new Long("0"));
+第930 - 933行
+	UserOrg tuo = new UserOrg();
+	tuo.setIsPrimary(uo.getIsPrimary());
+	tuo.setIsCharge(uo.getIsCharge());
+	tuo.setAppUser(appUser);
+	
+	
+23 日期：2012-03-24
+   bug修改：在表单发布成功后，在去编辑，修改字段，或换控件，点击查看，或不到字段列项的值
+     修改在    com.htsoft.oa.service.flow.impl中的FormDefServiceImpl.java  
+       将126的代码修改为fields.addAll(fieldss);
+
+24：日期：2012-03-25
+    bug修改： 部门人员管理加添主部门列
+AppUser.java 添加变量  protected String primaryDep;
+
+AppUserAction.java 
+public String depUsers() 方法，第1017行添加 
+buff.append("\"primaryDep\":").append(gson.toJson(au.getPrimaryDep())+",");
+
+DepUserView.js
+第92行   'userId','fullname','username','primaryDep'
+第96行    {header:'主部门',dataIndex:'primaryDep'}
+
+
+ 24：日期：2012-03-27
+     bug修改:在tomcat7发布中，在邮件，点击“回复”按钮，会报错，需要在mail.jsp页面中，将引入fmt的句子，跟着后面那个%之间加个空格，如下所示：
+ <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>，另外还有
+ <fmt:formatDate value="${mail.sendTime}"（这里之间加个空格） pattern="yyyy-MM-dd HH:mm:ss" />
+ 
+ 25: 日期：2012-03-29
+ 	bug修改：在显示页数一栏中，点击导出当前页，数据不正确
+ 修改 PageComboResizer.js ：第17行 添加 id:'gridPageSize'，整个代码显示如下：
+   var combo = new Ext.form.ComboBox({
+      id:'gridPageSize',
+      typeAhead: true,
+      triggerAction: 'all',
+      lazyRender:true,
+      mode: 'local',
+ 修改 HTExt.js ： 第340行
+ 	var sortInfo = gridObj.store.sortInfo;
+	var parasArr = {
+		isExport: true,
+		isExportAll: isExportAll,
+		exportType: exportType,
+		colId: colId,
+		colName: colName,
+		sort: sortInfo.field,
+		dir: sortInfo.direction,
+		start:0,
+		limit:Ext.get('gridPageSize').getValue()
+	};
+	
+ 26:日期：2012-03-29
+    bug修改：在报表中，在ie浏览器同事查看俩个报表时，图片没有改变，日期查询不了，
+    
+    在report.jsp页面中，将212行代码修改成下面代码
+    exporter.setParameter(JRHtmlExporterParameter.IMAGES_URI,"jasper?"+"time="+(new Date()).toString()+"&image="); 
+    
+    在73行和77行的日期转化格式，将yyyy-mm-dd改成yyyy-MM-dd
+    
+ 27 日期2012-04-01
+	bug修改：拖到，修改，拉伸 tip 报 this.dom is undefined
+修改 PersonalTipsView.js
+修改 AppTipsAction.java 中 save 方法
+
+28: 日期2012-04-10
+	bug修改：删除用户时没有把主要负责人信息删掉
+修改 AppUserAction.java ，方法multiDel()，
+	第363行 userOrgService.delCascade(new Long(id), new Long(0));
+	
+29: 日期2012-04-10
+	bug修改：添加卷内文件返回出错
+修改RollFileListView.js 
+第173行  注释
+//							, {
+//								header : '序号',
+//								width : 5,
+//								dataIndex : 'sn',
+//								renderer : function(value, metaData, record,
+//										rowIndex, colIndex, store) {
+//									record.data['sn'] = rowIndex + 1;
+//									store.commitChanges();
+//									return record.data['sn'];
+//								}
+//							}
+
+第276行 注释
+//					recrod.data[''] = this.rollFileId == null
+//							? ''
+//							: this.rollFileId
+
+29: 日期2012-04-11
+bug修改：修改组织主要负责人保存数据不正确
+修改OrganizationForm.js，第141行
+},{
+name : 'oldChargeIds',
+xtype : 'hidden'
+},{
+
+修改 Organization.java
+方法 get(),第145行,sb.append("\"oldChargeIds\":\"" + chargeIds + "\",");
+
+方法save(),第176行, 删除 userOrgService.updOrgCharge(oldChargeIds);
+
+第204行 
+String oldChargeIds = getRequest().getParameter("oldChargeIds");
+String[] pids = chargeIds.split(",");
+userOrgService.updOrgCharge(oldChargeIds.length()>0?oldChargeIds:"0");
+if(chargeIds!=null&&chargeIds.length()>0){
+for(int index=0;index<pids.length;index++){
+List<UserOrg> uolist = userOrgService.getByUserIdOrgId(new Long(pids[index]), orgOrganization.getOrgId());
+UserOrg userOrg = uolist.size()>0?uolist.get(0):new UserOrg();
+if(userOrg.getUserOrgId()==null){
+userOrg.setUserid(new Long(pids[index]));
+userOrg.setOrgId(organization.getOrgId());
+}
+userOrg.setIsPrimary(new Short("1"));
+userOrg.setIsCharge(new Short("1"));
+userOrgService.save(userOrg);
+}
+}
+
+30. 2012-04-19 待办任务处理页面中，若选择分页节点，其下面没有显示分支下跳转任务的人员选择界面，是因为目标节点传至后台，js传的参数名为activityName,
+后台通过request获取的参数名为nodeName，修正如下，ProcessNextForm.js 358行改成如下即可：
+	var params={taskId:this.taskId,nodeName:destName,isParentFlow:false};
+	
+31：2012-04-19 点击刷新或者注销或者退出会弹出俩次提示框，需要在App.js，修改353的App.Logout方法，把success : function() {
+//			window.location.href = __ctxPath + '/login.jsp';
+//		}这段代码注释掉，或者删除掉
+
+32:2012-04-24 在设计表单时候，一对多表的时候，在子表使用用户选择器，会报isSingle没定义
+
+修改AppUtil.js中的1715行将代码改成this.isSingle
+
+
+33.2012-5-22 系统组织框架设计，添加组织维度控制
+
+修改 OrgSettingView.js
+654，670行：var orgDem=this.demensionCombo.getValue();
+657，673行：demId:this.demId,
+658，674行：orgDem:orgDem,
+
+修改OrganizationForm.js
+81行：													
+if(this.demId==null&&cmp.getValue()==''&&this.orgSupId==0){
+														
+	cmp.setValue(1);
+}else{
+	
+	if(this.demId==1||cmp.getValue()==1){
+		cmp.setValue(1);
+		cmp.readOnly = true;
+	}else{
+		if(this.demId==null||cmp.getValue()==''){
+			cmp.setValue(this.orgDem);
+			cmp.readOnly = true;
+		}else{
+			
+			cmp.setValue(this.demId==null?cmp.getValue():this.demId);
+			cmp.readOnly = true;
+		}
+	}
+}
+
+34.2012-5-23 流程节点代码生成器，字段选择只显示主表字段
+修改 FormDefAction.java 
+方法getField()，第380行： if(formTable.getIsMain()==1){
+
+35.2012-5-28  岗位编辑器，屏蔽从属
+修改 PositionForm.js 
+84行，xtype : 'hidden'
+
+36. 2012-5-29 部门人员管理，岗位人员管理，查询
+修改 DepUserView.js 
+第205行： 	var toolbar=this.userGridPanel.getTopToolbar();
+		var fullname=toolbar.getCmpByName('fullname').getValue();
+		var username=toolbar.getCmpByName('username').getValue();
+		store.baseParams={depId:depId, 'Q_username_S_LK':username, 'Q_fullname_S_LK':fullname};
+修改 PositionUserView.js 
+第205行： 	var toolbar=this.userGridPanel.getTopToolbar();
+		var fullname=toolbar.getCmpByName('fullname').getValue();
+		var username=toolbar.getCmpByName('username').getValue();
+		store.baseParams={posId:posId,'Q_username_S_LK':username,'Q_fullname_S_LK':fullname};
+
+
+
+
+37.2012-05-29 流程同步时，若其中一分支上没有跳转线，并且作为会签节点时，其他同步任务执行时出错并且回退任务时，原来的会签任务的人员被更改
+
+   修正方法如下：
+   1.更改JbpmServiceImpl.java中jumpToPreTask(String piId,String assignee,String curTaskName,String preTaskName)方法，第2156行代码如下：
+		if(newTaskImpl.getAssignee()==null && newTaskImpl.getSubTasks().size()==0){//没有子任务
+			newTaskImpl.setAssignee(assignee);
+		}
+     2174行
+     if(newTask.getAssignee()==null && ((TaskImpl)newTask).getSubTasks().size()==0){
+	 	taskService.assignTask(newTask.getId(), assignee);
+	 }
+    2205行 completeTaskAndJump方法里，加上taskExe!=null的判断，最终代码如下
+    if(taskExe!=null && Execution.STATE_ACTIVE_CONCURRENT.equals(taskExe.getState())){//同步任务
+
+   
+38.修正当用户包括的模块中若不存在子菜单，会导致用户登录时直接抛出错误，需要修改AppUserServiceImpl.java类的getCurUserInfo方法，把196行的代码
+	sb.append(gson.toJson(currentUser.getTopModules().values()));
+	改成
+	sb.append(gson.toJson(currentUser.getValidTopModules().values()));
+	同时在AppUser.java类中，加上以下方法：
+	
+	/**
+	 * 取得不为空值的菜单配置
+	 * @return
+	 */
+	public Map<String,TopModule> getValidTopModules(){
+		Map<String,TopModule> moduleMap=new LinkedHashMap<String,TopModule>();
+		Iterator<String> it=topModules.keySet().iterator();
+		while(it.hasNext()){
+			String key=it.next();
+			if(topModules.get(key)!=null){
+				moduleMap.put(key, topModules.get(key));
+			}
+		}
+		return moduleMap;
+	}
+	
+39. 修正当在线表单带有明细表时，预览及显示都不能正常转化控件，在AppUtil.js的374行加上以下代码
+	if(!control)continue;
+	
+40:2012-06-18,修改外部邮箱在sqlServer2005数据库报mainid排序展示错误
+
+在OutMailView.js中，将store中排序改成store.setDefaultSort('mailDate', 'desc');
+
+41. 导出改进
+修改 HTExt.js
+348行： sort: sortInfo+""!='undefined'?sortInfo.field:'',
+348行： dir: sortInfo+""!='undefined'?sortInfo.direction:'',
+570行： var paingBar = null;
+	  if(conf.showPaging==null || conf.showPaging){
+		if(conf.setPagingBar)
+		{
+			paingBar = new HT.PagingBar({store: conf.store, exportable: true});
+		}else
+		{
+			paingBar = new HT.PagingBar({store: conf.store});
+		}
+580行：  }
+592行： bbar : paingBar
+
+修改ExportUtil.java
+196行： Object o = method.invoke(obj, null);
+		if(o!=null){
+			SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			value = f.format(method.invoke(obj, null));
+		}else{
+			value = "";
+202行：        }
+
+42. 级联修改不成功
+修改 BeanUtil.java
+114行： if (value instanceof HashSet){
+		HashSet valMap = (HashSet)value;
+		if(valMap.size()>0){
+			beanUtils.copyProperty(dest, name, value);
+		}
+	  }else{
+	  	beanUtils.copyProperty(dest, name, value);
+121行：  }
+
+43. 已结办流程打印效果不好
+修改print.jsp
+
+44. 一个人只有一个主要部门，可以是多个部门的主要负责人
+修改 OrganizaAction.java
+206 - 222行
+userOrgService.updOrgCharge(oldChargeIds.length()>0?oldChargeIds:"0",orgOrganization.getOrgId());
+if(chargeIds!=null&&chargeIds.length()>0){
+	userOrgService.updOrgCharge(chargeIds.length()>0?chargeIds:"0",orgOrganization.getOrgId());
+	for(int index=0;index<pids.length;index++){
+		List<UserOrg> uolist = userOrgService.getByUserIdOrgId(new Long(pids[index]), orgOrganization.getOrgId());
+		UserOrg userOrg = uolist.size()>0?uolist.get(0):new UserOrg();
+		if(userOrg.getUserOrgId()==null){
+			userOrg.setUserid(new Long(pids[index]));
+			userOrg.setOrgId(organization.getOrgId());
+		}
+		userOrg.setIsCharge(new Short("1"));
+		if(userOrg.getIsPrimary()==null){
+			userOrg.setIsPrimary(new Short("0"));
+		}
+		userOrgService.save(userOrg);
+	}
+}
+
+修改 UserOrgService.java
+public void updOrgCharge(String uids, Long orgId);
+
+修改 UserOrgDao.java
+public void updOrgCharge(String uids, Long orgId);
+
+修改 UserOrgServiceImpl.java
+public void updOrgCharge(String uids, Long orgId){
+	dao.updOrgCharge(uids, orgId);
+}
+
+修改 UserOrgDaoImpl.java
+public void updOrgCharge(String uids, Long orgId){
+	String hql = "update UserOrg uo set uo.isCharge=0 " +
+			"where uo.organization.orgId="+orgId+" and uo.appUser.userId in ("+uids+") ";
+	getSession().createQuery(hql).executeUpdate();
+}
+
+44. 岗位树增加拖动功能
+增加Position表字段用于存放序列
+ALTER TABLE position ADD sn INTEGER(11) 
+
+修改Position.hbm.xml
+14行：<property name="sn" type="java.lang.Integer" update="true" insert="true" access="property" column="sn" length="13" not-null="false" unique="false"/>
+
+修改Position.java
+25行： protected Integer sn;
+
+208-214行：
+public Integer getSn() {
+	return sn;
+}
+public void setSn(Integer sn) {
+	this.sn = sn;
+}
+
+231行：.append(this.sn, rhs.sn)
+246行： .append(this.sn)
+261行： .append("sn", this.sn)
+
+修改 TreePanelEditor.js
+44行：enableDD:null,
+
+107行-120行：				
+'movenode' : function(tree, node, oldParent, newParent, index ){
+	if(_cfg.movenode){
+		this.selectedNode=node;
+		var scope=this.scope?this.scope:this;
+		_cfg.movenode.call(scope, tree, node, oldParent, newParent, index);
+	}
+},
+'nodedragover': function(e){
+	if(_cfg.nodedragover){
+		this.selectedNode=e.data;
+		var scope=this.scope?this.scope:this;
+		_cfg.nodedragover.call(scope, e);
+	}
+}
+
+126行： enableDD: this.enableDD?true:false,
+
+修改PositionUserView.js
+51-53行：
+enableDD:true,
+movenode: this.movenode,
+nodedragover: this.nodedragover 
+
+295-320行：
+movenode: function(tree, node, oldParent, newParent, index){
+	if(newParent.id.indexOf('xnode')!=0){
+		
+		Ext.Ajax.request({
+		   url: __ctxPath+'/system/saveTreeSeqPosition.do',
+		   success: function(){
+			   this.reloadPosition.call(this);
+		   },
+		   failure: function(){
+			   this.reloadPosition.call(this);
+		   },
+		   params: { 
+			   curNode: node.id,
+			   oldParent: oldParent.id,
+			   newParent: newParent.id,
+			   setIdx: index
+		   },
+		   scope:this
+		});
+	}
+	else
+	{
+		Ext.ux.Toast.msg('操作信息','非法拖动!');
+		tree.root.reload();
+	}
+},
+
+322-333行：
+nodedragover: function(e){
+	var node = e.target;
+	
+	if(node.id!=0){
+		
+		node.leaf=false;
+	}else{
+
+		e.tree.root.reload();
+	}
+	return true;
+}
+
+修改PositionAction.java
+330-338行：
+public String saveTreeSeq()
+{
+	Long curNode = new Long(getRequest().getParameter("curNode"));
+	Long oldParent = new Long(getRequest().getParameter("oldParent"));
+	Long newParent = new Long(getRequest().getParameter("newParent"));
+	int setIdx = new Integer(getRequest().getParameter("setIdx"));
+	positionService.saveTreeSeq(curNode, oldParent, newParent, setIdx);
+	return SUCCESS;
+}
+
+修改PositionSevice.java
+66行：public void saveTreeSeq(Long curNode, Long oldParent, Long newParent, int setIdx);
+
+修改PositionSeviceImpl.java
+96-112行：
+public void saveTreeSeq(Long curNode, Long oldParent, Long newParent, int setIdx)
+{
+	List<Position> newPosList = dao.getByParent(newParent);
+	Position curPos = dao.get(curNode);
+	
+	// 新旧父节点相同时,先删除旧节点
+	if(oldParent.longValue()==newParent.longValue())
+	{
+		newPosList.remove(curPos);
+	}
+	
+	newPosList.add(setIdx, curPos);
+	Position newParentNode = dao.get(newParent);
+	
+	// 保存新节点
+	saveSonNode(newPosList, newParentNode);
+}
+119-134行：
+public void saveSonNode(List<Position> list, Position parentNode)
+{
+	for(int sn=0;sn<list.size();sn++){
+		Position pos = list.get(sn);
+		pos.setPosSupId(parentNode==null?0:parentNode.getPosId());
+		pos.setPath(parentNode==null?"0."+pos.getPosId()+"."
+				:parentNode.getPath()+pos.getPosId()+".");
+		pos.setDepth(parentNode==null?1:parentNode.getDepth()+1);
+		pos.setSn(sn);
+		dao.save(pos);
+		List<Position> sonList = dao.getByParent(pos.getPosId());
+		if(sonList!=null&&sonList.size()>0){
+			saveSonNode(sonList, pos);
+		}
+	}
+}
+
+修改PositionDaoImpl.java
+28行：String hql="from Position p where p.posSupId=? order by p.sn";
+
+45.日期：2012-07-30
+系统点击注销后弹出退出询问框，但在选择留在页面后没有效果
+修改：App.js 354-363行
+App.Logout = function() {	
+	Ext.get(document.getElementById("logout")).value="isout"; 
+	window.location.href = __ctxPath + '/login.jsp';
+};
+
+App.runOnUnload = function(){	
+	Ext.Ajax.request({
+		url : __ctxPath + '/j_logout.do'
+	});	
+};
+Index.jsp
+添加 115-124行
+	window.onbeforeunload = function() {			    				    	
+    	    var isout=Ext.get("logout").value;
+		    window.unloadTimer = setInterval("Ext.get('logout').value='';clearInterval(window.unloadTimer);",100);				    
+		    if(isout=="isout"){
+				  window.onunload = function() {App.runOnUnload();clearInterval(window.unloadTimer);}					 
+			}else{							
+				  window.onunload = function() {clearInterval(window.unloadTimer);}						  
+			}		
+		    return '你确定吗？';
+	   }  
+修改 138行，去掉原来的onbeforeunload函数
+
+46.协同办公->文档管理->知识管理  修改目录授权权限及文档可读/可修改/可删除的权限控制
+menu-oa.xml 添加 107行
+	<Function id="_KnowledgeManageGrant" text="目录授权" iconCls="menu-list">
+	</Function>
+KnowledgeManageView.js 494行添加 if(isGranted('_KnowledgeManageGrant'))判断
+DocFolderAction.java 
+修改:  650/779行 加是否是管理员权限判断
+rightOfFolder函数存在逻辑判断出错问题，去除874-875行多余逻辑语句
+
+

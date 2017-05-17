@@ -1,0 +1,2 @@
+双击Server下配置，在Server的配置页下点击Open Launch Configuration链接，在弹出对话框中的Arguments窗口中，在JVM Arguments下的最后，加上以下参数
+-Xms512m -Xmx1024m -XX:PermSize=128M -XX:MaxPermSize=256m -XX:NewSize=256m -XX:MaxNewSize=512m

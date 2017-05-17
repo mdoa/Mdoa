@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="hbm_converter"  basedir=".">
+	<property name="modelPath" value="../../src/com/htsoft/oa/model"/>
+	<property name="convertYui" value="../tools/yui"/>
+	
+	<target name = "copyHbm">
+			<copy todir="build/model">
+				<fileset dir="../../src/com/htsoft/oa/model" />
+			</copy>
+	</target>
+	
+	<target name="toOracle" >
+		<java classname="com.htsoft.converter.ToOracle" fork="true" >
+			<arg value="${modelPath}"/>
+			<classpath>
+			    <pathelement location="${basedir}/" />
+				<fileset dir="${basedir}/lib">
+				</fileset>
+			</classpath>
+		</java>
+	</target>
+	
+	<target name="toNormal" >
+		<java classname="com.htsoft.converter.ToNormal" classpath="${basedir}">
+			<arg value="${modelPath}"/>
+			<classpath>
+			    <pathelement location="${basedir}/" />
+				<fileset dir="${basedir}/lib">
+				</fileset>
+			</classpath>
+		</java>
+	</target>
+	
+</project>

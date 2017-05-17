@@ -1,0 +1,42 @@
+
+var menus = [
+	{
+		id:'btnMyTask',
+		cls:'myTask',
+		title:'我的待办',
+		view:'mobile.myTask.MyTask',
+		notice:'/htmobile/getNoticeTask.do'
+	},
+	{
+		id:'btnMyBulletin',
+		cls:'myBulletin',
+		title:'公司公告',
+		view:'mobile.news.News'
+	},
+	{
+		id:'btnNews',
+		cls:'news',
+		title:'公司新闻',
+		view:'mobile.news.News'
+	},
+	{
+		id:'btnAddressBook',
+		cls:'addressBook',
+		title:'通讯录',
+		view:'mobile.addressBook.AddressBook'
+	}
+	,
+    {
+		id:'btnMyEmail',
+		cls:'myEmail',
+		title:'我的邮件',
+		view:'mobile.myEmail.MyEmailBoxList'
+	},
+	{
+		id:'btnMySchedule',
+		cls:'mySchedule',
+		title:'我的日程',
+		view:'mobile.schedules.MySchedule',
+		notice:'/htmobile/getCountCalendarPlan.do'
+	}
+];

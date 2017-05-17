@@ -1,0 +1,313 @@
+/**以下SQL mySQL 和 orcale 数据库SQL修改 已经修改，SQLServer为修改*/
+
+
+--1.app_user表删除org_id,org_path字段，app_role表中删除org_id,org_path字段  
+--mysql :ALTER TABLE `app_user` DROP FOREIGN KEY `FK_AU_R_ORG`; 
+
+alter table app_user drop column org_id ;
+alter table app_user drop column org_path;
+alter table app_role drop column org_id;
+alter table app_role drop column org_path;
+
+
+--2.pro_definition表增加两字段
+alter table pro_definition add parentId number(18);
+alter table pro_definition add isMain smallint;
+alter table pro_definition add updatetime date;
+alter table pro_definition add skipFirstNode smallint;
+
+create sequence S_pro_node_set;
+create sequence S_pro_user_set;
+
+
+/*==============================================================*/
+/* Table: PRO_USER_SET                                          */
+/*==============================================================*/
+create table pro_user_set  (
+   id                   NUMBER(18)                      not null,
+   defId                NUMBER(18),
+   deployId             VARCHAR2(64)                    not null,
+   jbpmDefId            VARCHAR2(64)                    not null,
+   nodeName             VARCHAR2(256)                   not null,
+   userType             SMALLINT                        not null,
+   uids                 CLOB,
+   unames               CLOB,
+   compType             SMALLINT,
+   sn					NUMBER(18),
+   constraint pk_pro_user_set primary key (id)
+);
+
+COMMENT ON COLUMN PRO_USER_SET.USERTYPE IS '1=发起人;2=user;3=role;4=岗位;5=部门、组织;6=部门、组织负责人;7=上下级';
+
+COMMENT ON COLUMN PRO_USER_SET.COMPTYPE IS '1=or;2=and;3=exclude';
+
+ALTER TABLE PRO_USER_SET ADD CONSTRAINT FK_PRO_USR_R_PRO_DEF FOREIGN KEY (DEFID)
+      REFERENCES PRO_DEFINITION (DEFID) ON DELETE CASCADE;
+      
+      
+/*==============================================================*/
+/* Table: PRO_NODE_SET                                          */
+/*==============================================================*/
+create table pro_node_set  (
+   setId                NUMBER(18)                      not null,
+   defId                NUMBER(18)                      not null,
+   deployId             VARCHAR2(128)                   not null,
+   jbpmdefId            VARCHAR2(64)                    not null,
+   nodeName             VARCHAR2(256)                   not null,
+   nodeType             SMALLINT,
+   joinNodeName         VARCHAR2(256),
+   isAllowBack          SMALLINT,
+   constraint pk_pro_node_set primary key (setid)
+);
+
+COMMENT ON COLUMN PRO_NODE_SET.NODETYPE IS
+'1=普通任务节点;2=会签任务节点;3=分发任务节点';
+
+ALTER TABLE PRO_NODE_SET ADD CONSTRAINT FK_PRO_NODE_R_PRO_DEF FOREIGN KEY (DEFID)
+      REFERENCES PRO_DEFINITION (DEFID) ON DELETE CASCADE;
+   
+  
+alter table TASK_SIGN rename column assignid to SETID;
+comment on column TASK_SIGN.setid is '所属设置流程节点ID';
+
+alter table TASK_SIGN drop constraint FK_TASK_SIG_TS_R_PUA_PRO_USER;
+-- Create/Recreate primary, unique and foreign key constraints 
+alter table TASK_SIGN add constraint FK_TASK_SIG_TS_R_PRO_NODE_SET
+	foreign key (SETID) references pro_node_set (SETID);
+  
+-- Add/modify columns 
+alter table TASK_SIGN add signtype INTEGER;
+comment on column TASK_SIGN.signtype is '1=绝对票数 2=百分比票数';
+  
+  
+      
+/*==============================================================*/
+/* Table: FORM_RULE   表单规则                                          */
+/*==============================================================*/
+create table form_rule
+(
+  ruleId  NUMBER(18) not null,
+  name    VARCHAR2(128) not null,
+  rule    VARCHAR2(128) not null,
+  tipInfo VARCHAR2(128) not null,
+  memo    VARCHAR2(256)
+);
+
+comment on table FORM_RULE
+  is '表单验证规则';
+comment on column FORM_RULE.ruleid
+  is '主键';
+comment on column FORM_RULE.name
+  is '规则名称';
+comment on column FORM_RULE.rule
+  is '规则表达式';
+comment on column FORM_RULE.tipinfo
+  is '提示信息';
+comment on column FORM_RULE.memo
+  is '备注';
+ alter table FORM_RULE
+  add constraint PK_FORM_RULE primary key (RULEID);
+
+ CREATE SEQUENCE S_FORM_RULE INCREMENT BY 1 START WITH 10000 NOMAXVALUE MINVALUE 1 CACHE 20 NOORDER NOCYCLE;
+ 
+ 
+ -- 增加表单验证规则
+insert into FORM_RULE (RULEID, NAME, RULE, MEMO, TIPINFO)
+values (1, '手机号码', '^(((13[0-9]{1})|(15[0-9]{1}))+\d{8})$', '手机号码输入有误', '验证手机号码');
+
+insert into FORM_RULE (RULEID, NAME, RULE, MEMO, TIPINFO)
+values (2, 'email', '^\w+([-+.]\w+)*@\w+([-.]\w+)*.\w+([-.]\w+)*$', 'email格式输入有误', 'email规则验证');
+
+insert into FORM_RULE (RULEID, NAME, RULE, MEMO, TIPINFO)
+values (3, 'QQ号码', '^[1-9]*[1-9][0-9]*$', '请输入有效的QQ号码', '验证QQ号码');
+
+insert into FORM_RULE (RULEID, NAME, RULE, MEMO, TIPINFO)
+values (4, '汉字', '^[\u4E00-\u9FA5]+$', '验证汉字', '请输入汉字');
+
+insert into FORM_RULE (RULEID, NAME, RULE, MEMO, TIPINFO)
+values (5, '整数', '^-?\d+$', '验证整数', '请输入整数');
+
+insert into FORM_RULE (RULEID, NAME, RULE, MEMO, TIPINFO)
+values (6, '正整数', '^[1-9]+\d*$', '验证正整数', '请输入正整数');
+
+insert into FORM_RULE (RULEID, NAME, RULE, MEMO, TIPINFO)
+values (7, '负整数', '^-{1}\d+$', '验证负整数', '请输入负整数');
+
+insert into FORM_RULE (RULEID, NAME, RULE, MEMO, TIPINFO)
+values (8, '英数字', '^[a-zA-Z0-9]+$', '验证输入英文与数字', '请输入英文字母和数字');
+
+insert into FORM_RULE (RULEID, NAME, RULE, MEMO, TIPINFO)
+values (9, '非负整数', '^\d+$', '验证非负整数', '请输入非负整数');
+
+insert into FORM_RULE (RULEID, NAME, RULE, MEMO, TIPINFO)
+values (10, '英文字母', '^[a-zA-Z]+$', '验证英文字母', '请输入英文字母');
+ 
+-- Add/modify columns 
+alter table FORM_FIELD add decimalLen NUMBER(18);
+alter table FORM_FIELD add controlType NUMBER;
+-- Add comments to the columns 
+comment on column FORM_FIELD.CONTROLTYPE is '控件类型';
+  
+/*==============================================================*/
+/* Table: SYS_IDENTITY   流水号                                      */
+/*==============================================================*/
+create table serial_number
+(
+  numberId    NUMBER(18) not null,
+  name        VARCHAR2(50),
+  alias       VARCHAR2(20),
+  regulation  VARCHAR2(100),
+  genType     SMALLINT,
+  noLength    INTEGER,
+  curDate     VARCHAR2(10),
+  initValue   INTEGER,
+  curValue    INTEGER,
+  step        SMALLINT,
+  CONSTRAINT PK_SERIAL_NUMBER PRIMARY KEY (NUMBERID)
+);
+ ---流水号系列
+CREATE SEQUENCE S_SERIAL_NUMBER INCREMENT BY 1 START WITH 10000 NOMAXVALUE MINVALUE 1 CACHE 20 NOORDER NOCYCLE;  
+ 
+ ---流水号数据
+insert into SERIAL_NUMBER (NUMBERID,NAME,ALIAS,REGULATION,GENTYPE,NOLENGTH,CURDATE,INITVALUE,CURVALUE,STEP) 
+ values (1,'办公用品编号','OfficeGoods','OG{yyyy}{MM}{DD}{HH}{MI}{SS}-{SSSS}',4,5,null,1,1,1);
+insert into SERIAL_NUMBER (NUMBERID,NAME,ALIAS,REGULATION,GENTYPE,NOLENGTH,CURDATE,INITVALUE,CURVALUE,STEP) 
+ values (2,'办公入库编号','InStock',' IS{yyyy}{MM}{DD}{HH}{MI}{SS}-{SSSS}',4,5,null,1,1,1);
+insert into SERIAL_NUMBER (NUMBERID,NAME,ALIAS,REGULATION,GENTYPE,NOLENGTH,CURDATE,INITVALUE,CURVALUE,STEP) 
+ values (3,'商品申请编号','GoodsApply','GA{yyyy}{MM}{DD}{HH}{MI}{SS}-{SSSS}',4,5,null,1,1,1);
+insert into SERIAL_NUMBER (NUMBERID,NAME,ALIAS,REGULATION,GENTYPE,NOLENGTH,CURDATE,INITVALUE,CURVALUE,STEP) 
+ values (4,'固定资产编号','FixedAssets','FA{yyyy}{MM}{DD}{HH}{MI}{SS}-{SSSS}',4,5,null,1,1,1);
+insert into SERIAL_NUMBER (NUMBERID,NAME,ALIAS,REGULATION,GENTYPE,NOLENGTH,CURDATE,INITVALUE,CURVALUE,STEP) 
+ values (5,'档案编号','EmpProfile','PN{yyyy}{MM}{DD}{HH}{MI}{SS}-{SSSS}',4,5,null,1,1,1);
+insert into SERIAL_NUMBER (NUMBERID,NAME,ALIAS,REGULATION,GENTYPE,NOLENGTH,CURDATE,INITVALUE,CURVALUE,STEP) 
+ values (6,'薪酬标准编号','StandSalary','SN{yyyy}{MM}{DD}{HH}{MI}{SS}-{SSSS}',4,5,null,1,1,1);
+
+  
+--用户组织关系改造相关修改 2012-10-22
+CREATE TABLE SUBORDINATE 
+(
+	SUBORDINATEID NUMBER(18) NOT NULL,
+	DEM_ID NUMBER(18) NOT NULL,
+	USERID NUMBER(18) NOT NULL,
+	JOBUSERID NUMBER(18) NOT NULL,
+	RELATIVE NUMBER(2) NOT NULL,
+	CONSTRAINT PK_SUBORDINATE PRIMARY KEY (SUBORDINATEID)
+);
+
+ALTER TABLE SUBORDINATE ADD CONSTRAINT FK_SUBORDINATE_D_DEM FOREIGN KEY (DEM_ID) REFERENCES DEMENSION (DEM_ID) ON DELETE CASCADE;
+
+ALTER TABLE SUBORDINATE ADD CONSTRAINT FK_SUBORDINATE_U_APPUSER FOREIGN KEY (USERID) REFERENCES APP_USER (USERID) ON DELETE CASCADE;
+
+ALTER TABLE SUBORDINATE ADD CONSTRAINT FK_SUBORDINATE_J_APPUSER FOREIGN KEY (JOBUSERID) REFERENCES APP_USER (USERID) ON DELETE CASCADE;
+
+COMMENT ON COLUMN SUBORDINATE.RELATIVE IS '上下级标识 1=上级 ，2同级，0下级';
+COMMENT ON COLUMN SUBORDINATE.JOBUSERID IS '相对用户标示';
+COMMENT ON COLUMN SUBORDINATE.USERID IS '主用户标示';
+COMMENT ON COLUMN SUBORDINATE.DEM_ID IS '关系所属维度';
+
+CREATE SEQUENCE S_SUBORDINATE    INCREMENT BY 1 START WITH 10000 NOMAXVALUE MINVALUE 1 CACHE 20 NOORDER NOCYCLE;
+
+--流程定义人员设置上下级相关修改2012-10-23
+ALTER TABLE PRO_USER_SET ADD ( DEMID NUMBER(18) NULL  ) ;
+
+COMMENT ON COLUMN PRO_USER_SET.DEMID IS '若选择上下级时对应的维度';
+ALTER TABLE PRO_USER_SET ADD CONSTRAINT FK_PRO_USR_D_DEM FOREIGN KEY (DEMID) REFERENCES DEMENSION (DEM_ID) ON DELETE CASCADE;
+
+
+/*==============================================================*/
+/* 修改: OUT_MAIL 				                                */
+/*==============================================================*/
+delete from out_mail;
+alter table out_mail add (setId number(18) not null);
+
+COMMENT ON COLUMN OUT_MAIL.SETID IS
+'外部邮箱ID';
+/*==============================================================*/
+/* 修改: out_mail_folder 			                               */
+/*==============================================================*/
+delete from out_mail_folder;
+alter table out_mail_folder add (setId number(18) not null);
+COMMENT ON COLUMN OUT_MAIL_FOLDER.SETID IS
+'外部邮箱文件夹ID';
+
+drop table OUT_MAIL_USER_SETING;
+/*==============================================================*/
+/* Table: OUT_MAIL_USER_SETING                                  */
+/*==============================================================*/
+CREATE TABLE OUT_MAIL_USER_SETING  (
+   SETID                   NUMBER(18)                   NOT NULL,
+   USERID               NUMBER(18),
+   USERNAME             VARCHAR2(128),
+   accountname			VARCHAR2(128) 					NOT NULL,--增加字段
+   MAILADDRESS          VARCHAR2(128)                   NOT NULL,
+   MAILPASS             VARCHAR2(128)                   NOT NULL,
+   SMTPHOST             VARCHAR2(128)                   NOT NULL,
+   SMTPPORT             VARCHAR2(64)                    NOT NULL,
+   POPHOST              VARCHAR2(128)                   NOT NULL,
+   POPPORT              VARCHAR2(64)                    NOT NULL,
+   isdefault            NUMBER(18)						NOT NULL,
+   CONSTRAINT PK_OUT_MAIL_USER_SETING PRIMARY KEY (SETID)
+);
+COMMENT ON COLUMN OUT_MAIL_USER_SETING.SETID IS
+'邮箱设置ID';
+
+COMMENT ON COLUMN OUT_MAIL_USER_SETING.USERID IS
+'用户ID';
+
+COMMENT ON COLUMN OUT_MAIL_USER_SETING.ACCOUNTNAME IS
+'帐号名称';
+
+COMMENT ON COLUMN OUT_MAIL_USER_SETING.USERNAME IS
+'用户名称';
+
+COMMENT ON COLUMN OUT_MAIL_USER_SETING.MAILADDRESS IS
+'外部邮件地址';
+
+COMMENT ON COLUMN OUT_MAIL_USER_SETING.MAILPASS IS
+'外部邮件密码';
+
+COMMENT ON COLUMN OUT_MAIL_USER_SETING.SMTPHOST IS
+'smt主机';
+
+COMMENT ON COLUMN OUT_MAIL_USER_SETING.SMTPPORT IS
+'smt端口';
+
+COMMENT ON COLUMN OUT_MAIL_USER_SETING.POPHOST IS
+'pop主机';
+
+COMMENT ON COLUMN OUT_MAIL_USER_SETING.POPPORT IS
+'pop端口';
+
+COMMENT ON COLUMN OUT_MAIL_USER_SETING.ISDEfAULT IS
+'是否默认：1表示默认，0表示非默认';
+
+ALTER TABLE "OUT_MAIL"
+   ADD CONSTRAINT FK_O_M_R_O_M_S FOREIGN KEY ("SETID")
+      REFERENCES "OUT_MAIL_USER_SETING" ("SETID");
+      
+      ALTER TABLE "OUT_MAIL_FOLDER"
+   ADD CONSTRAINT FK_O_M_F_R_O_M_S FOREIGN KEY ("SETID")
+      REFERENCES "OUT_MAIL_USER_SETING" ("SETID");
+      
+-- 子表按钮权限控制      
+CREATE TABLE form_button_right (
+	buttonId  		bigint(20) NOT NULL AUTO_INCREMENT ,
+	mappingId  		bigint(20) NOT NULL ,
+	tableId 		bigint(20) NOT NULL ,
+	tableName  		varchar(256) NOT NULL COMMENT '子表名称',
+	buttonRight  	smallint NOT NULL COMMENT '隐藏/显示权限  0 隐藏 1 显示' ,
+	userType  		smallint NULL COMMENT '1=发起人;2=user;3=role;4=岗位;5=部门、组织;6=部门、组织负责人;7=上下级' ,
+	uids  			text ,
+	unames  		text ,
+	taskName 		varchar(128) NOT NULL,
+	buttonType  	smallint NOT NULL COMMENT '按钮类型 1：增加按钮，2:删除按钮',
+	PRIMARY KEY (buttonId)
+)
+;
+ALTER TABLE form_button_right ADD CONSTRAINT 
+	form_button_right_ibfk_1 FOREIGN KEY (mappingId) 
+	 REFERENCES form_def_mapping (mappingId) 
+	  ON DELETE CASCADE;
+
+--人员设置表增加
+alter table  pro_user_set add strategy smallint;

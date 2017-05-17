@@ -1,0 +1,124 @@
+## This is a velocity template
+## to generate a Spring controller class from an sql table input
+#set ($table = $sqlTable.Table)
+#set ($class = $utility.makeClassName($sqlTable.EntityName))
+#set ($classVar = $utility.makeFirstLetterLowerCase($class))
+#set ($packagePrefix  = $prop.getProperty("packagePrefix"))
+#set ($packageModot  = $prop.getProperty("packageModot").substring(1))
+#set ($keyColumn = $sqlTable.getPrimaryKey(0))
+#set ($keyfield = $sqlTable.getPrimaryKey(0).getColname())
+#set ($keytype  = $sqlTable.getPrimaryKey(0).getAttType())
+#set ($keyVar= $utility.makeVarName($keyfield))
+#set ($keyVarUC = $utility.makeFirstLetterUpperCase($keyVar))
+#set ($classService    = "${class}Service")
+#set ($classVarService = "${classVar}Service")
+package ${packagePrefix}.oa.action.${packageModot};
+/*
+ *  杭州梦德软件有限公司 J.Office协同办公管理系统   -- http://www.Mendersoft.com
+ *  Copyright (C) 2008-2010 GuangZhou HongTian Software Limited Company.
+*/
+import java.util.List;
+import javax.annotation.Resource;
+
+import com.htsoft.core.json.JacksonMapper;
+import com.htsoft.core.util.BeanUtil;
+
+import ${packagePrefix}.core.command.QueryFilter;
+import ${packagePrefix}.core.web.action.BaseAction;
+
+
+import ${packagePrefix}.oa.model.${packageModot}.${class};
+import ${packagePrefix}.oa.service.${packageModot}.${class}Service;
+/**
+ * 
+ * @author 
+ *
+ */
+public class ${class}Action extends BaseAction{
+	@Resource
+	private ${classService} ${classVarService};
+	private ${class} ${classVar};
+	
+	private Long $keyVar;
+
+	public Long get${keyVarUC}() {
+		return ${keyVar};
+	}
+
+	public void set${keyVarUC}(Long ${keyVar}) {
+		this.${keyVar} = ${keyVar};
+	}
+
+	public ${class} get${class}() {
+		return ${classVar};
+	}
+
+	public void set${class}($class $classVar) {
+		this.${classVar} = ${classVar};
+	}
+
+	/**
+	 * 显示列表
+	 */
+	public String list(){
+		
+		QueryFilter filter=new QueryFilter(getRequest());
+		List<${class}> list= ${classVarService}.getAll(filter);
+		
+
+		JacksonMapper mapper = new JacksonMapper(true, "yyyy-MM-dd");
+		jsonString = mapper.toPageJson(list, filter.getPagingBean()
+				.getTotalItems());
+		
+		return SUCCESS;
+	}
+	/**
+	 * 批量删除
+	 * @return
+	 */
+	public String multiDel(){
+		
+		String[]ids=getRequest().getParameterValues("ids");
+		if(ids!=null){
+			for(String id:ids){
+				${classVarService}.remove(new Long(id));
+			}
+		}
+		
+		jsonString="{success:true}";
+		
+		return SUCCESS;
+	}
+	
+	/**
+	 * 显示详细信息
+	 * @return
+	 */
+	public String get(){
+		${class} ${classVar}=${classVarService}.get(${keyVar});
+		
+		JacksonMapper mapper = new JacksonMapper(true, "yyyy-MM-dd");
+		jsonString = mapper.toDataJson(${classVar});
+		
+		return SUCCESS;
+	}
+	/**
+	 * 添加及保存操作
+	 */
+	public String save(){
+		if(${classVar}.get${keyVarUC}()==null){
+			${classVarService}.save(${classVar});
+		}else{
+			${class} org${class}=${classVarService}.get(${classVar}.get${keyVarUC}());
+			try{
+				BeanUtil.copyNotNullProperties(org${class}, ${classVar});
+				${classVarService}.save(org${class});
+			}catch(Exception ex){
+				logger.error(ex.getMessage());
+			}
+		}
+		setJsonString("{success:true}");
+		return SUCCESS;
+		
+	}
+}
