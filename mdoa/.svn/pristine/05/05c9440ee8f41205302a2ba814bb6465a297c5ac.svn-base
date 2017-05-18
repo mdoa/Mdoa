@@ -1,0 +1,40 @@
+<div id="framework-lead" title="上下级管理">
+	<div class="maintop">
+	</div>
+	<div class="invitetop">
+		
+		领导名称：
+		<input type="text" name="leadName">
+		用户名称：
+		<input type="text" name="peopleName"> 
+		<input type="button" class="select" value="查询">
+		<input type="button" class="clean" value="清空">
+	</div>
+	<div>
+		<table class="leadList"></table>
+	</div>
+	
+	<div class="popups" style="text-align: left">
+		<div class="popup lowerList" style="height: 410px;width: 300px;">
+			<h3>下级员工列表</h3>
+			<span class="turnoff"></span>
+			<div class="popuparea">
+				<div style="width: 282px; height: 340px;">
+					<div class="queryForm">
+						<input name="userId" style="display: none"/>
+						<input name="peopleName" style="display: none"/>
+						<input name="userDepartmentId" style="display: none"/>
+						<input name="userDepartmentName" style="display: none"/>
+						<input type="button" class="button" value="添加下级" style="width: 60px" onclick="addLower()"/>
+					</div>
+					<div style="float: right;height: 340px;width: 282px;">
+						<table style="height: 340px;width: 272px" class="lower"></table>
+					</div>
+				</div>
+			</div>
+			<div class="btnarea" style="text-align: center">
+				<input type="button" class="button cannel" value="关闭"/>
+			</div>
+		</div>
+	</div>
+</div>

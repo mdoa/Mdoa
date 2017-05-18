@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mdoa.personnel.dao.InsuranceDao">
+	
+	<!-- 通过类型id查询社保信息 -->
+	<select id="findInsuranceByTypeId" parameterType="java.lang.String" resultType="com.mdoa.personnel.bo.InsuranceForm">
+		SELECT
+			insurance_id AS insuranceId,
+			user_id AS userId,
+			insurance_type_id AS insuranceTypeId,
+			insurance_type_name AS insuranceTypeName,
+			create_user_id AS createUserId
+		FROM
+			personnel_insurance
+		WHERE
+			insurance_type_id = (#{typeId})
+			AND alive_flag = 1
+	</select>
+	
+	<!-- 通过用户id查询社保信息 -->
+	<select id="findInsuranceByUserId" parameterType="java.lang.String" resultType="com.mdoa.personnel.bo.InsuranceForm">
+		SELECT
+			insurance_id AS insuranceId,
+			user_id AS userId,
+			insurance_type_id AS insuranceTypeId,
+			insurance_type_name AS insuranceTypeName,
+			create_user_id AS createUserId
+		FROM
+			personnel_insurance
+		WHERE
+			user_id = (#{userId})
+			AND alive_flag = 1
+	</select>
+	
+	<!-- 插入社保信息 -->
+	<insert id="insertInsurance" parameterType="com.mdoa.personnel.bo.InsuranceForm">
+		INSERT INTO personnel_insurance (
+			insurance_id,
+			user_id,
+			insurance_type_name,
+			insurance_type_id,
+			create_user_id,
+			create_time,
+			alive_flag
+		)
+		VALUES
+			(
+				UUID(),
+				(#{userId}),
+				(#{insuranceTypeName}),
+				(#{insuranceTypeId}),
+				(#{createUserId}),
+				NOW(),
+				'1'
+			)
+	</insert>
+	
+	<!-- 通过社保大类型查询社保类型信息 -->
+	<select id="findTypeBySuperType" parameterType="java.lang.String" resultType="com.mdoa.personnel.bo.InsuranceTypeForm">
+		SELECT
+			insurance_type_id AS insuranceTypeId,
+			type_name AS typeName,
+			text AS text,
+			super_type AS superType,
+		FROM
+			personnel_insurance_type
+		WHERE
+			super_type = (#{superType})
+			AND alive_flag = 1
+	</select>
+	
+	<!-- 条件查询社保类型信息 -->
+	<select id="findTypeByCondition" parameterType="com.mdoa.personnel.bo.InsuranceTypeForm" resultType="com.mdoa.personnel.model.InsuranceType">
+		SELECT
+			insurance_type_id AS insuranceTypeId,
+			type_name AS typeName,
+			text AS text,
+			super_type AS superType,
+			create_user_id AS createUserId,
+			create_time AS createTime,
+			update_user_id AS updateUserId,
+			update_time AS updateTime,
+			alive_flag AS aliveFlag
+		FROM
+			personnel_insurance_type
+		WHERE
+			alive_flag = 1
+			<if test="insuranceTypeId != null and insuranceTypeId != ''">
+				AND insurance_type_id = '${insuranceTypeId}'
+			</if>
+			<if test="userId != null and userId != ''">
+				AND user_id = '${userId}'
+			</if>
+			<if test="superType != null and superType != ''">
+				AND super_type = '${superType}'
+			</if>
+			<if test="createUserId != null and createUserId != ''">
+				AND create_user_id = '${createUserId}'
+			</if>
+			<if test="typeName != null and typeName != ''">
+				AND type_name LIKE (${typeName})
+			</if>
+			<if test="createUserName != null and createUserName != ''">
+				AND create_user_id
+				IN(
+					SELECT
+						user_id
+					FROM
+						user_info
+					WHERE
+						user_name LIKE (${createUserName})
+					AND alive_flag = '1'
+				) 
+			</if>
+	</select>
+	
+	<!-- 插入社保类型信息 -->
+	<insert id="insertInsuranceType" parameterType="com.mdoa.personnel.bo.InsuranceTypeForm">
+		INSERT INTO personnel_insurance_type (
+			insurance_type_id,
+			type_name,
+			text,
+			super_type,
+			create_user_id,
+			create_time,
+			alive_flag
+		)
+		VALUES
+			(
+				UUID(),
+				(#{typeName}),
+				(#{text}),
+				(#{superType}),
+				(#{createUserId}),
+				NOW(),
+				'1'
+			)
+	</insert>
+	
+	<!-- 条件查询社保信息 -->
+	<select id="findInsuranceByCondition" parameterType="com.mdoa.personnel.bo.InsuranceForm" resultType="com.mdoa.personnel.bo.InsuranceForm">
+		SELECT
+			a.insurance_id AS insuranceId,
+			a.user_id AS userId,
+			a.insurance_type_id AS insuranceTypeId,
+			b.type_name AS insuranceTypeName,
+			a.create_user_id AS createUserId,
+			a.create_time AS createTime,
+			a.update_user_id AS updateUserId,
+			a.update_time AS updateTime,
+			b.text AS text,
+			b.super_type AS superType,
+			c.user_name AS userName,
+			c.id_card AS idCard,
+			c.sex AS sex
+		FROM
+			personnel_insurance a
+		INNER JOIN	
+			personnel_insurance_type b ON (a.insurance_type_id = b.insurance_type_id)
+		INNER JOIN
+			user_info c ON (a.user_id = c.user_id)
+		WHERE
+			a.alive_flag = '1'
+		AND b.alive_flag = '1'
+		AND c.alive_flag = '1'
+			<if test="insuranceId != null and insuranceId != ''">
+				AND a.insurance_id = '${insuranceId}'
+			</if>
+			<if test="userId != null and userId != ''">
+				AND a.user_id = '${userId}'
+			</if>
+			<if test="insuranceTypeId != null and insuranceTypeId != ''">
+				AND a.insurance_type_id = '${insuranceTypeId}'
+			</if>
+			<if test="insuranceTypeName != null and insuranceTypeName != ''">
+				AND a.insurance_type_name = '${insuranceTypeName}'
+			</if>
+			<if test="createUserId != null and createUserId != ''">
+				AND a.create_user_id = '${createUserId}'
+			</if>
+			<if test="superType != null and superType != ''">
+				AND b.super_type = '${superType}'
+			</if>
+			<if test="userName != null and userName != ''">
+				AND c.user_name LIKE (${userName})
+			</if>
+			<if test="idCard != null and idCard != ''">
+				AND c.id_card = '${idCard}'
+			</if>
+	</select>
+</mapper> 

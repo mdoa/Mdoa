@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mdoa.admin.dao.AssetsDao">
+	 <!-- 获取UUID -->
+	 <select id="getuuid" resultType="java.lang.String">
+	 	select uuid() as uuid
+	 </select>
+	<!--资产类型下是否有资产  -->
+<select id="isAssetsBelowType" parameterType="com.mdoa.admin.model.AssetsType" resultType="com.mdoa.admin.model.AssetsType">
+	SELECT
+		b.assets_id AS assetsId
+	FROM
+		admin_assets_type a,
+		admin_fixed_assets b
+	WHERE
+		a.alive_flag = '1'
+		AND b.alive_flag = '1'
+		AND b.assets_type_id = a.assets_type_id
+		AND a.assets_type_id = #{assetsTypeId}
+</select>
+ <!-- 查询符合条件的记录 -->
+ <select id="list" parameterType="java.lang.String" resultType="com.mdoa.admin.model.AssetsModel">  
+     SELECT
+     	assets_type_id AS thisId,
+     	assets_type_url AS id,
+		assets_type_name AS text
+     FROM
+		 admin_assets_type
+	 WHERE
+	 	 parent_type_id = #{pid}
+	 	 AND alive_flag = '1'
+ </select>
+  <!-- 添加资产类型 -->
+ <insert id="addAssetsType">
+ 	INSERT INTO admin_assets_type(
+ 		assets_type_id,
+		assets_type_name,
+		assets_type_url,
+		parent_type_id,
+		create_time,
+		create_user_id,
+		create_user_name,
+		alive_flag
+ 	)VALUES(
+ 		#{assetsTypeId},
+ 		#{assetsTypeName},
+ 		#{assetsTypeUrl},
+ 		#{parentTypeId},
+ 		NOW(),
+ 		#{createUserId},
+ 		#{createUserName},
+ 		'1'
+ 	)
+ </insert>
+  <!-- 根据选择的ID查询其url -->
+ <select id="selectUrlByparentTypeId" parameterType="java.lang.String" resultType="com.mdoa.admin.model.AssetsType">
+ 	SELECT 
+ 		assets_type_url AS assetsTypeUrl,
+ 		parent_type_id AS parentTypeId
+ 	FROM
+ 		admin_assets_type
+ 	WHERE
+ 		assets_type_id = #{parentTypeId}
+ 		AND alive_flag = '1'
+ </select>
+ 
+  <select id="selectUrlByAssetsTypeId" parameterType="java.lang.String" resultType="com.mdoa.admin.model.AssetsType">
+ 	SELECT 
+ 		assets_type_url AS assetsTypeUrl,
+ 		parent_type_id AS parentTypeId
+ 	FROM
+ 		admin_assets_type
+ 	WHERE
+ 		assets_type_id = #{assetsTypeId}
+ 		AND alive_flag = '1'
+ </select>
+  <!-- 根据父ID删除该ID以及下面的所有资产类 -->
+ <update id="removeAssetsType" parameterType="com.mdoa.admin.model.AssetsType">
+ 	UPDATE admin_assets_type
+ 	SET
+ 		alive_flag = '0',
+ 		update_time = NOW(),
+ 		update_user_id = #{updateUserId},
+ 		update_user_name = #{updateUserName}
+ 	WHERE
+ 		assets_type_url LIKE (${assetsTypeUrl})
+ </update>
+ <!-- 根据ID修改相应的资产类Name -->
+ <update id="editAssetsType" parameterType="com.mdoa.admin.model.AssetsType">
+ 	UPDATE admin_assets_type
+ 	SET
+ 		assets_type_name = '${assetsTypeName}',
+ 		update_time = NOW(),
+ 		update_user_id = '${updateUserId}',
+ 		update_user_name = '${updateUserName}'
+ 	WHERE
+ 		assets_type_id = '${assetsTypeId}'
+ </update>
+ 
+  <!-- 根据ID修改Url(append) -->
+ <update id="updateDragSourceAssetsUrl" parameterType="com.mdoa.admin.model.DragModel">
+ 	UPDATE admin_assets_type
+ 	SET
+ 		assets_type_url = #{sourceUrlo},
+ 		parent_type_id = #{targetId},
+ 		update_time = NOW(),
+ 		update_user_id = #{updateUserId},
+ 		update_user_name = #{updateUserName}
+ 	WHERE
+ 		assets_type_id = #{sourceId}
+ </update>
+  <!-- 根据ID修改Url(bottom,top) -->
+ <update id="updateDragSourceAssetsUrlBt" parameterType="com.mdoa.admin.model.DragModel">
+ 	UPDATE admin_assets_type
+ 	SET
+ 		assets_type_url = #{sourceUrlo},
+ 		parent_type_id = #{targetParentId},
+ 		update_time = NOW(),
+ 		update_user_id = #{updateUserId},
+ 		update_user_name = #{updateUserName}
+ 	WHERE
+ 		assets_type_id = #{sourceId}
+ </update>
+  <!-- 拖动的时候下面的物品类url全部更改 -->
+ <update id="updateDragLaterUrl" parameterType="com.mdoa.admin.model.DragModel">
+ 	UPDATE admin_assets_type
+ 	SET
+ 		assets_type_url = REPLACE(assets_type_url,${previousUrl},${replaceUrl}),
+ 		update_time = NOW(),
+ 		update_user_id = '${updateUserId}',
+ 		update_user_name = '${updateUserName}'
+ 	WHERE
+ 		assets_type_url LIKE (${queryUrl})
+ </update>
+  <!-- 根据资产ID查询资产信息 -->
+ <select id="selectAssetsInformationById" parameterType="java.lang.String" resultType="com.mdoa.admin.model.AssetsType">
+ 	SELECT 
+		assets_type_name AS assetsTypeName,
+		assets_type_url AS assetsTypeUrl,
+		parent_type_id AS parentTypeId,
+		create_time AS createTime,
+		create_user_id AS createUserId,
+		create_user_name AS createUserName,
+		update_time AS updateTime,
+		update_user_id AS updateUserId,
+		update_user_name AS updateUserName,
+		alive_flag AS aliveFlag
+ 	FROM
+ 		admin_assets_type
+ 	WHERE
+ 		assets_type_id = #{sourceId}
+ </select>
+</mapper>

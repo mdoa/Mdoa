@@ -1,0 +1,108 @@
+<div id="trainRecord">
+	<div style="display: block" class="list">
+		<div class="maintop">
+		</div>
+		<div class="invitetop">
+			请输入查询条件：
+			申请人：<input type="text" name="createUserName"> 
+			培训名称：<input type="text" name="trainName">
+			<a class="easyui-linkbutton query" iconCls="icon-search" style="line-height:16px;">查询</a>
+			<input type="button" value="清空">
+		</div>
+		<div>
+			<table class="traindg"></table>
+		</div>
+	</div>
+	
+	
+	<div class="flow" style="display:none">
+		<!-- 抬头的审批按钮 -->
+		<div class="flowbar">
+			<input type="button" value="返回" class="back" /> 
+			<input type="button" value="驳回" class="reject" /> 
+			<input type="button" value="备案" class="reference" /> 
+			<input type="button" value="驳回提交至下一级" class="past" /> 
+			请选择下一级审批人：
+			请选择下一级审批人：
+			<input name="nextExamineUserName" type="text" readonly="readonly"/>
+			<input name="nextExamineUser" type="text" style="display:none"/>
+			<input value="选择" type="button" class="chooseUser">
+		</div>
+		<!-- 左侧的培训信息框 -->		
+		<div class="flowplan">
+			<input type="text" class="trainStreamId" style="display: none"/>
+			<input type="text" class="trainId" style="display: none"/>
+			<p class="jiachu">培训名：</p>
+			<p><input type="text" class="trainName" value="" /></p>
+			
+			<p class="jiachu">发起人：</p>
+			<p><input type="text" class="createUserName" value="" /></p>
+			
+			<p class="jiachu">发起时间：</p>
+			<p><input type="text" class="createTime" value="" /></p>
+			
+			<p class="jiachu">培训开始时间：</p>
+			<p><input type="text" class="startTime" value="" /></p>
+			
+			<p class="jiachu">培训结束时间：</p>
+			<p><input type="text" class="endTime" value="" /></p>
+			
+			<p class="jiachu">审批状态：</p>
+			<p><input type="text" class="examineStatus" value="" /></p>
+			
+			<p class="jiachu">培训描述：</p>
+			<div class="applyDescribe detail"></div>
+			
+			<p class="jiachu">发起理由：</p>
+			<div class="applyDescribe reason"></div>
+		</div>
+		<!-- 右侧视图的目标位置 -->
+		<div class="showView">
+		</div>
+		<div class="popops">
+			<!-- 审批驳回意见栏 -->
+			<div class="popup rejectWindow" style="width:332px;height:212px;">
+				<h3>驳回流程</h3>
+				<span class="turnoff"></span>
+				<div class="popuparea">
+					<textarea name="text"></textarea>
+				</div>
+				<div class="btnarea" style="text-align: center">
+					<input type="button" class="button save" value="保存"/>
+					<input type="button" class="button cannel" value="取消" style="margin-left: 20px;"/>
+				</div>
+			</div>
+			<!-- 提交备案意见栏 -->
+			<div class="popup referenceWindow" style="width:332px;height:212px;">
+				<h3>通过备案</h3>
+				<span class="turnoff"></span>
+				<div class="popuparea">
+					<textarea name="text"></textarea>
+				</div>
+				<div class="btnarea" style="text-align: center">
+					<input type="button" class="button save" value="保存"/>
+					<input type="button" class="button cannel" value="取消" style="margin-left: 20px;"/>
+				</div>
+			</div>
+			<!-- 审批通过提交下级意见栏 -->
+			<div class="popup pastWindow" style="width:332px;height:246px;">
+				<h3>驳回至他人</h3>
+				<span class="turnoff"></span>
+				<div class="pastarea popuparea">
+					<textarea name="text"></textarea>
+					<div class="nextExamine">
+						下一级审批人：
+						<input type="text" name="nextExamineUserName" readonly="readonly"/>
+						<input type="button" class="button chooseUser" value="选择"  style="width: 55px"/>
+						<input style="display: none" name="nextExamineUserId"/>
+					</div>
+				</div>
+				<div class="btnarea" style="text-align: center">
+					<input type="button" class="button save" value="保存"/>
+					<input type="button" class="button cannel" value="取消" style="margin-left: 20px;"/>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mdoa.framework.dao.PowerDao">
+	
+	<!-- 添加权限 -->
+	<insert id="addUserPower" parameterType="com.mdoa.framework.model.Power">
+		INSERT INTO framework_power(
+			power_id,
+			power_name,
+			super_power_id,
+			alive_flag,
+			power
+		)VALUE(
+			UUID(),
+			#{powerName},
+			#{superPowerId},
+			'1',
+			#{power}
+		)
+	</insert>
+	
+	<!-- 查询权限表 -->
+	<select id="queryPower" parameterType="com.mdoa.framework.model.Power" resultType="com.mdoa.framework.model.Power">
+		SELECT
+			power_id AS powerId,
+			power_name AS powerName,
+			super_power_id AS superPower,
+			alive_flag AS aliveFlag,
+			power AS power
+		FROM
+			framework_power
+		WHERE
+			power = #{power}
+			
+	</select>
+	<!-- 根据父权限的Id，来查找下一级子权限 -->
+	<select id="getPowerBySuper" resultType="com.mdoa.framework.model.FrameworkTree" parameterType="java.lang.String">
+		select
+			power_name AS text,
+			power_id AS thisId,
+			power AS id
+		from
+			framework_power
+		where
+			super_power_id = #{thisId}
+	</select>
+	
+	<!-- 根据用户的Id来查询用户所拥有的权限 -->
+	<select id="getPowerByUser" parameterType="java.lang.String" resultType="com.mdoa.framework.model.Power">
+		SELECT
+			b.power
+		FROM
+			framework_user_role a
+		INNER JOIN (
+			SELECT
+				b.power,
+				b.role_id
+			FROM
+				framework_role a
+			LEFT JOIN framework_role_power b ON (a.role_id = b.role_id)
+		) b
+		ON (a.role_id = b.role_id)
+		WHERE 
+			a.user_id = #{userId}
+	</select>
+</mapper>

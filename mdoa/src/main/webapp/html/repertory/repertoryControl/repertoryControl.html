@@ -1,0 +1,88 @@
+<div id="repertoryControl" title="仓库管理">
+	<div class="listForm repertoryControl">
+		<div class="toolbar" >
+			<input type="button" class="button" value="添加仓库"/>
+			<input type="button" class="button addDpbtn" value="添加部门"/>
+			<input type="button" class="button" value="导出到Excel" />
+		</div>
+		<div class="queryForm">
+			物品名称：<input type="text" class="goodsName"/>
+			物品规格：<input type="text" class="goodsSize"/>
+			物品数量：<input type="text" class="goodsNumSm"/> ~ <input type="text" class="goodsNumBg"/>
+			仓位：<input type="text" class="goodsPosition"/>
+			仓库：<select class="repertoryName">
+					<option>全部</option>
+					<option>1仓库</option>
+					<option>2仓库</option>
+					<option>3仓库</option>
+				</select>	
+			<a class="easyui-linkbutton query" iconCls="icon-search" style="line-height:16px;">查询</a>
+			<input type="button" value="清空">
+		</div>
+		<div>
+			<table id="repertoryControldg">
+			</table>
+		</div>
+	</div>
+	<div id="mm" class="easyui-menu" style="width:120px;">
+		<div onclick="add()" data-options="iconCls:'icon-add'">添加</div>
+		<div onclick="remove()" data-options="iconCls:'icon-remove'">删除</div>
+		<div onclick="edit()" data-options="iconCls:'icon-edit'">修改</div>
+	</div>
+	<div class="popups">
+	<!-- 修改仓位 -->
+		<div class="popup update">
+			<h3>修改仓位信息</h3>
+			<span class="turnoff"></span>
+			<div class="popuparea">
+				<table>
+					<tr>
+						<td>仓位：</td>
+						<td><input type="text"/></td>
+					</tr>
+					<tr>
+						<td>数量：</td>
+						<td><input type="text"/></td>
+					</tr>
+					<tr>
+						<td>仓库：</td>
+						<td><input type="text"/></td>
+					</tr>
+				</table>
+			</div>
+			<div class="btnarea">
+				<input type="button" class="button confirm" value="确定"/>
+				<input type="button" class="button cannel" value="取消" />
+			</div>
+		</div>
+	<!-- 添加部门 -->
+		<div class="popup addDepartment">
+			<h3>添加部门信息</h3>
+			<span class="turnoff"></span>
+			<div class="popuparea">
+				<table>
+					<tr>
+						<td>部门名字：</td>
+						<td><input type="text" class="departmentName"/></td>
+					</tr>
+				</table>
+			</div>
+			<div class="btnarea">
+				<input type="button" class="button confirm" value="确定"/>
+				<input type="button" class="button cannel" value="取消" />
+			</div>
+		</div>
+	<!-- 删除仓位    -->
+		<div class="popup del">
+			<h3>删除仓位信息</h3>
+			<span class="turnoff"></span>
+			<div class="popuparea delarea">
+				确定要删除仓库信息吗？
+			</div>
+			<div class="btnarea">
+				<input type="button" class="button confirm" value="确定"/>
+				<input type="button" class="button cannel" value="取消" />
+			</div>
+		</div>
+	</div>
+</div> 

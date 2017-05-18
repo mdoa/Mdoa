@@ -1,0 +1,24 @@
+package com.mdoa.system.service;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import com.mdoa.system.model.UserSystemMessage;
+
+public class MessageService {
+	
+	
+	
+	/**
+	 * 将需要对用户发送的消息，存储到数据库中
+	 * @param message 对象中，包含以下参数
+	 * @param userId 接收人UserId
+	 * @param url 只能使用MessageConstant包中的地址，用于跳转，如果不跳转可以为空
+	 */
+	public void sendSystemMessage(UserSystemMessage message){
+		message.setSendUserId("system");
+		message.setSendUserName("系统消息");
+		message.setSendTime(new SimpleDateFormat().format(new Date()));
+		
+	}
+}

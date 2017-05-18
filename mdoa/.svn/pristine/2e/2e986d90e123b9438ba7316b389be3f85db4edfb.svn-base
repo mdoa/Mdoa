@@ -1,0 +1,49 @@
+<div id="roleGive" title="重置员工密码">
+	<div class="main">
+		<div class="maintop">
+		</div>
+		<div class="invitetop">
+			请输入查询条件：
+			姓名：<input type="text" name="peopleName" style="width: 100px">
+			身份证号：<input type="text" name="idCard" style="width: 150px"> 
+			部门名：<input type="text" name="departmentName" style="width: 100px" readOnly="true"> 
+			<input type="hidden" name="departmentUrl" style="width: 100px"> 
+			<input type="button" class="button departmentChooseObj" value="选择"  style="width: 55px"/> 
+			岗位名：<input type="text" name="postName" style="width: 100px"> 
+			<input type="hidden" name="postId" style="width: 100px"> 
+			<input type="button" class="button postChooseObj" value="选择"  style="width: 55px"/> 
+			<input type="button" class="button query" value="查询"  style="width: 55px;"/> 
+			<input type="button" class="button" value="清空"  style="width: 55px;"/> 
+		</div>
+		<div>
+			<table id="roleGivedg"></table>
+		</div>
+	</div>
+	
+	<div class="popup roleWindow" style="height: 130px;width: 325px">
+			<h3>角色赋予表</h3>
+			<span class="turnoff"></span>
+			<div class="popuparea" style="overflow: hidden;width: 295px">
+				<table style="text-align: left;height:60px;width: 285px">
+					<tr>
+						<td style="width: 200px;padding-left: 15px">持有角色名：</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td style="width: 200px;padding-left: 15px"><input type="text" style="width:192px;" name="roleNames" readOnly="true"/></td>
+						<td>
+							<input type="button" class="button roleChooseObj" value="选择"  style="width: 55px"/>
+							<input type="hidden" name="roleIds" />
+							<input type="hidden" name="userId"/>
+							<input type="hidden" name="peopleName"/>
+						</td>
+					</tr>
+				</table>
+			</div>
+			<div class="btnarea" style="text-align: center;">
+				<input type="button" class="button save" value="确定"/>
+				<input type="button" class="button cannel" value="关闭"/>
+			</div>
+		</div>
+	
+</div>

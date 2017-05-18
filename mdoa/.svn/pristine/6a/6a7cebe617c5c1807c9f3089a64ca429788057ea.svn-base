@@ -1,0 +1,86 @@
+ <div id="rewardPenalties" title="员工奖惩">
+	<div class="maintop">
+	</div>
+	<div  class="invitetop">
+		请输入查询条件：员工名称：<input class="userName" type="text">执行人：<input class="performUserName" type="text"><input class="selectByName" type="button" value="查询" ><input type="button" value="清空" >
+	</div>
+	<div >
+	 <table id="rewardPenaltiesdg" width="100%" height="100%" ></table>	
+	</div>
+
+	<div  class="popups" style="text-align: left;">
+		<div class="popup savepunishment" style="height: 300px;width: 400px;">
+			<h3>添加奖惩信息</h3>
+			<span class="turnoff"></span>
+			<div class="popuparea" style="padding: 10px 36px;">
+				<table style="text-align: right;width: 300px;height: 210px">
+					<tr>
+						<td style="width:100px;">员工名称:</td>
+						<td style="width:250px;">
+							<input type="text" style="width:160px;" name="userName" readonly="readonly"/>
+							<input type="button" class="button chooseUser" value="选择"  style="width: 55px"/>
+							<input style="display: none" name="userId"/>
+						</td>
+					</tr>
+					<tr>
+						<td>奖惩原因:</td>
+						<td><input type="text" style="width:220px;" class="awardPunishReason"/></td>
+					</tr>
+					<tr>
+						<td>奖惩办法:</td>
+						<td><input type="text" style="width:220px;" class="solution"/></td>
+					</tr>
+					<tr>
+						<td>奖惩类型:</td>
+						<td><select style="width:224px;" class="awardPunishType"></select></td>
+					</tr>
+					<tr>
+						<td>执行人:</td>
+						<td><input type="text" style="width:220px;" class="performUserName"/></td>
+					</tr>
+				</table>
+			</div>
+			<div class="btnarea" style="text-align: center">
+				<input type="button" class="button confirm" value="确定"/>
+				<input type="button" class="button cannel" value="取消" style="margin-left: 20px;"/>
+			</div>
+		</div>
+	</div>
+	<div  class="popups" style="text-align: left;">
+		<div class="popup updatepunishment" style="height: 300px;width: 400px;">
+			<h3>修改奖惩信息</h3>
+			<span class="turnoff"></span>
+			<div class="popuparea" style="padding: 10px 36px;">
+				<table style="text-align: right;width: 300px;height: 210px">
+					<tr>
+						<td style="width:100px;">员工名称:</td>
+						<td style="width:250px;"><input type="text" style="width:220px;" class="userName" readonly="readonly"/></td>
+					</tr>
+					<tr>
+						<td>奖惩原因:</td>
+						<td><input type="text" style="width:220px;" class="awardPunishReason"/></td>
+					</tr>
+					<tr>
+						<td>奖惩办法:</td>
+						<td><input type="text" style="width:220px;" class="solution"/></td>
+					</tr>
+					<tr>
+						<td>奖惩类型:</td>
+						<td><select style="width:224px;" class="awardPunishType">
+								<option>--请选择--</option>
+						</select></td>
+					</tr>
+					<tr>
+						<td>执行人:</td>
+						<td><input type="text" style="width:220px;" class="performUserName"/></td>
+					</tr>
+				</table>
+			</div>
+			<div class="btnarea" style="text-align: center">
+				<input type="button" class="button confirm" value="确定"/>
+				<input type="button" class="button cannel" value="取消" style="margin-left: 20px;"/>
+			</div>
+		</div>
+	</div>
+</div>
+

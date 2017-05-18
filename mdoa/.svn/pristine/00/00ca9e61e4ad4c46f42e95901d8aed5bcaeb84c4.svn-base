@@ -1,0 +1,20 @@
+<div id="checkGroupAllot">
+	<!-- 顶部添加人员 -->
+	<div class="maintop">
+		<input type="button" name="" value="添加人员" style="margin-left:12%;margin-right:8px;;display:none;"/>
+	</div>
+	<!-- 考勤组人员主题内容 -->
+	<div class="checkGroupAllotMain">
+		<!-- 左侧数据类别区域 -->
+		<div class="checkGroupName">
+			<table id="checkGroupNameDg"></table>
+		</div>
+		
+		<!-- 右侧数据键值区域 -->
+		<div class="checkGroupAllotDetail">
+			<table id="checkGroupAllotDetailDg"></table>
+		</div>
+	</div>
+
+
+</div>

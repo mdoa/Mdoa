@@ -1,0 +1,49 @@
+#staffRecord{
+	width:100%;
+	padding-left: 2%;
+	padding-right: 5%;
+	padding-top: 25px;
+	overflow:auto;
+}
+#staffRecord table input{
+	border:1px #A9A9A9 solid;
+	width: 99.5%;
+}
+#staffRecord table textarea{
+	border:1px #A9A9A9 solid;
+	width: 99.5%;
+}
+#staffRecord table select{
+	border:1px #A9A9A9 solid;
+	width: 100%;
+}
+#staffRecord .expleft{
+	padding-top:10px;
+	float: left;
+	width: 7%;
+	font-size: 20px;
+	font-weight: 600;
+}
+#staffRecord .expright{
+	float: right;
+	width: 93%;
+}
+#staffRecord .doc-button{
+	width: 150px;
+	height: 30px;
+	background-color: #64D8EA;
+	border-color: #64D8EA;
+	border-radius:5%;
+	margin-bottom: 20px;
+}
+#staffRecord .expsame{
+	float: left;
+	overflow:hidden;
+}
+
+#staffRecord .basicInformation .user-message img{
+	border: 1px #A9A9A9 solid;
+}
+#staffRecord table span{
+	color:red;	
+}

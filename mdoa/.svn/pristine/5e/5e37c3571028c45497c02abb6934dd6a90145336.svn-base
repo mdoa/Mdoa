@@ -1,0 +1,20 @@
+#inviterecord .popup .popuparea{
+	width:306px;
+	height:150px;
+}
+#inviterecord .popup .popuparea textarea{
+	width:300px;
+	height:144px;
+	border:none;
+	border-bottom:1px solid #a3c8f8;
+}
+#inviterecord .reExamineWindow .popuparea{
+	height:184px;
+}
+#inviterecord .nextExamine{
+	height:30px;
+	line-height:30px;
+}
+#inviterecord .nextExamine input[type="text"]{
+	width:146px;
+}

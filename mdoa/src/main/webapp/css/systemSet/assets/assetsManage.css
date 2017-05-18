@@ -1,0 +1,12 @@
+.calculate{
+	background-image: url(../../../img/index/calculate.png);;
+}
+#assetsManage{
+	overflow:hidden;
+}
+#assetsManage .popup .popuparea{
+	padding:10px 20px;
+}
+#assetsManage .addAssets .popuparea .workLoad{
+	display:none;
+}

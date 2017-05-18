@@ -1,0 +1,14 @@
+<div id="tryPerson" title="修改合同图片信息">
+	<div class="maintop"></div>
+	<div  class="invitetop">
+		请输入查询条件：用户名称：<input type="text" class="userName"> 
+		身份证号：<input type="text" class="idCard">
+		部门名称：<input type="text" class="departmentName">
+		岗位名称：<input type="text" class="postName">
+		<a class="easyui-linkbutton serBtn" iconCls="icon-search" style="line-height:16px;">查询</a>
+		<input type="button" value="清空" class="close">
+	</div> 
+	<div>
+		<table id="tryPersondg"></table>
+	</div>
+</div>

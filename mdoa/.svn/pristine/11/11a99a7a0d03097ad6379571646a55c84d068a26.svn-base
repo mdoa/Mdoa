@@ -1,0 +1,12 @@
+#repertoryControl .repertoryControl{
+	clear:both;
+}
+#repertoryControl .popups .popuparea table{
+	padding:20px 30px;
+}
+#repertoryControl .addDepartment .confirm{
+	margin-left:92px;
+}
+#repertoryControl .addDepartment .cannel{
+	margin-left:8px;
+}

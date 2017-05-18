@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>权限树</title>
+<link rel="SHORTCUT ICON" href="../../img/index/Mender.ico"/>
+	<link rel="stylesheet" type="text/css" href="../../themes/default/easyui.css">
+	<link rel="stylesheet" type="text/css" href="../../themes/icon.css">
+	<link rel="stylesheet" type="text/css" href="../../css/reset.css">
+	<link rel="stylesheet" type="text/css" href="../../css/personnel/invite.css">
+	<link rel="stylesheet" type="text/css" href="../../css/personnel/inviteflow.css">
+	<link rel="stylesheet" type="text/css" href="../../css/index/index.css">
+	<link rel="stylesheet" type="text/css" href="../../css/plug/jedate.css">
+	<script type="text/javascript" src="../../js/jquery/jquery-1.8.0.min.js"></script>
+	<script type="text/javascript" src="../../js/easyui/jquery.easyui.min.js"></script>
+	<script type="text/javascript" src="../../js/jquery/jquery.jedate.min.js"></script>
+	<script type="text/javascript" src="../../js/index/index.js"></script>
+	<script type="text/javascript" src="../../js/plugin/upload.js"></script>
+	<script type="text/javascript" src="../../js/user/powertree.js"></script>
+</head>
+<body id="powertree">
+<input id="poweridd" type="text">
+
+<div style="width: 30%; position: absolute; top: 34px; bottom: 0;" style="display:block">  
+     <ul id="powertg" data-options="region:'center',border: true"  class="easyui-tree">  </ul>  
+</div> 
+
+<div id="mmm" class="easyui-menu" style="width:120px;">
+<div onclick="add()" data-options="iconCls:'icon-add'">添加</div>
+</div>
+
+ <div class="addWindow" style="display:none">
+ 	<p>
+		请输入要添加的物品key：<input type="text" class="powerKey">
+	</p>
+	<p>
+		请输入要添加的物品name：<input type="text" class="powerName">
+	</p>
+	<p>
+		<input type="button" value="确定" class="quedingadd">
+		<input type="button" value="取消" class="cancel">
+	</p>
+</div>
+</body>
+</html>

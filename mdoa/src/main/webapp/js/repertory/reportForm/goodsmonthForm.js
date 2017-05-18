@@ -1,0 +1,256 @@
+$(function(){
+	/*设置页面高100%*/
+	$('#goodsmonthForm').css('height',$('#loadarea').height()-31+'px');
+	/*设置list的宽度*/
+	$('#goodsmonthForm .listForm').css('width',$('#loadarea').width()-2+'px');
+	$('#goodsmonthForm .listForm').css('height',$('#loadarea').height()-31+'px');
+	/*设置chart的宽度*/
+	$('#goodsmonthForm .chartArea').css({
+		'width':$('#loadarea').width()+'px',
+		'height':$('#loadarea').height()-31+'px'
+	});
+	/*设置表格的高度*/
+	$('#goodsmonthFormdg').css('height',$('#loadarea').height()-61+'px');
+	$(window).resize(function() {
+		$('#goodsmonthForm').css('height',$('#loadarea').height()-31+'px');
+		$('#goodsmonthForm .listForm').css('width',$('#loadarea').width()-2+'px');
+	});	
+	/*网格数据加载*/
+	$('#goodsmonthFormdg').datagrid({
+		//url:'../../reportForms/findGoodsMonthBalanceByCondition.do?getMs='+getMS(),
+		pagination:true,
+		toolbar:'#goodsmonthForm .queryForm',
+		onLoadSuccess:function(data){
+			var goodsName = $.trim($('#goodsmonthForm .queryForm .goodsName').val());
+			var goodsSize = $.trim($('#goodsmonthForm .queryForm .goodsSize').val());
+			var monthBalanceTimeStr = $.trim($('#goodsmonthForm .queryForm .monthBalanceTimeStr').val());
+			var info = {
+				goodsName:goodsName,
+				goodsSize:goodsSize,
+				monthBalanceTimeStr:monthBalanceTimeStr,
+			}
+			$.ajax({
+				url:'../../reportForms/findSumGoodsMonthBalance.do?getMs='+getMS(),
+				data:info,
+				success:function(data){
+					adjustsumBar('goodsmonthForm');
+					addsumBarMonthForm('goodsmonthForm',data);
+				},
+				error:function(err){
+				}
+			})
+		},
+		columns:[[
+	       {field:"goodsName",title:"物品名称",fitColumns:true,resizable:true,align:"center",sortable:true,width:100},
+	       {field:"goodsSize",title:"物品规格",fitColumns:true,sortable:true,align:"center",sortable:true,width:100},
+	       {field:"lastBalanceNumber",title:"上期余量",fitColumns:true,resizable:true,align:"center",sortable:true,width:80},
+	       {field:"lastBalanceAmount",title:"上期余额",fitColumns:true,resizable:true,align:"center",sortable:true,width:80},
+	       {field:"currentOutNumber",title:"本期出库数量",fitColumns:true,resizable:true,align:"center",sortable:true,width:80},
+	       {field:"currentOutAmount",title:"本期出库金额",fitColumns:true,resizable:true,align:"center",sortable:true,width:80},
+	       {field:"currentInNumber",title:"本期入库数量",fitColumns:true,resizable:true,align:"center",sortable:true,width:80},
+	       {field:"currentInAmount",title:"本期入库金额",fitColumns:true,resizable:true,align:"center",sortable:true,width:80},
+	       {field:"currentBalanceNumber",title:"本期余量",fitColumns:true,resizable:true,align:"center",sortable:true,width:80},
+	       {field:"currentBalanceAmount",title:"本期余额",fitColumns:true,resizable:true,align:"center",sortable:true,width:80},
+	       {field:"monthBalanceTimeStr",title:"月结日期",fitColumns:true,resizable:true,align:"center",sortable:true,width:80},
+	       {field:"startTimeStr",title:"开始日期",fitColumns:true,resizable:true,align:"center",sortable:true,width:80},
+	       {field:"endTimeStr",title:"结束日期",fitColumns:true,resizable:true,align:"center",sortable:true,width:80},
+	    ]]
+	});
+	
+	/*查询*/
+	$('#goodsmonthForm .queryForm .query').click(function(){
+		var goodsName = $.trim($('#goodsmonthForm .queryForm .goodsName').val());
+		var goodsSize = $.trim($('#goodsmonthForm .queryForm .goodsSize').val());
+		var monthBalanceTimeStr = $.trim($('#goodsmonthForm .queryForm .monthBalanceTimeStr').val());
+		var info = {
+			goodsName:goodsName,
+			goodsSize:goodsSize,
+			monthBalanceTimeStr:monthBalanceTimeStr,
+		}
+		$('#goodsmonthFormdg').datagrid({
+			url:'../../reportForms/findGoodsMonthBalanceByCondition.do?getMs='+getMS(),
+			queryParams:info
+		})
+	});
+	/*月结*/
+	$('#goodsmonthForm .toolbar .startMonthBalance').click(function(){
+		$.ajax({
+			url:'../../reportForms/findLastMonthBalanceTime.do?getMs='+getMS(),
+			type:'post',
+			success:function(data){
+				if(data == 500){
+					windowControl('服务器异常');
+				}else if(data == 400){
+					windowControl('获取月结开始日期失败');
+				}else{
+					$('#goodsmonthForm .popups .startMonthBalance').css('display','block');
+					$('#goodsmonthForm .popups .startMonthBalance input[type=text]:eq(0)').val(data);
+				}
+			},
+			error:function(err){
+				windowControl('网络异常');
+			}
+		});
+	});
+	$('#goodsmonthForm .popups .startMonthBalance .confirm').click(function(){
+		var startTime = $.trim($('#goodsmonthForm .popups .startMonthBalance input[name=startTime]').val());
+		var endTime = $.trim($('#goodsmonthForm .popups .startMonthBalance input[name=endTime]').val());
+		if(startTime == ''||startTime == null){
+			windowControl('月结开始日期不能为空');
+			return false;
+		}else if(endTime == ''||endTime == null){
+			windowControl('月结结束日期不能为空');
+			return false;
+		}else if(startTime > endTime){
+			windowControl('结束日期不能小于开始时间');
+			return false;
+		}else{
+			$.ajax({
+				url:'../../reportForms/startMonthBalance.do?getMs='+getMS(),
+				data:{
+					startTime:startTime,
+					endTime:endTime,
+					lastBalanceTime:startTime,
+				},
+				type:'post',
+				success:function(data){
+					if(data == 500){
+						windowControl('服务器异常');
+					}else if(data == 400){
+						windowControl('设置月结日期失败');
+					}else{
+						windowControl('已开始月结');
+						$('#goodsmonthForm .popups .startMonthBalance').css('display','none');
+						$('#goodsmonthForm .popups .startMonthBalance input[type=text]').val('');
+					}
+				},
+				error:function(err){
+					windowControl('网络异常');
+				}
+			});
+		}
+	});
+	//显示隐藏汇总bar
+	$('#goodsmonthForm .controlSumBar').click(function(){
+		if($(this).val() == '隐藏'){
+			$('#goodsmonthForm .sumBar').animate({
+				'bottom':'-=30px',
+				'opacity':0,
+			},500,function(){
+				$('#goodsmonthForm .controlSumBar').val('显示');
+			});
+		}else{
+			$('#goodsmonthForm .sumBar').animate({
+				'bottom':'+=30px',
+				'opacity':1,
+			},500,function(){
+				$('#goodsmonthForm .controlSumBar').val('隐藏');
+			});
+		}
+	});
+	/*--------------------------------tree------------------------------*/
+	var goodsTypeIds=[];
+	$('#goodsmonthFormtg').tree({
+        url: "../../treeController/queryTree.do?getMs="+getMS(),
+        method:"post",
+        animate: false,
+        checkbox : true,//是否显示复选框  
+        cascadeCheck: false,
+        dnd:true,
+        onClick: function(node){
+        	var goodsTypeUrl = $("#goodsmonthForm .goodsTypeUrl").val(node.id);
+        },
+        onCollapse:function(node){
+        	$("#goodsTypeUrl").val(node.id);
+        	$.ajax({
+        		data:{goodsTypeUrl:$("#goodsTypeUrl").val(),state:"onCollapse"},
+    			url:"../../treeController/updateTreeState?getMs="+getMS(),
+    			method:"post"
+    		})
+        },
+        onExpand:function(node){
+        	$("#goodsTypeUrl").val(node.id);
+        	$.ajax({
+        		data:{goodsTypeUrl:$("#goodsTypeUrl").val(),state:"onExpand"},
+    			url:"../../treeController/updateTreeState?getMs="+getMS(),
+    			method:"post"
+    		})
+        },
+        onDrop: function(target,source,point){
+        	var targetUrl = $('#goodsmonthFormtg').tree('getNode', target).id;
+        	var targetName = $('#goodsmonthFormtg').tree('getNode', target).text;
+        	//console.log("targetId="+targetId+"source="+source.text+"point="+point);
+        	$.ajax({
+    			data:{targetUrl:targetUrl,targetName:targetName,sourceUrl:source.id,sourceName:source.text,point:point},
+    			url:"../../treeController/dragRepertoryType?getMs="+getMS(),
+    			method:"post",
+    			success: function(data){
+    				$('#goodsmonthFormtg').tree('reload');
+    			}
+    		})
+        },
+        onCheck: function(node,checked){
+        	if(checked == true){
+        		goodsTypeIds.push(node.id);
+        	}else if(checked == false){
+        		for(var i=0;i<goodsTypeIds.length;i++){
+        			if(goodsTypeIds[i] == node.id){
+        				goodsTypeIds.splice(i,1);
+        			}
+        		}
+        	}
+        },
+        /*onContextMenu : function(e,node){
+        	e.preventDefault();
+        	var goodsTypeUrl = $('#goodsmonthForm .goodsTypeUrl').val(node.id);
+        	$('#goodsmonthFormtg').tree('select', node.target);
+    		$('#goodsmonthFormmm').menu('show', {
+    			left: e.pageX,
+    			top: e.pageY
+    		});
+		}*/
+    });
+});
+/*加载月结日期*/
+$.ajax({
+	data:{},
+	url:'../../reportForms/findMonthBalanceTime.do?getMs='+getMS(),
+	type:'post',
+	success:function(data){
+		var data = $.parseJSON(data);
+		var str = '<option></option>';
+		for(var i=0;i<data.length;i++){
+			str += '<option>'+data[i]+'</option>'
+		}
+		$('#goodsmonthForm .monthBalanceTimeStr').append(str);
+	},
+	error:function(err){
+		windowControl(err.status);
+	}
+});
+/*----------汇总-----------------*/
+function addsumBarMonthForm(id,data){
+	$('#'+id).find('.sumBar').css({
+		'width':$('#'+id).find('.datagrid-header-inner:eq(1) .datagrid-htable').width()+'px',
+	});
+	data = $.parseJSON(data);
+	var str = '';
+	str +='<td style="width:100px">上期余量：</td>';
+	str +='<td style="width:100px">'+data.lastBalanceNumber+'</td>';
+	str +='<td style="width:100px">上期余额：</td>';
+	str +='<td style="width:100px">'+data.lastBalanceAmount+'</td>';
+	str +='<td style="width:100px">本期出库数量：</td>';
+	str +='<td style="width:100px">'+data.currentOutNumber+'</td>';
+	str +='<td style="width:100px">本期出库金额：</td>';
+	str +='<td style="width:100px">'+data.currentOutAmount+'</td>';
+	str +='<td style="width:100px">本期入库数量：</td>';
+	str +='<td style="width:100px">'+data.currentInNumber+'</td>';
+	str +='<td style="width:100px">本期入库金额：</td>';
+	str +='<td style="width:100px">'+data.currentInAmount+'</td>';
+	str +='<td style="width:100px">本期余量：</td>';
+	str +='<td style="width:100px">'+data.currentBalanceNumber+'</td>';
+	str +='<td style="width:100px">本期余额：</td>';
+	str +='<td style="width:100px">'+data.currentBalanceAmount+'</td>';
+	str += '</tr></table>';
+	$('#'+id).find('.sumBar').html(str);
+}

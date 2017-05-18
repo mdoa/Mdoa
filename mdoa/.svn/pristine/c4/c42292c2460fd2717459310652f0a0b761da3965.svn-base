@@ -1,0 +1,382 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mdoa.personnel.dao.GoOutDao">
+	<!-- 获取uuid -->
+	<select id="getuuid" resultType="java.lang.String">
+		select uuid() as uuid
+	</select>
+	
+	<!-- 插入外出申请信息 -->
+	<insert id="insertGoOutApply" parameterType="com.mdoa.personnel.bo.GoOutApplyForm">
+		INSERT INTO personnel_go_out_apply (
+			go_out_apply_id,
+			user_id,
+			user_name,
+			go_out_user_id,
+			go_out_user_name,
+			reason,
+			start_time,
+			end_time,
+			create_time,
+			examine_status,
+			back_flag,
+			alive_flag
+		)
+		VALUES
+			(
+				#{goOutApplyId},
+				#{userId},
+				#{userName},
+				#{goOutUserId},
+				#{goOutUserName},
+				#{reason},
+				#{startTime},
+				#{endTime},
+				NOW(),
+				'1',
+				'0',
+				'1'
+			)
+	</insert>
+	
+	<!-- 插入外出流程信息 -->
+	<insert id="insertGoOutStream" parameterType="com.mdoa.personnel.bo.GoOutApplyForm">
+		INSERT INTO personnel_go_out_stream (
+			go_out_stream_id,
+			go_out_apply_id,
+			examine_user_id,
+			examine_user_name,
+			examine_status,
+			create_time,
+			stream_type,
+			alive_flag
+		)
+		VALUES
+			(
+				UUID(),
+				#{goOutApplyId},
+				#{examineUserId},
+				#{examineUserName},
+				'1',
+				NOW(),
+				'1',
+				'1'
+			)
+	</insert>
+	<!-- 插入外出流程信息 -->
+	<insert id="AddGoOutStream" parameterType="com.mdoa.personnel.bo.GoOutExamineForm">
+		INSERT INTO personnel_go_out_stream (
+			go_out_stream_id,
+			go_out_apply_id,
+			examine_user_id,
+			examine_user_name,
+			examine_status,
+			create_time,
+			stream_type,
+			alive_flag
+		)
+		VALUES
+			(
+				UUID(),
+				#{goOutApplyId},
+				#{examineUserId},
+				#{examineUserName},
+				'1',
+				NOW(),
+				'1',
+				'1'
+			)
+	</insert>
+	<!-- 条件查询外出申请 -->
+	<select id="findApplyByCondition" parameterType="com.mdoa.personnel.bo.GoOutApplyForm" resultType="com.mdoa.personnel.model.GoOutApply">
+		SELECT
+			go_out_apply_id AS goOutApplyId,
+			user_id AS userId,
+			user_name AS userName,
+			go_out_user_id AS goOutUserId,
+			go_out_user_name AS goOutUserName,
+			reason AS Reason,
+			start_time AS startTime,
+			end_time AS endTime,
+			back_flag AS backFlag,
+			create_time AS createTime,
+			update_time AS updateTime,
+			record_user_id AS recordUserId,
+			record_user_name AS recordUserName,
+			record_idea AS recordIdea,
+			record_time AS recordTime,
+			examine_status AS examineStatus
+		FROM
+			personnel_go_out_apply
+		WHERE
+			alive_flag = '1'
+			<if test="goOutApplyId != null and goOutApplyId != ''">
+				AND go_out_apply_id = '${goOutApplyId}'
+			</if>
+			<if test="userId != null and userId != ''">
+				AND user_id = '${userId}'
+			</if>
+			<if test="userName != null and userName != ''">
+				AND user_name LIKE (${userName})
+			</if>
+			<if test="goOutUserId != null and goOutUserId != ''">
+				AND go_out_user_id = '${goOutUserId}'
+			</if>
+			<if test="goOutUserName != null and goOutUserName != ''">
+				AND go_out_user_name LIKE (${goOutUserName})
+			</if>
+			<if test="examineUserId != null and examineUserId != ''">
+				AND go_out_apply_id IN(
+					SELECT
+						go_out_apply_id
+					FROM
+						personnel_go_out_stream
+					WHERE
+						examine_user_Id = '${examineUserId}'
+				)
+			</if>
+			<if test="examineUserName != null and examineUserName != ''">
+				AND go_out_apply_id IN(
+					SELECT
+						go_out_apply_id
+					FROM
+						personnel_go_out_stream
+					WHERE
+						examine_user_name LIKE (${examineUserName})
+				)
+			</if>
+			<if test="backFlag != null and backFlag != ''">
+				AND back_flag = '${backFlag}'
+			</if>
+			<if test="examineStatus != null and examineStatus != ''">
+				AND examine_status = '${examineStatus}'
+			</if>
+	</select>
+	<!-- 条件查询备案外出流程 -->
+	<select id="findStream" parameterType="com.mdoa.personnel.bo.GoOutApplyForm" resultType="com.mdoa.personnel.bo.GoOutStreamForm">
+		SELECT
+			a.go_out_stream_id AS goOutStreamId,
+			a.go_out_apply_id AS goOutApplyId,
+			a.examine_user_id AS examineUserId,
+			b.go_out_user_name AS goOutUserName,
+			b.go_out_user_id AS goOutUserId,
+			b.back_flag AS backFlag,
+			a.examine_user_name AS examineUserName,
+			a.examine_idea AS examineIdea,
+			a.examine_status AS examineStatus,
+			a.next_examine_user_id AS nextExamineUserId,
+			a.next_examine_user_name AS nextExamineUserName,
+			a.examine_time AS examineTime,
+			a.create_time AS createTime,
+			a.update_time AS updateTime,
+			a.stream_type AS streamType,
+			b.user_id AS userId,
+			b.user_name AS userName,
+			b.reason AS reason,
+			b.start_time AS startTime,
+			b.end_time AS endTime
+		FROM
+			personnel_go_out_stream a,
+			personnel_go_out_apply b
+		WHERE
+			a.alive_flag = '1'
+		AND
+			b.alive_flag = '1'
+		AND
+			a.go_out_apply_id = b.go_out_apply_id
+			<if test="userName != null and userName != ''">
+				AND b.user_name LIKE (${userName})
+			</if>
+			<if test="goOutStreamId != null and goOutStreamId != ''">
+				AND a.go_out_stream_id = '${goOutStreamId}'
+			</if>
+			<if test="goOutApplyId != null and goOutApplyId != ''">
+				AND a.go_out_apply_id = '${goOutApplyId}'
+			</if>
+			<if test="examineStatus != null and examineStatus != ''">
+				AND a.examine_status = '${examineStatus}'
+			</if>
+			<if test="streamType != null and streamType != ''">
+				AND a.stream_type = '${streamType}'
+			</if>
+		ORDER BY
+			b.create_time DESC
+	</select>
+	<!-- 条件查询外出流程 -->
+	<select id="findStreamByCondition" parameterType="com.mdoa.personnel.bo.GoOutApplyForm" resultType="com.mdoa.personnel.bo.GoOutStreamForm">
+		SELECT
+			a.go_out_stream_id AS goOutStreamId,
+			a.go_out_apply_id AS goOutApplyId,
+			a.examine_user_id AS examineUserId,
+			b.go_out_user_name AS goOutUserName,
+			b.go_out_user_id AS goOutUserId,
+			b.back_flag AS backFlag,
+			a.examine_user_name AS examineUserName,
+			a.examine_idea AS examineIdea,
+			a.examine_status AS examineStatus,
+			a.next_examine_user_id AS nextExamineUserId,
+			a.next_examine_user_name AS nextExamineUserName,
+			a.examine_time AS examineTime,
+			a.create_time AS createTime,
+			a.update_time AS updateTime,
+			a.stream_type AS streamType,
+			b.user_id AS userId,
+			b.user_name AS userName,
+			b.reason AS reason,
+			b.start_time AS startTime,
+			b.end_time AS endTime
+		FROM
+			personnel_go_out_stream a,
+			personnel_go_out_apply b
+		WHERE
+			a.alive_flag = '1'
+		AND
+			b.alive_flag = '1'
+		AND
+			a.go_out_apply_id = b.go_out_apply_id
+			<if test="userName != null and userName != ''">
+				AND b.user_name LIKE (${userName})
+			</if>
+			<if test="examineUserId != null and examineUserId != ''">
+				AND a.examine_user_id = '${examineUserId}'
+			</if>
+			<if test="goOutStreamId != null and goOutStreamId != ''">
+				AND a.go_out_stream_id = '${goOutStreamId}'
+			</if>
+			<if test="goOutApplyId != null and goOutApplyId != ''">
+				AND a.go_out_apply_id = '${goOutApplyId}'
+			</if>
+			<if test="examineStatus != null and examineStatus != ''">
+				AND a.examine_status = '${examineStatus}'
+			</if>
+			<if test="streamType != null and streamType != ''">
+				AND a.stream_type = '${streamType}'
+			</if>
+		ORDER BY
+			b.create_time DESC
+	</select>
+	
+	<!-- 更新外出流程 -->
+	<update id="updateGoOutStream" parameterType="com.mdoa.personnel.bo.GoOutExamineForm">
+		UPDATE personnel_go_out_stream
+		<set>
+			<if test="examineIdea != null and examineIdea != ''">
+			 examine_idea = '${examineIdea}',
+			</if>
+			<if test="examineStatus != null and examineStatus != '' ">
+			 examine_status = '${examineStatus}',
+			</if>
+			<if test="nextExamineUserId != null and nextExamineUserId != ''">
+			 next_examine_user_id = '${nextExamineUserId}',
+			</if>
+			<if test="nextExamineUserName != null and nextExamineUserName != ''">
+			 next_examine_user_name = '${nextExamineUserName}',
+			</if>
+			 <if test="userId != null and userId != ''">
+			 examine_user_id = '${userId}',
+			 </if>
+			 <if test="userName != null and userName != ''">
+			 examine_user_name = '${userName}',
+			 </if>
+			 examine_time = NOW(),
+			 update_time = NOW()
+		 </set>
+		WHERE
+			go_out_stream_id = '${goOutStreamId}'
+	</update>
+	
+	<!-- 插入外出备案流程 -->
+	<insert id="insertRecordGoOutStream" parameterType="com.mdoa.personnel.bo.GoOutExamineForm">
+		INSERT INTO personnel_go_out_stream (
+			go_out_stream_id,
+			go_out_apply_id,
+			examine_status,
+			create_time,
+			stream_type,
+			alive_flag
+		)
+		VALUES
+			(
+				UUID(),
+				#{goOutApplyId},
+				'1',
+				NOW(),
+				'2',
+				'1'
+			)
+	</insert>
+	
+	<!-- 更新外出申请 -->
+	<update id="rejectGoOutApply" parameterType="com.mdoa.personnel.bo.GoOutExamineForm">
+		UPDATE personnel_go_out_apply
+		SET
+		 examine_status = '4',
+		 update_time = NOW()
+		WHERE
+			go_out_apply_id = '${goOutApplyId}'
+	</update>
+	
+	<!-- 备案外出流程 -->
+	<update id="recordGoOutStream" parameterType="com.mdoa.personnel.bo.GoOutExamineForm">
+		UPDATE personnel_go_out_stream
+		<set>
+		 examine_user_id = '${userId}',
+		 examine_user_name = '${userName}',
+		 <if test="examineIdea != null and examineIdea != ''">
+		 examine_idea = '${examineIdea}',
+		 </if>
+		 examine_time = NOW(),
+		 examine_status = '3',
+		 update_time = NOW()
+		</set>
+		WHERE
+			go_out_stream_id = '${goOutStreamId}'
+	</update>
+		
+	<!-- 备案外出申请 -->
+	<update id="recordGoOutApply" parameterType="com.mdoa.personnel.bo.GoOutExamineForm">
+		UPDATE personnel_go_out_apply
+		<set>
+		 back_flag = '0',
+		 record_user_id = '${userId}',
+		 record_user_name = '${userName}',
+		 <if test="recordIdea != null and recordIdea != ''">
+		 record_idea = '${recordIdea}',		 
+		 </if>
+		 record_time = NOW(),
+		 examine_status = '3',
+		 update_time = NOW()
+		 </set>
+		WHERE
+			go_out_apply_id = '${goOutApplyId}'
+	</update>
+	
+	<!-- 撤回外出流程 -->
+	<update id="withdrawGoOutStream" parameterType="com.mdoa.personnel.bo.GoOutExamineForm">
+		UPDATE personnel_go_out_stream
+		SET
+		 examine_status = '2',
+		 update_time = NOW()
+		WHERE
+			go_out_stream_id = '${goOutStreamId}'
+	</update>
+	
+	<!-- 撤回外出申请 -->
+	<update id="withdrawGoOutApply" parameterType="com.mdoa.personnel.bo.GoOutExamineForm">
+		UPDATE personnel_go_out_stream
+		SET
+		 examine_status = '2',
+		 update_time = NOW()
+		WHERE
+			go_out_apply_id = '${goOutApplyId}'
+	</update>
+	<!-- 确认员工已经返回 -->
+	<update id="confirmUserBack" parameterType="com.mdoa.personnel.bo.GoOutExamineForm">
+		UPDATE personnel_go_out_apply
+		SET
+		 back_flag = '1',
+		 update_time = NOW()
+		WHERE
+			go_out_apply_id = '${goOutApplyId}'
+	</update>
+</mapper>

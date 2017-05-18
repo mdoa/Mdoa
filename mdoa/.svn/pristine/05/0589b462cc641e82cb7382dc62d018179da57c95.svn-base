@@ -1,0 +1,9 @@
+#train .department{
+	width:10px;
+}
+#train .post{
+	width:10px;
+}
+#trainobjshow{
+	margin-left:26px;
+}

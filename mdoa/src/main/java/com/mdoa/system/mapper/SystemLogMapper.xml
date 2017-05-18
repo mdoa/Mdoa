@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mdoa.system.dao.SystemDao">
+
+	<!-- 添加日志 -->
+	<insert id="addSystemLog" parameterType="com.mdoa.system.model.SystemLog">
+		INSERT INTO system_log(
+			log_id,
+			opera_time,
+			opera_user_id,
+			opera_user_name,
+			opera_panel,
+			opera_tab,
+			create_time,
+			alive_flag
+		)VALUE(
+			UUID(),
+			NOW(),
+			#{operaUserId},
+			#{operaUserName},
+			#{operaPanel},
+			#{operaTab},
+			NOW(),
+			'1'
+		)
+	</insert>
+	<!-- 查询日志 -->
+	<select id="querySystemLog" parameterType="com.mdoa.system.model.SystemLog" resultType="com.mdoa.system.model.SystemLog">
+		SELECT
+			log_id AS logId,
+			opera_time AS operaTime,
+			opera_user_id AS operaUserId,
+			opera_user_name AS operaUserName,
+			opera_panel AS operaPanel,
+			opera_tab AS operaTab,
+			create_time AS createTime
+		FROM
+			system_log
+		WHERE
+			alive_flag = '1'
+			<if test="operaTimeStartStr != null and operaTimeStartStr !=''">
+				AND opera_time &gt;= STR_TO_DATE(#{operaTimeStartStr},'%Y-%m-%d %H:%i:%s')
+			</if>
+			<if test="operaTimeEndStr != null and operaTimeEndStr !=''">
+				AND opera_time &lt;= STR_TO_DATE(#{operaTimeEndStr},'%Y-%m-%d %H:%i:%s')		
+			</if>
+			<if test="operaUserName != null and operaUserName !=''">
+				AND opera_user_name LIKE #{operaUserName}
+			</if>
+		    <if test="operaPanel != null and operaPanel !=''">
+		    	AND opera_panel LIKE #{operaPanel}
+		    </if>
+		    <if test="operaTab != null and operaTab != ''">
+		    	AND opera_tab LIKE #{operaTab}
+		    </if>
+	</select>
+	<!-- 删除日志 -->
+	<update id="deleteSystemLog" parameterType="com.mdoa.system.model.SystemLog">
+		UPDATE 
+			system_log
+		SET
+			alive_flag = '0',
+			update_user_id = #{updateUserId},
+			update_user_name = #{updateUserName},
+			update_time = NOW()
+		WHERE
+			log_id IN
+			<foreach collection="logIds" item="logIds" separator="," open="(" close=")">
+				#{logIds}
+			</foreach>
+	</update>
+	
+</mapper>

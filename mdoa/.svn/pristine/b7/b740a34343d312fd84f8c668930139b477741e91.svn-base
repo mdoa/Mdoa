@@ -1,0 +1,187 @@
+$(function(){	
+	$('#checkGroupManage #checkGroupManagedg').css('height',$('#loadarea').height()-64 + 'px');
+		
+	//产生数据网格
+	$('#checkGroupManagedg').datagrid({
+		url:'../../attendance/findGroupByCondition.do?getMs='+getMS(),
+		rownumbers:"true",
+		pagination:true,
+		toolbar:"#checkGroupManage .invitetop",
+		method:"post",
+		columns:[[			
+			{
+				field:'groupName',
+				title:'组名',
+				width:100,
+				align:"center"
+			},
+			{
+				field:'defaultOnTime',
+				title:'上班时间',
+				width:100,
+				align:"center"
+			},
+			{
+				field:'defaultOffTime',
+				title:'下班时间',
+				width:100,
+				align:"center"
+			},
+			{
+				field:"_opera",
+				title:"操作",
+				width:60,
+				align:"center",
+				formatter:function(value,row,index){
+				   var opera = '';
+				   var groupId = "'"+ row.groupId +"'";
+				   var groupName = "'"+ row.groupName +"'";
+				   var defaultOnTime = "'"+ row.defaultOnTime +"'";
+				   var defaultOffTime = "'"+ row.defaultOffTime +"'";
+				   opera += '<div class="imgBox">'
+					   opera += '<span style="float:left;" class="small-button edit" title="修改" onclick="checkGroupManageUpdate('+ groupId +','+ groupName +','+ defaultOnTime +','+ defaultOffTime +')"></span>'
+					   opera += '<span style="float:left;" class="small-button delete" title="删除" onclick="checkGroupManageDel('+ groupId +','+ groupName +')"></span>';
+				   opera += '</div>'
+				   return opera;
+				}
+			}
+	    ]]
+	});
+	//查询
+	$('#checkGroupManage .invitetop .selectGroup').click(function(){
+		$('#checkGroupManagedg').datagrid({
+			queryParams: {
+				groupName: function(){
+					return $('#checkGroupManage .invitetop input[name=groupName]').val();
+				}
+			}
+		});
+	});
+	
+	//点击添加事件
+	$('#checkGroupManage .maintop .addCheckGroup').click(function(){
+		$('#checkGroupManage .popups .addGroup').show();
+	})
+	$('#checkGroupManage .popups .addGroup .comfirm').click(function(){
+		var groupName = $('#checkGroupManage .popups .addGroup input[name=groupName]').val();
+		var defaultOnTime = $('#checkGroupManage .popups .addGroup input[name=defaultOnTime]').val();
+		var defaultOffTime = $('#checkGroupManage .popups .addGroup input[name=defaultOffTime]').val();
+		if(groupName == null || groupName == ''){
+			windowControl("考勤组名称不能为空！")
+			return ;
+		}
+		else if(defaultOnTime == null || defaultOnTime == ''){
+			windowControl("上班时间不能为空！")
+			return ;
+		}else if(defaultOffTime ==null || defaultOffTime == ''){
+			windowControl("下班时间不能为空！")
+			return ;
+		}
+		var list = {
+			groupName:groupName,
+			defaultOnTime:defaultOnTime,
+			defaultOffTime:defaultOffTime
+		};
+		$('#checkGroupManage .popups .addGroup').hide();
+		$('#checkGroupManage .popups .addGroup .popuparea input').val(null);
+		checkGroupManageAdd(list);
+	})
+	
+})
+//添加考勤组
+function checkGroupManageAdd(obj){
+	$.ajax({
+		url:'../../attendance/insertGroup.do?getMs='+getMS(),
+		data:obj,
+		type:'post',
+		success:function(data){
+			if(data == 200){
+				windowControl("添加成功！")
+				$('#checkGroupManagedg').datagrid("reload");
+			}else{
+				windowControl("添加失败！")
+			}	
+		},
+		error:function(){
+			windowControl("服务器未响应");
+		}
+	})
+}
+//删除考勤组
+function checkGroupManageDel(groupId,groupName){
+	ui.confirm('确定将 '+groupName+' 删除吗？',function(z){
+		if(z){
+			$.ajax({
+				url:'../../attendance/deleteGroup.do?getMs='+getMS(),
+				data:{
+					groupId:groupId,
+				},
+				type:'post',
+				success:function(data){
+					if(data == 200){
+						windowControl("删除成功！")
+						$('#checkGroupManagedg').datagrid("reload");
+					}else{
+						windowControl("删除失败！")
+					}					
+				},
+				error:function(){
+					windowControl("服务器未响应");
+				}
+			})
+		}		
+	},false)
+}
+//修改考勤组
+function checkGroupManageUpdate(groupId,groupName,defaultOnTime,defaultOffTime){
+	$('#checkGroupManage .popups .updateGroup').show();
+	$('#checkGroupManage .popups .updateGroup input[name=groupName]').val(groupName);
+	$('#checkGroupManage .popups .updateGroup input[name=defaultOnTime]').val(defaultOnTime);
+	$('#checkGroupManage .popups .updateGroup input[name=defaultOffTime]').val(defaultOffTime);
+	$('#checkGroupManage .popups .updateGroup .update').unbind();
+	$('#checkGroupManage .popups .updateGroup .update').click(function(){
+		var groupName = $('#checkGroupManage .popups .updateGroup input[name=groupName]').val();
+		var defaultOnTime = $('#checkGroupManage .popups .updateGroup input[name=defaultOnTime]').val();
+		var defaultOffTime = $('#checkGroupManage .popups .updateGroup input[name=defaultOffTime]').val();
+		if(groupName == null || groupName == ''){
+			windowControl("考勤组名称不能为空！")
+			return ;
+		}
+		else if(defaultOnTime == null || defaultOnTime == ''){
+			windowControl("上班时间不能为空！")
+			return ;
+		}else if(defaultOffTime ==null || defaultOffTime == ''){
+			windowControl("下班时间不能为空！")
+			return ;
+		}
+		var list = {
+			groupId:groupId,
+			groupName:groupName,
+			defaultOnTime:defaultOnTime,
+			defaultOffTime:defaultOffTime
+		};
+		$('#checkGroupManage .popups .updateGroup').hide();
+		$('#checkGroupManage .popups .updateGroup .popuparea input').val(null);
+		$.ajax({
+			url:'../../attendance/updateGroupByCondition.do?getMs='+getMS(),
+			data:list,
+			type:'post',
+			success:function(data){
+				if(data == 200){
+					windowControl("修改成功！")
+					$('#checkGroupManagedg').datagrid("reload");
+				}else{
+					windowControl("修改失败！")
+				}	
+			},
+			error:function(){
+				windowControl("服务器未响应");
+			}
+		})
+	})
+
+}
+
+
+
+

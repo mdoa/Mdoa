@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mdoa.personnel.dao.PersonKpiGroupDao" >
+	
+	<select id="getUUID" resultType="java.lang.String">
+		select uuid() as uuid
+	</select>
+	<!-- 给员工分配kpi组 -->
+	<update id="updateUserKpiGroup" parameterType="com.mdoa.user.model.UserInfo">
+		UPDATE
+			user_info
+		SET
+			kpi_group_id = #{kpiGroupId},
+			update_user_id = #{updateUserId},
+			update_user_name = #{updateUserName},
+			update_time = NOW()
+		WHERE
+			user_id = #{userId}
+	</update>
+	<!-- 打分的时候回显的kpi标准和kpi组的信息 -->
+	<select id="selectKpiGroupByUserId" parameterType="java.util.HashMap" resultType="com.mdoa.personnel.bo.KpiApplyForm"  >
+		SELECT
+			kpi_id AS kpiId,
+			kpi_name AS kpiName,
+			kpi_group_id AS kpiGroupId,
+			score_standard AS scoreStandard,
+			text AS text
+		FROM
+			personnel_kpi
+		WHERE
+			kpi_group_id = #{kpiGroupId}
+
+	</select>
+	<!--查看打分详细情况的时候显示的信息  -->
+	<select id="selectKpiRecordByGroup" parameterType="java.lang.String" resultType="com.mdoa.personnel.bo.KpiApplyForm">
+		SELECT
+			a.kpi_id AS kpiId,
+			a.kpi_name AS kpiName,
+			a.score_standard AS scoreStandard,
+			a.text AS text,
+			b.record_id AS recordId,
+			b.standard_score AS standardScore,
+			b.user_score AS userScore,
+			b.reason AS reason
+		FROM
+			personnel_kpi a,
+			personnel_kpi_record b
+		WHERE
+			a.alive_flag = '1'
+		AND	a.kpi_group_id = #{kpiGroupId}
+		AND	a.kpi_id = b.kpi_id
+	</select>
+	
+	<!-- 增加kpi组  -->
+  <insert id="addKpiGroup" parameterType="com.mdoa.personnel.bo.KpiApplyForm" >
+    	INSERT INTO 
+    		personnel_kpi_group 
+    	(
+			kpi_group_id,
+			kpi_group_name,
+			create_time,
+			create_user_name,
+			create_user_id,
+			alive_flag,
+			note
+		)VALUE(  
+			uuid(),
+			#{kpiGroupName},
+			now(), 
+			#{createUserName,jdbcType=VARCHAR}, 
+			#{createUserId,jdbcType=CHAR}, 
+			'1',
+			#{note,jdbcType=LONGVARCHAR}
+			)
+  </insert>
+  
+  	<!-- 查询kpiGroup根据时间 -->
+  	<select id="selectKpiGroupByTime" parameterType="com.mdoa.personnel.model.PersonKpiGroup" resultType="com.mdoa.personnel.model.PersonKpiGroup">
+  		SELECT 
+  			kpi_group_id AS kpiGroupId,
+  			kpi_group_name AS kpiGroupName,
+  			note AS note,
+  			create_time AS createTime,
+  			create_user_id AS createUserId,
+  			create_user_name AS createUserName,
+  			update_time AS updateTime,
+  			update_user_id AS updateUserId,
+  			update_user_name AS updateUserName
+  		FROM
+  			personnel_kpi_group
+  		<where>
+  			 alive_flag = '1'
+  		<if test="kpiGroupId != null and kpiGroupId !=''">
+  			AND kpi_group_id = #{kpiGroupId}</if> 
+  		<if test="kpiGroupName != null and kpiGroupName != '' ">
+			AND kpi_group_name LIKE ('${kpiGroupName}') </if> 
+		<if test="createUserName != null and createUserName != '' ">
+			AND create_user_name LIKE ('${createUserName}') </if> 
+  		</where>
+  	</select>
+	
+	<!-- 删除kpi组 -->
+	<update id="deleteKpiGroup" parameterType="com.mdoa.personnel.bo.KpiApplyForm" >
+    	UPDATE
+			personnel_kpi_group
+		SET
+			update_user_id = #{updateUserId},
+			update_time = NOW(),
+			alive_flag = '0'
+		WHERE
+			kpi_group_id = #{kpiGroupId,jdbcType=CHAR}
+  </update>
+	<!-- 修改kpi组的信息 -->
+  <update id="updateKpiGroup" parameterType="com.mdoa.personnel.model.PersonKpiGroup" >
+   		UPDATE 
+   			personnel_kpi_group
+		SET 
+			note = #{note},
+			kpi_group_name = #{kpiGroupName},
+			update_user_id = #{updateUserId,jdbcType=CHAR},
+			update_time = now()
+		WHERE
+			kpi_group_id = #{kpiGroupId,jdbcType=CHAR}
+  </update>
+  
+  <!--根据时间的先后顺序 查询kpi信息 -->
+  <select id="selectKpiByTime" resultType="com.mdoa.personnel.bo.KpiApplyForm" parameterType="com.mdoa.personnel.bo.KpiApplyForm">
+    	SELECT
+    		a.kpi_id AS kpiId,
+    		a.kpi_name AS kpiName,
+    		a.kpi_group_id AS kpiGroupId,
+    		a.score_standard AS scoreStandard,
+    		a.text AS text,
+    		a.create_time AS createtime,
+    		a.update_time AS updateTime,
+    		b.kpi_group_name AS kpiGroupName
+    	FROM 
+    		personnel_kpi a,
+    		personnel_kpi_group b
+		<where>
+			a.alive_flag = '1'
+			AND b.alive_flag = '1'
+			AND a.kpi_group_id = b.kpi_group_id
+			<if test="kpiName != null and kpiName != '' ">
+			AND a.kpi_name Like ('${kpiName}')</if>
+			<if test="kpiId != null and kpiId != ''">
+			AND a.kpi_id = #{kpiId}</if>
+			<if test="kpiGroupId != null and kpiGroupId != '' ">
+			AND a.kpi_group_id = #{kpiGroupId}</if>
+		</where>
+    	ORDER BY 
+    		a.create_time 
+    	DESC
+  </select>
+  <!-- 删除一条kpi信息 -->
+  <update id="deleteKpi" parameterType="java.lang.String" >
+    	UPDATE  
+    		personnel_kpi
+    	SET
+    		alive_flag = '0',
+    		update_user_id = #{userId},
+			update_time = NOW()
+    	WHERE 
+    		kpi_id = #{kpiId,jdbcType=CHAR}
+  </update>
+  <!--增加一条kpi信息  -->
+  <insert id="insertKpi" parameterType="com.mdoa.personnel.model.PersonKpi" >
+    	INSERT INTO 
+    	personnel_kpi 
+    	(
+			kpi_id,
+			kpi_group_id,
+			kpi_name,
+			score_standard,
+			create_user_id,
+			create_time,
+			text,
+			alive_flag
+			
+		)VALUES(
+			UUID(),
+			#{kpiGroupId,jdbcType=CHAR},
+			#{kpiName,jdbcType=VARCHAR}, 
+			#{scoreStandard,jdbcType=INTEGER}, 
+			#{createUserId,jdbcType=CHAR}, 
+			now(), 
+			#{text,jdbcType=LONGVARCHAR},
+			'1'
+			)
+  </insert>
+	<!-- 修改kpi信息 -->
+  <update id="updateKpi" parameterType="com.mdoa.personnel.model.PersonKpi" >
+    	UPDATE 
+    		personnel_kpi
+		SET 
+			kpi_name = #{kpiName,jdbcType=VARCHAR},
+			kpi_group_id = #{kpiGroupId,jdbcType=CHAR},
+			score_standard = #{scoreStandard,jdbcType=INTEGER},
+			text = #{text},
+			update_user_id = #{updateUserId,jdbcType=CHAR},
+			update_time = now()
+		WHERE
+			kpi_id = #{kpiId,jdbcType=CHAR}
+  </update> 
+</mapper>

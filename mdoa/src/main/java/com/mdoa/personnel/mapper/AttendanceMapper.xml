@@ -1,0 +1,364 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mdoa.personnel.dao.AttendanceDao">
+
+	<!-- 获取uuid -->
+	<select id="getuuid" resultType="java.lang.String">
+		select uuid() as uuid
+	</select>
+	
+	<!-- 插入考勤组 -->
+	<insert id="insertGroup" parameterType="com.mdoa.personnel.bo.AttendanceGroupForm">
+		INSERT INTO personnel_attendance_group (
+			group_id,
+			group_name,
+			default_on_time,
+			default_off_time,
+			create_user_id,
+			create_user_name,
+			create_time,
+			alive_flag
+		)
+		VALUES
+			(
+				UUID(),
+				#{groupName},
+				#{defaultOnTime},
+				#{defaultOffTime},
+				#{createUserId},
+				#{createUserName},
+				NOW(),
+				'1'
+			)
+	</insert>
+	
+	<!-- 查询考勤组信息 -->
+	<select id="findGroupByCondition" parameterType="com.mdoa.personnel.bo.AttendanceGroupForm" resultType="com.mdoa.personnel.model.AttendanceGroup">
+		SELECT
+			group_id AS groupId,
+			group_name AS groupName,
+			default_on_time AS defaultOnTime,
+			default_off_time AS defaultOffTime,
+			create_user_id AS createUserId,
+			create_user_name AS createUserName,
+			create_time AS createTime,
+			update_user_id AS updateUserId,
+			update_user_name AS updateUserName,
+			update_time AS updateTime,
+			alive_flag AS aliveFlag
+		FROM
+			personnel_attendance_group
+		WHERE
+			alive_flag = '1'
+			<if test="groupId != null and groupId != '' ">
+			AND group_id = #{groupId}
+			</if>
+			<if test="groupName != null and groupName != '' ">
+			AND group_name LIKE (${groupName})
+			</if>
+	</select>
+	
+	<!-- 更新考勤组信息 -->
+	<update id="updateGroupByCondition" parameterType="com.mdoa.personnel.bo.AttendanceGroupForm">
+		UPDATE 
+			personnel_attendance_group
+		SET 
+			update_time = NOW(),
+			update_user_id = #{updateUserId},
+		 	update_user_name = #{updateUserName}
+			<if test="groupName != null and groupName != ''">		
+				,group_name = #{groupName}
+			</if>
+			<if test="defaultOnTime != null and defaultOnTime != ''">		
+				,default_on_time = #{defaultOnTime}
+			</if>
+			<if test="defaultOffTime != null and defaultOffTime != ''">		
+				,default_off_time = #{defaultOffTime}
+			</if>
+		WHERE
+			alive_flag = '1'
+		AND group_id = #{groupId}
+	</update>
+	
+	<!-- 查询考勤组内人数-->
+	<select id="findGroupMemberNum" parameterType="java.lang.String" resultType="java.lang.Integer">
+		SELECT
+			COUNT(0)
+		FROM
+			user_info
+		WHERE
+			attendance_group_id = #{groupId}
+		AND alive_flag = '1'
+	</select>
+	
+	<!-- 删除考勤组 -->
+	<update id="deleteGroup" parameterType="com.mdoa.personnel.bo.AttendanceGroupForm">
+		UPDATE 
+			personnel_attendance_group
+		SET 
+			update_time = NOW(),
+			update_user_id = #{updateUserId},
+		 	update_user_name = #{updateUserName},
+			alive_flag = '0'
+		WHERE
+			alive_flag = '1'
+		AND group_id = #{groupId}
+	</update>
+	
+	<!-- 高级查询方式添加人员进考勤组 -->
+	<update id="addGroupMemberByAdvancedQuery" parameterType="com.mdoa.personnel.bo.AttendanceUserInfoForm">
+		UPDATE
+			user_info
+		SET
+			update_time = NOW(),
+			update_user_id = #{updateUserId},
+			update_user_name = #{updateUserName},
+			attendance_group_id = #{groupId}
+		WHERE
+			alive_flag = '1'
+		<if test="attendanceGroupId != null and attendanceGroupId !=''">
+		 	AND attendance_group_id = #{attendanceGroupId}
+		</if>
+		<if test="userId != null and userId !=''">
+		 	AND user_id = #{userId}
+		</if>
+		<if test="userAccount != null and userAccount !=''">
+		 	AND user_account = #{userAccount}
+		</if>
+		<if test="userName != null and userName !=''">
+			AND user_name LIKE (${userName})
+		</if>
+		<if test="postName != null and postName !=''">
+			AND post_name LIKE (${postName})
+		</if>
+		<if test="postId != null and postId !=''">
+			AND post_id = #{postId}
+		</if>
+		<if test="departmentName != null and departmentName !=''">
+			AND department_name LIKE (${departmentName})
+		</if>
+		<if test="departmentUrl != null and departmentUrl !=''">
+			AND department_url LIKE (${departmentUrl})
+		</if>
+		<if test="idCard != null and idCard !=''">
+			AND id_card = #{idCard}
+		</if>
+		<if test="sex != null and sex !=''">
+			AND sex = #{sex}
+		</if>
+		<if test="workTimeStartStr != null and workTimeStartStr !=''">
+			AND work_time &gt; STR_TO_DATE(#{workTimeStartStr},'%Y-%m-%d')
+		</if>
+		<if test="workTimeEndStr != null and workTimeEndStr !=''">
+			AND work_time &lt; STR_TO_DATE(#{workTimeEndStr},'%Y-%m-%d')		
+		</if>
+		<if test="queryFlag == null or queryFlag == ''">
+			<if test="inviteFlag != null and inviteFlag != ''">
+				AND invite_flag = #{inviteFlag}
+			</if>
+			<if test="inviteFlag == null or inviteFlag == ''">
+				AND (invite_flag = '1' OR invite_flag = '4')
+			</if>
+			<if test="retireFlag != null and retireFlag !=''">
+				AND retire_flag = #{retireFlag}
+			</if>
+			<if test="retireFlag == null and retireFlag ==''">
+				AND (retire_flag = '1' OR retire_flag = '3')
+			</if>
+		</if>
+		<if test="queryFlag != null and queryFlag == 'queryAll'">
+			
+		</if>
+		<if test="politicalStatus != null and politicalStatus !=''">
+			AND political_status = #{politicalStatus}
+		</if>
+		<if test="education != null and education !=''">
+			AND education = #{education}
+		</if>
+		<if test="marriageFlag != null and marriageFlag !=''">
+			AND marriage_flag = #{marriageFlag}
+		</if>
+		<if test="dormFlag != null and dormFlag != ''">
+			AND dorm_flag = #{dormFlag}
+		</if>
+		<if test="workTimeStr != null and workTimeStr !=''">
+			AND work_time = #{workTime}
+		</if>
+		<if test="englishLevel != null and englishLevel != ''">
+			AND english_level = #{englishLevel}
+		</if>
+		<if test="wageAccount != null and wageAccount != ''">
+			AND wage_account = #{wageAccount}
+		</if>
+		<if test="address != null and address != ''">
+			AND address LIKE(${address})
+		</if>
+		<if test="nativePlace != null and nativePlace != ''">
+			AND native_place LIKE(${nativePlace})
+		</if>
+		<if test="volk != null and volk != ''">
+			AND volk = #{volk}
+		</if>
+		<if test="dorm != null and dorm != ''">
+			AND dorm = #{dorm}
+		</if>
+		<if test="diseaseHistoryFlag != null and diseaseHistoryFlag != ''">
+			AND disease_history_flag = #{diseaseHistoryFlag}
+		</if>
+	</update>
+	
+	<!-- ids方式添加人员进考勤组 -->
+	<update id="addGroupMemberByIds" parameterType="com.mdoa.personnel.bo.AttendanceUserInfoForm">
+		UPDATE
+			user_info
+		SET
+			update_time = NOW(),
+			update_user_id = #{updateUserId},
+			update_user_name = #{updateUserName},
+			attendance_group_id = #{groupId}
+		WHERE
+			alive_flag = '1'
+		AND user_id IN (${userIds})
+	</update>
+	
+	<!-- 移除考勤组人员 -->
+	<update id="removeGroupMember" parameterType="com.mdoa.personnel.bo.AttendanceUserInfoForm">
+		UPDATE
+			user_info
+		SET
+			update_time = NOW(),
+			update_user_id = #{updateUserId},
+			update_user_name = #{updateUserName},
+			attendance_group_id = NULL
+		WHERE
+			alive_flag = '1'
+		<if test="userIds != null and userIds != ''">
+			AND user_id IN (${userIds})
+		</if>
+		<if test="attendanceGroupId != null and attendanceGroupId != ''">
+			AND attendance_group_id = #{attendanceGroupId}
+		</if>
+	</update>
+	
+	<!-- 插入班次 -->
+	<insert id="insertClass" parameterType="com.mdoa.personnel.bo.AttendanceClassForm">
+		INSERT INTO personnel_attendance_class (
+			class_id,
+			group_id,
+			class_date,
+			work_flag,
+			on_duty_time,
+			off_duty_time,
+			create_user_id,
+			create_user_name,
+			create_time,
+			alive_flag
+		)
+		VALUES
+			(
+				UUID(),
+				#{groupId},
+				#{classDate},
+				#{workFlag},
+				#{onDutyTime},
+				#{offDutyTime},
+				#{createUserId},
+				#{createUserName},
+				NOW(),
+				'1'
+			)
+	</insert>
+	
+	<!-- 查询班次信息 -->
+	<select id="findClassByCondition" parameterType="com.mdoa.personnel.bo.AttendanceClassForm" resultType="com.mdoa.personnel.model.AttendanceClass">
+		SELECT
+			class_id AS classId,
+			group_id AS groupId,
+			class_date AS classDate,
+			work_flag AS workFlag,
+			on_duty_time AS onDutyTime,
+			off_duty_time AS offDutyTime,
+			create_user_id AS createUserId,
+			create_user_name AS createUserName,
+			create_time AS createTime,
+			update_user_id AS updateUserId,
+			update_user_name AS updateUserName,
+			update_time AS updateTime,
+			alive_flag AS aliveFlag
+		FROM
+			personnel_attendance_class
+		WHERE
+			alive_flag = '1'
+			<if test="groupId != null and groupId != '' ">
+			AND group_id = #{groupId}
+			</if>
+			<if test="classId != null and classId != '' ">
+			AND class_id = #{classId}
+			</if>
+			<if test="queryMonth != null and queryMonth != '' ">
+			AND DATE_FORMAT(class_date,'%Y-%m') = #{queryMonth}
+			</if>
+			<if test="classDate != null ">
+			AND class_date = #{classDate}
+			</if>
+			<if test="workFlag != null and workFlag != '' ">
+			AND work_flag = #{workFlag}
+			</if>
+	</select>
+	
+	<!-- 更新班次信息 -->
+	<update id="updateClassByCondition" parameterType="com.mdoa.personnel.bo.AttendanceClassForm">
+		UPDATE 
+			personnel_attendance_class
+		SET 
+			update_time = NOW(),
+			update_user_id = #{updateUserId},
+		 	update_user_name = #{updateUserName}
+			<if test="onDutyTime != null and onDutyTime != ''">		
+				,on_duty_time = #{onDutyTime}
+			</if>
+			<if test="offDutyTime != null and offDutyTime != ''">		
+				,off_duty_time = #{offDutyTime}
+			</if>
+			<if test="workFlag != null and workFlag != ''">		
+				,work_flag = #{workFlag}
+			</if>
+		WHERE
+			alive_flag = '1'
+			<if test="groupId != null and groupId != '' ">
+				<if test="classDate != null ">
+					AND class_date = #{classDate}
+					AND group_id = #{groupId}
+				</if>	
+			</if>
+			<if test="classId != null and classId != '' ">
+			AND class_id = #{classId}
+			</if>
+			
+	</update>
+	
+	<!-- 删除班次 -->
+	<update id="deleteClass" parameterType="com.mdoa.personnel.bo.AttendanceClassForm">
+		UPDATE 
+			personnel_attendance_class
+		SET 
+			update_time = NOW(),
+			update_user_id = #{updateUserId},
+		 	update_user_name = #{updateUserName},
+			alive_flag = '0'
+		WHERE
+			alive_flag = '1'
+			<if test="groupId != null and groupId != '' ">
+			AND group_id = #{groupId}
+			</if>
+			<if test="classId != null and classId != '' ">
+			AND class_id = #{classId}
+			</if>
+			<if test="classDate != null ">
+			AND class_date = #{classDate}
+			</if>
+	</update>
+	
+	
+	
+</mapper>

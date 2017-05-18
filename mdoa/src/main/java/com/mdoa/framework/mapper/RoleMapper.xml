@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mdoa.framework.dao.RoleDao">
+	
+	<!-- 获取一个uuid()主键 -->
+	<select id="getuuid" resultType="java.lang.String">
+		select uuid() AS uuid
+	</select>
+	
+	
+	<!-- 查询角色所使用的map，其中包含了一个List -->
+	<resultMap type="com.mdoa.framework.model.Role" id="role">
+		<id property="roleId" column="role_id" javaType="java.lang.String"/>
+		<result property="roleName" column="role_name" javaType="java.lang.String"/>
+		<result property="remark" column="remark" javaType="java.lang.String"/>
+		<result property="createUserId" column="create_user_id" javaType="java.lang.String"/>
+		<result property="createUserName" column="create_user_name" javaType="java.lang.String"/>
+		<result property="createTime" column="create_time" javaType="java.util.Date"/>
+		<result property="updateUserId" column="update_user_id" javaType="java.lang.String"/>
+		<result property="updateUserName" column="update_user_name" javaType="java.lang.String"/>
+		<result property="updateTime" column="update_time" javaType="java.util.Date"/>
+	</resultMap>
+	
+	<!-- 获取角色列表信息，同时会查询该角色所拥有的权限 -->
+	<select id="getRolePowerList" parameterType="com.mdoa.framework.bo.RoleForm" resultMap="role">
+		SELECT
+			role_id AS roleId,
+			role_name AS roleName,
+			remark AS remark,
+			create_user_id AS createUserId,
+			create_user_name AS createUserName,
+			create_time AS createTime,
+			update_user_id AS updateUserId,
+			update_user_name AS updateUserName,
+			update_time AS updateTime
+		FROM
+			framework_role
+		WHERE
+			alive_flag = '1'
+			<if test="roleId != null and roleId != ''">
+				AND role_id = #{roleId}
+			</if>
+			<if test="roleName != null and roleName != ''">
+				AND role_name LIKE (${roleName})
+			</if>
+			<if test="createTimeStartStr != null and createTimeStartStr != ''">
+				AND create_time &lt; STR_TO_DATE(#{createTimeStartStr},'%Y-%m-%d %H')
+			</if>
+			<if test="createTimeEndStr != null and createTimeEndStr != ''">
+				AND create_time &gt; STR_TO_DATE(#{createTimeEndStr},'%Y-%m-%d %H')
+			</if>
+	</select>
+	
+	<!-- 获取角色列表信息，同时会查询该角色所拥有的权限 -->
+	<select id="getRoleList" parameterType="com.mdoa.framework.bo.RoleForm" resultType="com.mdoa.framework.model.Role">
+		SELECT
+			role_id AS roleId,
+			role_name AS roleName,
+			remark AS remark,
+			create_user_id AS createUserId,
+			create_user_name AS createUserName,
+			create_time AS createTime,
+			update_user_id AS updateUserId,
+			update_user_name AS updateUserName,
+			update_time AS updateTime
+		FROM
+			framework_role
+		WHERE
+			alive_flag = '1'
+			<if test="roleId != null and roleId != ''">
+				AND role_id = #{roleId}
+			</if>
+			<if test="roleName != null and roleName != ''">
+				AND role_name LIKE (${roleName})
+			</if>
+			<if test="createTimeStartStr != null and createTimeStartStr != ''">
+				AND create_time &lt; STR_TO_DATE(#{createTimeStartStr},'%Y-%m-%d %H')
+			</if>
+			<if test="createTimeEndStr != null and createTimeEndStr != ''">
+				AND create_time &gt; STR_TO_DATE(#{createTimeEndStr},'%Y-%m-%d %H')
+			</if>
+	</select>
+	
+	<!-- 添加角色信息 -->
+	<insert id="addRole" parameterType="com.mdoa.framework.model.Role">
+		INSERT INTO framework_role(
+			role_id,
+			role_name,
+			remark,
+			create_user_id,
+			create_user_name,
+			create_time,
+			alive_flag
+		)VALUES(
+			UUID(),
+			#{roleName},
+			#{remark},
+			#{createUserId},
+			#{createUserName},
+			NOW(),
+			'1'
+		)
+	</insert>
+
+	<!-- 为角色进行授权 -->
+	<insert id="addRolePower" parameterType="java.util.HashMap">
+		INSERT INTO
+			framework_role_power
+		(
+			role_power_id,
+			role_id,
+			power,
+			create_user_id,
+			create_user_name,
+			create_time,
+			alive_flag
+		)VALUES
+		<foreach collection="powers" item="power" separator=",">
+			( 
+				UUID(),
+				#{roleId},
+				#{power},
+				#{createUserId},
+				#{createUserName},
+				NOW(),
+				'1' 
+			)
+		</foreach>
+	</insert>
+	
+	<!-- 批量删除角色 -->
+	<update id="deleteRole" parameterType="com.mdoa.framework.bo.RoleForm">
+		UPDATE 
+			framework_role
+		SET
+			alive_flag = '0',
+			update_user_id = #{userId},
+			update_time = now(),
+			update_user_name = #{userName}
+		where
+			role_id in (${roleIds})
+	</update>
+	
+	<!-- 清空角色下的权限信息 -->
+	<update id="cleanRolePower" parameterType="com.mdoa.framework.bo.RoleForm">
+		UPDATE 
+			framework_role_power
+		SET
+			alive_flag = '0',
+			update_user_id = #{userId},
+			update_time = now(),
+			update_user_name = #{userName}
+		WHERE
+			<if test="roleId != null and roleId != ''">
+				role_id = #{roleId}
+			</if>
+			<if test="roleIds != null and roleIds != ''">
+				role_id in (${roleIds})
+			</if>
+	</update>
+	
+	<!-- 修改角色信息 -->
+	<update id="updateRole" parameterType="com.mdoa.framework.model.Role">
+		UPDATE
+			framework_role
+		SET
+			role_name = #{roleName},
+			remark = #{remark},
+			update_time = NOW(),
+			update_user_id = #{updateUserId},
+			update_user_name = #{updateUserName}
+		WHERE
+			role_id = #{roleId}
+	</update>
+	
+	<!-- 为用户批量添加角色 -->
+	<insert id="addUserRole" parameterType="java.util.HashMap">
+		INSERT INTO
+			framework_user_role
+		(
+			user_role_id,
+			user_id,
+			role_id,
+			create_user_id,
+			create_user_name,
+			create_time,
+			alive_flag
+		)VALUES
+		<foreach collection="roleIds" item="roleId" separator=",">
+			(
+				UUID(),
+				#{userId},
+				#{roleId},
+				#{createUserId},
+				#{createUserName},
+				NOW(),
+				'1'
+			)
+		</foreach>
+	</insert>
+	
+	<update id="cleanUserRole" parameterType="com.mdoa.user.model.UserInfo">
+		UPDATE
+			framework_user_role
+		SET
+			alive_flag = '0',
+			update_user_id = #{updateUserId},
+			update_user_name = #{updateUserName}
+		WHERE
+			user_id = #{userId}
+	</update>
+	
+	<select id="queryUserRoleByUserId" parameterType="java.lang.String" resultType="com.mdoa.framework.model.Role">
+		SELECT
+			a.user_role_id AS userRoleId,
+			a.user_id AS userId,
+			a.role_id AS roleId,
+			b.role_name AS roleName,
+			a.alive_flag AS aliveFlag
+		FROM
+			framework_user_role a
+		LEFT JOIN
+			framework_role b
+		ON(a.role_id = b.role_id)
+		WHERE
+			a.user_id = #{userId}
+			AND a.alive_flag = '1'
+	</select>
+	
+	<select id="queryRolePower" parameterType="java.lang.String" resultType="com.mdoa.framework.model.Power">
+		SELECT
+			b.power
+		FROM
+			framework_role a
+		LEFT JOIN
+			framework_role_power b
+		ON (a.role_id = b.role_id)
+		WHERE
+			a.role_id = #{roleId}
+			AND b.alive_flag = '1'
+	</select>
+</mapper>

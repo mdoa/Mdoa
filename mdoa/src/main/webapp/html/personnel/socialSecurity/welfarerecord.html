@@ -1,0 +1,127 @@
+<div id="welfarerecord" title="福利备案信息">
+	<div style="display: block" class="list">
+	<div class="maintop"></div>
+		<div class="invitetop">
+			请输入查询条件： 申请人：<input type="text" class="people"> 福利名称：<input
+				type="text" name="welfareName"> 编号：<input type="text" name="welfareCode"> 审批状态：
+				<select name="examineStatus">
+					<option value=""></option>
+					<option value="1" selected="selected">待审</option>
+					<option value="2">撤回</option>
+					<option value="3">通过</option>
+					<option value="4">驳回</option>
+				</select>
+			<!-- </select> 发放对象：<select name="objFlag">
+				<option value=""></option>
+				<option value="1">部门</option>
+				<option value="2">岗位</option>
+				<option value="3">退休</option>
+			</select> --> 
+			<a class="easyui-linkbutton" iconCls="icon-search"  name="queryWelfare" style="line-height:16px;">查询</a>
+			<input type="button" value="清空" name="clean">
+		</div>
+		<div>
+			<table id="welfarerecorddg"></table>
+		</div>
+	</div>
+	<div class="welfareLookObj">
+			<div class="maintop">
+				<input type="button" class="button back" value="返回">
+			</div>
+			<!-- <div  class="invitetop">
+				请输入查询条件：
+			</div> -->
+			<div>
+				<table class="lookObjdg"></table>	
+			</div>
+		</div>
+	<div class="flow" style="display: none">
+		<div class="flowbar">
+			<input type="button" value="返回" class="back" /> 
+			<input type="button" value="驳回" class="reject" /> 
+			<input type="button" value="重新审核" class="reExamine" />
+			<input type="button" value="备案" class="reference" /> 
+		</div>
+		<div class="flowplan">
+
+			<p class="jiachu">福利名：</p>
+			<p>
+				<input type="text" class="welfareName" value="" readOnly="true" />
+			</p>
+
+			<p class="jiachu">福利码：</p>
+			<p>
+				<input type="text" class="welfareCode" value="" readOnly="true" />
+			</p>
+
+			<p class="jiachu">发放时间：</p>
+			<p>
+				<input type="text" class="giveTimeStr" value="" readOnly="true" />
+			</p>
+
+			<p class="jiachu">福利内容：</p>
+			<div class="applyDescribe text"></div>
+
+			<p class="jiachu">福利原因：</p>
+			<div class="applyDescribe reason"></div>
+		</div>
+		<div class="showView"></div>
+		<!-- 审批驳回意见栏 -->
+		<div class="popup rejectWindow" style="width: 332px; height: 212px;">
+			<h3>
+				<span>审批信息框</span>
+			</h3>
+			<span class="turnoff"></span>
+			<div class="popuparea">
+				<textarea name="examineIdea"></textarea>
+			</div>
+			<div class="btnarea" style="text-align: center">
+				<input type="button" class="button save" value="保存" /> <input
+					type="button" class="button cannel" value="取消"
+					style="margin-left: 20px;" />
+			</div>
+		</div>
+		<!-- 提交备案意见栏 -->
+		<div class="popup referenceWindow"
+			style="width: 332px; height: 212px;">
+			<h3>
+				<span>审批信息框</span>
+			</h3>
+			<span class="turnoff"></span>
+			<div class="popuparea referencearea">
+				<textarea name="examineIdea"></textarea>
+			</div>
+			<div class="btnarea" style="text-align: center">
+				<input type="button" class="button save" value="保存" /> <input
+					type="button" class="button cannel" value="取消"
+					style="margin-left: 20px;" />
+			</div>
+		</div>
+
+
+		<!-- 驳回并给一下个人重新审核 -->
+		<div class="popup reExamineWindow"
+			style="width: 332px; height: 246px;">
+			<h3>
+				<span>审批信息框</span>
+			</h3>
+			<span class="turnoff"></span>
+			<div class="reExaminearea popuparea">
+				<textarea name="examineIdea"></textarea>
+				<div class="nextExamine">
+					下一级审批人： <input type="text" name="nextExamineUserName"
+						readonly="readonly" /> <input type="button"
+						class="button chooseUser" value="选择" style="width: 55px" /> <input
+						style="display: none" name="nextExamineUserId" />
+				</div>
+			</div>
+			<div class="btnarea" style="text-align: center">
+				<input type="button" class="button save" value="保存" /> <input
+					type="button" class="button cannel" value="取消"
+					style="margin-left: 20px;" />
+			</div>
+		</div>
+
+	</div>
+
+</div>

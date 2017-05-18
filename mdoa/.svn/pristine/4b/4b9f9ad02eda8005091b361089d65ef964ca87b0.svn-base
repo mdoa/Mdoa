@@ -1,0 +1,95 @@
+ <div id="gooutRecord" title="待我备案流程">
+	 <div style="display: block" class="list">
+		<div class="maintop">
+		</div>
+		<div  class="invitetop">
+			请输入查询条件：申请人：<input type="text" class="userName"> 
+			 审批状态:<select class="examineStatus">
+		         	<option></option>
+		         	<option>待审</option>
+		         	<option>撤回</option>
+		         	<option>通过</option>
+		         	<option>驳回</option>
+		         </select>
+		         <a class="easyui-linkbutton query" iconCls="icon-search" style="line-height:16px;">查询</a>
+		         <input type="button" value="清空" class="clean">
+		</div>
+		<div >
+		 <table id="gooutRecorddg"></table>	
+		</div>
+	</div>
+	<div class="flow" style="display: none">
+		<div class="flowbar">
+			<input type="button" value="返回" class="back" /> 
+			<input type="button" value="驳回" class="reject" /> 
+			<input type="button" value="备案" class="reference" /> 
+			<input type="button" value="重新审批" class="reExamine" /> 
+		</div>
+		  <div class="flowplan">
+			<p class="jiachu">请假人：</p>
+			<p><input type="text" class="createUserName" value="" /></p>
+			
+			<p class="jiachu">发起时间：</p>
+			<p><input type="text" class="createTimeStr" value="" /></p>
+			
+			<p class="jiachu">审批状态：</p>
+			<p><input type="text" class="inviteStatus" value="" /></p>
+			
+			<p class="jiachu">外出原因：</p>
+			<div class="applyDescribe reason"></div>
+		</div>
+		<div class="showView">
+		</div>
+		<!-- 审批驳回意见栏 -->
+		<div class="popup rejectWindow" style="width:332px;height:212px;">
+			<h3>
+				<span>审批驳回信息框</span>
+			</h3>
+			<span class="turnoff"></span>
+			<div class="popuparea" style="width: 308px;height: 150px;">
+				<textarea name="examineIdea" style="width: 300px;height: 146px;"></textarea>
+			</div>
+			<div class="btnarea" style="text-align: center">
+				<input type="button" class="button save" value="保存"/>
+				<input type="button" class="button cannel" value="取消" style="margin-left: 20px;"/>
+			</div>
+		</div>
+		
+		<!-- 提交备案意见栏 -->
+		<div class="popup referenceWindow" style="width:332px;height:212px;">
+			<h3>
+				<span>审批备案信息框</span>
+			</h3>
+			<span class="turnoff"></span>
+			<div class="popuparea referencearea" style="width: 308px;height: 150px;">
+				<textarea  name="examineIdea" style="width: 300px;height: 146px;"></textarea>
+			</div>
+			<div class="btnarea" style="text-align: center">
+				<input type="button" class="button save" value="保存"/>
+				<input type="button" class="button cannel" value="取消" style="margin-left: 20px;"/>
+			</div>
+		</div>
+		
+		<!-- 审批通过提交下级意见栏 -->
+		<div class="popup pastWindow" style="width:332px;height:246px;">
+			<h3>
+				<span>审批通过信息框</span>
+			</h3>
+			<span class="turnoff"></span>
+			<div class="pastarea popuparea">
+				<textarea name="examineIdea" style="width: 298px;height: 150px;"></textarea>
+				<div class="nextExamine">
+				下一级审批人：
+				<input type="text" name="nextExamineUserName" readonly="readonly"/>
+				<input type="button" class="button chooseUser" value="选择"  style="width: 55px"/>
+				<input style="display: none" name="nextExamineUser"/>
+			</div>
+			</div>
+			<div class="btnarea" style="text-align: center">
+				<input type="button" class="button save" value="保存"/>
+				<input type="button" class="button cannel" value="取消" style="margin-left: 20px;"/>
+			</div>
+		</div>
+	</div>
+
+</div>

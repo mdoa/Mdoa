@@ -1,0 +1,56 @@
+<div id="KPIgroup" title="KPI评分">
+	<div class="maintop">
+	</div>
+	<div class="invitetop">
+		请输入查询条件：KPI组名：<input type="text" class="kpiGroupName">
+		 		  		  <a class="easyui-linkbutton query" iconCls="icon-search" style="line-height:16px;">查询</a>
+		 		  		  <input type="button" class="reset" value="清空">
+	</div>
+	<div>
+		<table id="KPIgroupdg" width="100%" height="100%"></table>
+	</div>
+	<div  class="popups" style="text-align: left;">
+		<div class="popup saveKpiGroup" style="height: 240px;width: 400px;">
+			<h3>新建KPI组</h3>
+			<span class="turnoff"></span>
+			<div class="popuparea" style="padding: 10px 36px;">
+				<table style="text-align: right;width: 310px;height: 150px">
+					<tr>
+						<td>KPI组名:</td>
+						<td><input type="text" style="width:220px;" class="kpiGroupName"//></td>
+					</tr>
+					<tr>
+						<td style="padding-bottom:24px;">申请原因描述:</td>
+						<td><textarea style="width: 216px" class="note"/></textarea></td>
+					</tr>
+				</table>
+			</div>
+			<div class="btnarea" style="text-align: center">
+				<input type="button" class="button confirm" value="确定"/>
+				<input type="button" class="button cannel" value="取消" style="margin-left: 20px;"/>
+			</div>
+		</div>
+	</div>
+	<div  class="popups" style="text-align: left;">
+		<div class="popup updateKpiGroup" style="height: 240px;width: 400px;">
+			<h3>修改KPI组</h3>
+			<span class="turnoff"></span>
+			<div class="popuparea" style="padding: 10px 36px;">
+				<table style="text-align: right;width: 310px;height: 150px">
+					<tr>
+						<td>KPI组名:</td>
+						<td><input type="text" style="width:220px;" class="kpiGroupName"//></td>
+					</tr>
+					<tr>
+						<td style="padding-bottom:24px;">申请原因描述:</td>
+						<td><textarea style="width: 216px" class="note"/></textarea></td>
+					</tr>
+				</table>
+			</div>
+			<div class="btnarea" style="text-align: center">
+				<input type="button" class="button confirm" value="确定"/>
+				<input type="button" class="button cannel" value="取消" style="margin-left: 20px;"/>
+			</div>
+		</div>
+	</div>
+</div>

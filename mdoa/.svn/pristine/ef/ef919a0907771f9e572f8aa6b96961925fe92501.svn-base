@@ -1,0 +1,74 @@
+ <div id="KPIgrade" title="KPI评分">
+	<div class="maintop">
+	</div>
+	<div  class="invitetop">
+		请输入查询条件：月份：<input type="text" class="markMonth">
+		KPI组名字：<input type="text" class="kpiGroupName"> 
+		用户名：<input type="text" class="userName">
+		<input type="button" class="query" value="查询" >
+		<input type="button" value="清空" >
+	</div>
+	<div>
+	 <table id="KPIgradedg" width="100%" height="100%" ></table>	
+	</div>
+	<div  class="popups" style="text-align: left;">
+		<div class="popup saveKpiGrade" style="height: 235px;width: 400px;">
+			<h3>增加员工打分记录</h3>
+			<span class="turnoff"></span>
+			<div class="popuparea" style="padding: 10px 36px;">
+				<table style="text-align: right;width: 300px;height: 150px">
+					<tr>
+						<td>员工姓名:</td>
+						<td>
+							<input type="text" style="width:160px;" name="peopleName" readonly="readonly"/>
+							<input type="button" class="button chooseUser" value="选择"  style="width: 55px"/>
+							<input style="display: none" name="userId"/>
+							<input style="display: none" name="kpiGroupId"/>
+						</td>
+					</tr>
+					<tr>
+						<td>打分月份:</td>
+						<td><input type="text" style="width:220px;" class="markMonth"/></td>
+					</tr>
+				</table>
+			</div>
+			<div class="btnarea" style="text-align: center">
+				<input type="button" class="button confirm" value="确定"/>
+				<input type="button" class="button cannel" value="取消" style="margin-left: 20px;"/>
+			</div>
+		</div>
+	</div>
+	<div  class="popups" style="text-align: left;">
+		<div class="popup editKPIgrade" style="height: 260px;width: 400px;">
+			<h3>员工kpi打分</h3>
+			<span class="turnoff"></span>
+			<div class="popuparea" style="padding: 10px 36px;overflow-y:auto;height:200px;width:360px;">
+				<table style="text-align: right;width: 266px;height: 150px;">
+					<tr>
+					</tr>
+				</table>
+				    实际得分:<input type="text" class="realgrade"  readonly="readonly"><br><br>
+				    此组总分:<input type="text" class="scoreStandard" readonly="readonly">
+			</div>
+			<div class="btnarea" style="text-align: center">
+				<input type="button" class="button confirm" value="保存"/>
+				<input type="button" class="button cannel" value="取消" style="margin-left: 20px;"/>
+			</div>
+		</div>
+	</div>
+	<div  class="popups" style="text-align: left;">
+		<div class="popup lookKPIgrade" style="height: 260px;width: 400px;">
+			<h3>查看员工打分记录</h3>
+			<span class="turnoff"></span>
+			<div class="popuparea" style="padding: 10px 36px;overflow-y:auto;height:200px;width:376px;">
+				<table style="text-align: right;width: 300px;height: 150px;">
+					<tr>
+					</tr>
+				</table>
+			</div>
+			<div class="btnarea" style="text-align: center">
+				<input type="button" class="button cannel" value="取消" style="margin-left: 20px;"/>
+			</div>
+		</div>
+	</div>
+</div>

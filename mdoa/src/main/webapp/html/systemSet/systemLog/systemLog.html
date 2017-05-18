@@ -1,0 +1,26 @@
+<div id="systemLog" title="日志管理">
+
+	<div class="list">
+		<div class="maintop">
+		<div class="add">
+			<span class="maintopicon mainicon2"></span> 
+			<span>删除</span>
+		</div>
+		</div>
+		<div class="invitetop">
+			请输入查询条件：
+			日期：<input class="jqdate" type="text" style="width: 100px" name="operaTimeStartStr" onblur="testDate(this)" onclick="testShow(this);">
+			 ~ 
+			 	<input class="jqdate" type="text" style="width: 100px" name="operaTimeEndStr" onblur="testDate(this)" onclick="testShow(this);">
+			操作人：<input type="text" name="operaUserName">
+			操作标记：<input type="text" name="operaTab">
+			操作模块：<input type="text" name="operaPanel">
+			<a class="easyui-linkbutton" iconCls="icon-search" style="line-height:16px;" name="querySystemLog">查询</a>
+			<input type="button" value="清空" name="clean">
+		</div> 
+		<div>
+		 <table id="systemlogdg"></table>
+		</div>
+	</div>
+	
+</div> 

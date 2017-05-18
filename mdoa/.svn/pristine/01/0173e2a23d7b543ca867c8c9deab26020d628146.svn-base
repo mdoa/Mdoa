@@ -1,0 +1,246 @@
+<div id="documentManage">
+	<input id="catalogUrl" type="hidden">
+	<div class="treearea">
+		<h3>公文树</h3>
+		<div>  
+		    <ul id="ddd" data-options="region:'center',border: true"  
+		         class="easyui-tree">  
+		    </ul>  
+		</div>
+	</div>
+	<div id="mmm" class="easyui-menu" style="width:120px;">
+		<div onclick="add()" data-options="iconCls:'icon-add'">添加文件</div>
+		<div onclick="addcatalogue()" data-options="iconCls:'icon-add'">添加目录</div>
+		<div onclick="remove()" data-options="iconCls:'icon-remove'">删除</div>
+		<div onclick="edit()" data-options="iconCls:'icon-edit'">修改</div>
+	</div>
+	<div id="mmd" class="easyui-menu" style="width:120px;">
+		<div onclick="remove()" data-options="iconCls:'icon-remove'">删除</div>
+		<div onclick="edit()" data-options="iconCls:'icon-edit'">修改</div>
+	</div>
+	<div class="listForm">
+		<div class="toolbar" >
+			<input type="button" class="button editDocument" value="编辑"/>
+			<input type="button" class="button saveDocument" value="保存"/>
+			<input type="button" class="button addDocument" value="发布"/>
+		</div>
+		<div class="lookdocument">
+		</div>
+		<div class="editorarea">
+			<input type="text" name="titleName" placeholder="请输入正文标题">
+			<script type="text/plain" id="myEditor"></script>
+		</div>
+	</div>
+	<!-- 弹窗 -->
+	<div class="popups">
+		<div class="addWindow popup">
+			<h3>添加文件</h3>
+			<span class="turnoff"></span>
+			<div class="popuparea">
+				<table>
+					<tr>
+						<td>请输入文件名称：</td>
+						<td><input type="text" class="catalogName"></td>
+					</tr>
+				</table>
+			</div>
+			<div class="btnarea" style="text-align: center">
+				<input type="button" class="button quedingadd" value="确定">
+				<input type="button" class="button cannel" value="取消" style="margin-left: 8px;">
+			</div>
+		</div>
+		<div class="addcatalogueWindow popup">
+			<h3>添加目录</h3>
+			<span class="turnoff"></span>
+			<div class="popuparea">
+				<table>
+					<tr>
+						<td>请输入目录名称：</td>
+						<td><input type="text" class="catalogName"></td>
+					</tr>
+				</table>
+			</div>
+			<div class="btnarea" style="text-align: center">
+				<input type="button" class="button quedingadd" value="确定">
+				<input type="button" class="button cannel" value="取消" style="margin-left: 8px;">
+			</div>
+		</div>
+		<div class="removeWindow popup">
+			<h3>删除目录(文件)</h3>
+			<span class="turnoff"></span>
+			<div class="popuparea">
+				你确定要删除该文件吗
+			</div>
+			<div class="btnarea" style="text-align: center">
+				<input type="button" class="button quedingremove" value="确定">
+				<input type="button" class="button cannel" value="取消" style="margin-left: 8px;">
+			</div>
+		</div>
+				
+		<div class="editWindow popup">
+			<h3>修改目录(文件)</h3>
+			<span class="turnoff"></span>
+			<div class="popuparea">
+				<table>
+					<tr>
+						<td>请输入修改后的文件名：</td>
+						<td><input type="text" class="catalogName"></td>
+					</tr>
+					<tr>
+						<td></td>
+						<td></td>
+					</tr>
+				</table>
+			</div>
+			<div class="btnarea" style="text-align: center">
+				<input type="button" class="button quedingedit" value="确定">
+				<input type="button" class="button cannel" value="取消" style="margin-left: 8px;">
+			</div>
+		</div>
+	</div>
+</div>
+<script type="text/javascript">
+	$.getScript("../../js/workOfficeDoc/documentManage/documentManage.js", function(data, status, jqxhr) {
+		$('#documentManage .editorarea').css('display','none');
+		var myEditorH = $('#loadarea').height()-143;
+		var myEditorW = $('#loadarea').width()-202;
+		UE.getEditor('myEditor', {
+		    theme:"default", //皮肤
+		    lang:'zh-cn',//语言
+		    initialFrameWidth:myEditorW,  //初始化编辑器宽度,默认1000
+	        initialFrameHeight:myEditorH, //初始化编辑器高度,默认320
+		});
+		//点击确定添加文件
+		$('#documentManage .addWindow .quedingadd').click(function(){
+			var catalogName = $('#documentManage .addWindow .catalogName').val();
+			var catalogUrl = $("#catalogUrl").val();
+			var	documentType = "1";
+			console.log(catalogName,catalogUrl,documentType);
+			if(catalogName == null || catalogName == ""){
+				windowControl("请输入文件名");
+			}else{
+				$.ajax({
+					data:{url:catalogUrl,catalogName:catalogName,docFlag:documentType},
+					url:"../../document/addDocument.do?getMs="+getMS(),
+					method:"post",
+					success: function(data){
+						alert(data);
+						$('#ddd').tree('reload');
+						$('#documentManage .addWindow .popuparea input[type=text]').val('');
+						$('#documentManage .addWindow').css('display','none');
+						$('#documentManage .lookdocument').css('display','none');
+						$('#documentManage .editorarea').css('display','block');
+					}
+				})
+			}
+		});
+		//点击确定添加目录
+		$('#documentManage .addcatalogueWindow .quedingadd').click(function(){
+			var catalogName = $('#documentManage .addcatalogueWindow .catalogName').val();
+			var catalogUrl = $("#catalogUrl").val();
+			var	documentType = "0";
+			console.log("catalogName="+catalogName);
+			if(catalogName == null || catalogName == ""){
+				windowControl("请输入目录名");
+			}else{
+				$.ajax({
+					data:{url:catalogUrl,catalogName:catalogName,docFlag:documentType},
+					url:"../../document/addDocument.do?getMs="+getMS(),
+					method:"post",
+					success: function(data){
+						$('#ddd').tree('reload');
+						$('#documentManage .addcatalogueWindow .popuparea input[type=text]').val('');
+						$('#documentManage .addcatalogueWindow').css('display','none');
+					}
+				})
+			}
+		})
+		$('#ddd').tree({
+			 onClick: function(node,e){
+				 if(node.id != $("#catalogUrl").val()){
+		        		$('#documentManage .editorarea').css('display','none');
+		        	}
+	        	$("#catalogUrl").val(node.id);
+	        	$("#catalogUrl").attr("docFlag",node.attributes);
+	        	select();
+		        },
+		})
+		$('#documentManage .listForm .toolbar .addDocument').click(function(){
+			alert("发布功能暂定");
+			//submit();
+		});
+		$('#documentManage .listForm .toolbar .saveDocument').click(function(){
+			bianJi();
+		});
+		function select(){
+	       $.ajax({
+	       		data:{url:$("#catalogUrl").val()},
+	        	url:"../../document/selectDocumentText.do?getMs="+getMS(),
+	        	method:"post",
+	        	success:function(data){
+	        		var obj = $.parseJSON(data);
+	        		$('#documentManage .lookdocument').html('');
+	        		$('#documentManage .lookdocument').css('display','block');
+	        		$('#documentManage .editorarea').css('display','none');
+        			$('#documentManage .lookdocument').css({
+        				'height':myEditorH+'px',
+        				'width':myEditorW+'px',
+        			});
+	        		if(obj[0]){
+		        		$('#documentManage .lookdocument').html(obj[0].text);
+	        		 	$('#documentManage .listForm .toolbar .editDocument').click(function(){
+	        				$('#documentManage .lookdocument').css('display','none');
+	        				$('#documentManage .editorarea').css('display','block');
+	        	 			UE.getEditor('myEditor').setContent($('#documentManage .lookdocument').html());
+	        	 		});
+	        		}
+	        	},
+	        	error:function(err){
+	        		windowControl('服务器异常');
+	        	}
+	        }) 
+	    }
+	    function submit(){
+	    	ui.confirm("是否确定发布公文",function(z){
+	    		alert(1);
+		        var text = UE.getEditor('myEditor').getContent();
+		        alert(text);
+		        var catalogName = $('#ddd').tree('getSelected').text;
+		        var url = $("#catalogUrl").val();
+		        $.ajax({
+		        	data:{text:text,catalogName:catalogName,url:url,docFlag:"1"},
+		        	url:"../../document/addDocument.do?getMs="+getMS(),
+		        	method:"post",
+		        	success:function(data){
+		        		if(data == 200){
+		        			windowControl('保存成功');
+		        		}else{
+		        			windowControl('保存失败');
+		        		}
+		        	},
+		        	error:function(err){
+		        		windowControl('服务器异常');
+		        	}
+		        })
+		    	},false);
+	    }
+	    //保存
+	    function bianJi(){
+	        var text = UE.getEditor('myEditor').getContent();
+	        $.ajax({
+	        	data:{text:text,url:$("#catalogUrl").val(),titleName:$("#documentManage .editorarea input[name=titleName]").val()},
+	        	url:"../../document/updateText.do?getMs="+getMS(),
+	        	success:function(data){
+	        		if(data == 200){
+	        			windowControl('保存成功');
+	        		}else{
+	        			windowControl('保存失败');
+	        		}
+	        	},
+	        	error:function(err){
+	        		windowControl('服务器异常');
+	        	}
+	        })
+		}
+	});
+</script>

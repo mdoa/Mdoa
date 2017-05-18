@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mdoa.personnel.dao.PersonKpiRecordDao">
+	
+	<select id="selectKpiRecordByTime" parameterType="com.mdoa.personnel.bo.KpiApplyForm" resultType="com.mdoa.personnel.bo.KpiApplyForm">
+		SELECT 
+			a.group_record_id AS groupRecordId,
+			a.mark_month AS markMonth,
+			a.score_user AS scoreUser,
+			a.score_standard AS scoreStandard,
+			a.mark_user_name AS markUserName,
+			a.mark_user_id AS markUserId,
+			a.user_id AS userId,
+			a.user_name AS userName,
+			a.create_user_id AS createUserId,
+			a.create_user_name AS createUserName,
+			a.create_time AS createTime,
+			a.update_user_id AS updateUserId,
+			a.update_user_name AS updateUserName,
+			a.update_time AS updateTime,
+			b.kpi_group_id AS kpiGroupId,
+			b.kpi_group_name AS kpiGroupName
+		FROM 
+			personnel_kpi_group_record a,
+			personnel_kpi_group b,
+			user_info c
+		WHERE
+				a.alive_flag = '1'
+				AND b.alive_flag = '1'
+				AND c.alive_flag = '1'
+				AND a.user_id = c.user_id
+				AND a.kpi_group_id = b.kpi_group_id
+				AND b.kpi_group_id = c.kpi_group_id
+			<if test="markMonth != null and markMonth != '' ">
+				AND a.mark_month LIKE ('${markMonth}') </if> 
+			<if test="kpiGroupName != null and kpiGroupName != '' ">
+				AND b.kpi_group_name LIKE ('${kpiGroupName}') </if> 
+			<if test="userName != null and userName != '' ">
+				AND a.user_name LIKE ('${userName}') </if>
+			<if test="userId != null and userId != '' ">
+				AND a.user_id = #{userId} </if>
+		ORDER BY
+				a.create_time
+		DESC
+	</select>	
+	<!-- 新建员工打分记录表 -->
+	<insert id="insertKpiRecord" parameterType="com.mdoa.personnel.model.PersonKpiRecord">
+		INSERT INTO personnel_kpi_record(
+			record_id,
+			kpi_id,
+			user_score,
+			standard_score,
+			kpi_group_record_id,
+			reason,
+			create_time,
+			create_user_id,
+			create_user_name,
+			alive_flag
+		)VALUE(
+			UUID(),
+			#{kpiId},
+			#{userScore},
+			#{standardScore},
+			#{kpiGroupRecordId},
+			#{reason},
+			now(),
+			#{createUserId},
+			#{createUserName},
+			'1'
+			)
+	</insert>
+	<!-- 创建员工打分记录组 -->
+	<insert id="insertKpiRecordGroup" parameterType="com.mdoa.personnel.model.PersonKpiGroupRecord">
+		INSERT INTO personnel_kpi_group_record(
+			group_record_id,
+			mark_month,
+			kpi_group_id,
+			score_user,
+			score_standard,
+			mark_user_name,
+			mark_user_id,
+			user_id,
+			user_name,
+			create_user_id,
+			create_user_name,
+			create_time,
+			alive_flag
+		)VALUE(
+			UUID(),
+			#{markMonth},
+			#{kpiGroupId},
+			#{scoreUser},
+			#{scoreStandard},
+			#{markUserName},
+			#{markUserId},
+			#{userId},
+			#{userName},
+			#{createUserId},
+			#{createUserName},
+			NOW(),
+			'1'
+		)
+	</insert>
+	<!-- 查询组记录下的分数记录 -->
+	<select id="selectKpiRecordByGroupId" parameterType="com.mdoa.personnel.bo.KpiRecordForm" resultType="com.mdoa.personnel.model.PersonKpiRecord">
+		SELECT 
+			a.record_id  as recordId,
+			a.kpi_id as kpiId,
+			a.user_score as userScore,
+			a.standard_score as standardScore,
+			a.kpi_group_record_id as kpiGroupRecordId,
+			a.reason as reason,
+			a.create_time as createTime,
+			a.create_user_id as createUserId,
+			a.create_user_name as createUserName,
+			a.update_time as updateTime,
+			a.update_user_id as updateUserId,
+			a.update_user_name as updateUserName,
+			b.user_id as userId
+		FROM 
+			personnel_kpi_record a,
+			personnel_kpi_group_record b
+		WHERE
+			a.group_record_id = b.kpi_group_record_id
+		AND 
+			a.alive_flag = '1'
+		ORDER BY 
+			a.create_time DESC
+	</select>
+	
+	<!--根据userId去查询kpi打分记录  -->
+	<select id="selectKpiGroupRecordByUserId" parameterType="com.mdoa.personnel.bo.KpiRecordForm"
+	resultType="com.mdoa.personnel.model.PersonKpiRecord" >
+		SELECT 
+			a.record_id  as recordId,
+			a.kpi_id as kpiId,
+			a.user_score as userScore,
+			a.standard_score as standardScore,
+			a.kpi_group_record_id as kpiGroupRecordId,
+			a.reason as reason,
+			a.create_time as createTime,
+			a.create_user_id as createUserId,
+			a.create_user_name as createUserName,
+			a.update_time as updateTime,
+			a.update_user_id as updateUserId,
+			a.update_user_name as updateUserName,
+			b.user_id as userId
+		FROM
+			personnel_kpi_record a,
+			personnel_kpi_group_record b
+		WHERE
+			b.user_id = #{userId}
+		AND 
+			a.alive_flag = '1'
+		ORDER BY 
+			a.create_time DESC
+	</select>
+	<!-- 修改kpi员工打分表 -->
+	<update id="updateKpiRecord" parameterType="com.mdoa.personnel.model.PersonKpiRecord">
+		UPDATE 
+			personnel_kpi_record
+		SET 
+			user_score = #{userScore},
+			standard_score = #{standardScore},
+			reason = #{reason},
+			update_time = NOW(),
+			update_user_id = #{updateUserId},
+			update_user_name = #{updateUserName}
+		WHERE
+			record_id = #{recordId}
+		AND 
+			alive_flag = '1'
+	</update>
+	
+	<!-- 修改员工打分记录组 -->
+	<update id="updateKpiGroupRecord" parameterType="com.mdoa.personnel.model.PersonKpiGroupRecord">
+		UPDATE
+			personnel_kpi_group_record
+		<set>
+			<if test="userId != null and userId != ''">
+			user_id = #{userId},</if>
+			<if test="markMonth != null and markMonth != ''">
+			mark_month = #{markMonth},</if>
+			<if test="kpiGroupId != null and kpiGroupId != ''">
+			kpi_group_id = #{kpiGroupId},</if>
+			<if test="kpiGroupName != null and kpiGroupName != ''">
+			kpi_group_name = #{kpiGroupName},</if>
+			<if test="scoreUser != null and scoreUser != ''">
+			score_user = #{scoreUser},</if>
+			<if test="scoreStandard != null and scoreStandard != ''">
+			score_standard = #{scoreStandard},</if>
+			<if test="markUserName != null and markUserName != ''">
+			mark_user_name = #{markUserName},</if>
+			<if test="markUserId != null and markUserId != ''">
+			mark_user_id = #{markUserId},</if>
+			<if test="updateUserId != null and updateUserId != ''">
+			update_user_id = #{updateUserId},</if>
+			update_time = NOW()
+		</set>
+		WHERE
+			group_record_id = #{groupRecordId}
+	</update>
+	
+	<!-- 删除员工打分表 -->
+	<update id="deleteKpiRecord" parameterType="java.lang.String">
+		UPDATE 
+			personnel_kpi_record
+		SET 
+			update_time = NOW(),
+			update_user_name = #{updateUserName},
+			update_user_id = #{updateUserId},
+			alive_flag = '0'
+		WHERE
+			record_id = #{recordId}
+	</update>
+	<!-- 删除员工打分记录组 -->
+	<update id="deleteKpiGroupRecord" parameterType="java.lang.String">
+		UPDATE
+			personnel_kpi_group_record
+		SET
+			update_time = NOW(),
+			update_user_id = #{updateUserId},
+			alive_flag = '0'
+		WHERE
+			group_record_id = #{groupRecordId}
+				
+	</update>
+</mapper>

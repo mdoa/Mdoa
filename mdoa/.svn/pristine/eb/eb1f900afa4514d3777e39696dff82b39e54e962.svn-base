@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>测试福利的说</title>
+<link rel="SHORTCUT ICON" href="../../img/index/Mender.ico"/>
+	<link rel="stylesheet" type="text/css" href="../../themes/default/easyui.css">
+	<link rel="stylesheet" type="text/css" href="../../themes/icon.css">
+	<link rel="stylesheet" type="text/css" href="../../css/reset.css">
+	<link rel="stylesheet" type="text/css" href="../../css/personnel/invite.css">
+	<link rel="stylesheet" type="text/css" href="../../css/personnel/inviteflow.css">
+	<link rel="stylesheet" type="text/css" href="../../css/index/index.css">
+	<link rel="stylesheet" type="text/css" href="../../css/plug/jedate.css">
+	<script type="text/javascript" src="../../js/jquery/jquery-1.8.0.min.js"></script>
+	<script type="text/javascript" src="../../js/easyui/jquery.easyui.min.js"></script>
+	<script type="text/javascript" src="../../js/jquery/jquery.jedate.min.js"></script>
+	<script type="text/javascript" src="../../js/index/index.js"></script>
+	<script type="text/javascript" src="../../js/plugin/upload.js"></script>
+	<script type="text/javascript" src="../../js/user/test.js"></script>
+</head>
+<script type="text/javascript">
+	function addWelfareApply(){
+		$.ajax({
+			data:{welfareName:"减肥计划",text:"让天下胖纸减肥",reason:"他土司要减肥",examineUserId:"001",examineUserName:"陈涛",
+				dorm:"11",giveTimeStr:"2017-4-24"},
+			url:"../../welfare/addWelfareApply?getMs="+getMS(),
+			success:function(data){
+				alert(data);
+			}
+			})
+	}
+	function queryPersonMessage(){
+		$.ajax({
+			data:{userName:"陈涛"},
+			url:"../../welfare/queryPersonMessage?getMs="+getMS(),
+			success:function(data){
+				alert(data);
+			}
+			})
+	}
+	
+	
+</script>
+
+<body>
+
+<input type="button" value="发起福利申请" onclick="addWelfareApply()">
+<input type="button" value="查询人员信息" onclick="queryPersonMessage()">
+<input type="button" value="查询人员信息" onclick="queryPersonMessage()">
+
+
+</body>
+</html>

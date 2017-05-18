@@ -1,0 +1,41 @@
+<div id="dimission" title="基本信息">
+	<div class="maintop">
+		<input name="userId" type="hidden" >
+	</div>
+	<div class="invitetop">
+		请输入查询条件：
+		姓名：
+			<input type="text" name="peopleName" style="width: 100px">
+		离职时间：
+			<input  class="jqdate" type="text" name="dimissionTimeStart" onblur="testDate(this)" onclick="testShow(this);">
+		~ 
+			<input  class="jqdate" type="text" name="dimissionTimeEnd" onblur="testDate(this)" onclick="testShow(this);">
+		部门名：
+			<input type="text" name="departmentName" style="width: 100px" readOnly="readonly"> 
+			<input type="hidden" name="departmentUrl" style="width: 100px"> 
+			<input type="button" class="button departmentChooseObj" value="选择"  style="width: 55px"/> 
+		岗位名：
+			<input type="text" name="postName" style="width: 100px"> 
+			<input type="hidden" name="postId" style="width: 100px"> 
+			<input type="button" class="button postChooseObj" value="选择"  style="width: 55px"/> 
+		离职状态：
+			<select name="inviteFlag">
+				<option value="" selected="selected">未选择</option>
+				<option value="2" >离职无手续</option>
+				<option value="3">离职有手续</option>
+			</select>
+		离职类别：
+			<select name="dimissionFlag">
+				<option value="" selected="selected">未选择</option>
+				<option value="01">开除</option>
+				<option value="02">急辞</option>
+				<option value="03">辞职</option>
+				<option value="04">辞退</option>
+			</select>
+			<input type="button" class="selectUserInfo" value="查询"> 
+			<input type="button" class="clean-query" value="清空">
+	</div>
+	<div>
+		<table class="dimissiondg"></table>
+	</div>
+</div>

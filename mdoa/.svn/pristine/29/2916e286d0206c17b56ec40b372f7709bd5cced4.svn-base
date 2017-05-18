@@ -1,0 +1,38 @@
+<!-- 物品动态报表 -->
+<div id="goodsVariationForm">
+	<input class="goodsTypeUrl" type="hidden" style="display:none;">
+	<div class="treearea">
+		<h3>选择物品类别</h3>
+		<ul id="goodsVariationFormtg" data-options="region:'center',border: true"  
+         class="easyui-tree">  
+     	</ul>
+	</div>
+	<div class="listForm">
+		<div class="toolbar" >
+			
+		</div>
+		<div class="queryForm">
+			物品名称：<input type="text" name="goodsName"/>
+			物品规格：<input type="text" name="goodsSize"/>
+			结算时间：<input  class="jqdate" name="balanceStartTime" onblur="testDate(this)" onclick="testShow(this);">
+		~ <input  class="jqdate" name="balanceEndTime" onblur="testDate(this)" onclick="testShow(this);">
+			<input type="button" class="query button" value="查询"/>
+			<input type="button" class="clean-query button" value="清空"/>
+		</div>
+		<div>
+			<table id="goodsVariationFormdg">
+			</table>
+		</div>
+		<!-- 汇总 -->
+		<div class="sumBar">
+		</div>
+		<input type="button" class="button controlSumBar" value="隐藏"/>
+	</div>
+	<div class="chartArea" style="display: none">
+		<div class="toolbar" >
+			<input type="button" class="button goback" value="返回" />
+		</div>
+		<div id="goodsVariation" style="margin:0 auto;width:80%;height:80%;"></div>
+	</div>
+
+</div>

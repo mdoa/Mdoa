@@ -1,0 +1,121 @@
+<div id="invitelist" title="我参与的审批流程">
+<div style="display: block" class="list">
+ <div class="maintop"></div>
+	<div class="invitetop">
+		请输入查询条件：
+		招聘计划名：<input type="text" class="planName"> 
+		<!-- 申请人：<input type="text" class="applyUserName"> 
+		创建人：<input type="text" class="createUserName">
+		修改人：<input type="text" class="updateUserName">  -->
+		招聘状态:<select class="inviteStatus">
+				<option></option>
+				<option>审批中</option>
+				<option>撤回</option>
+				<option>招聘中</option>
+				<option>驳回</option>
+				</select>
+	    <!-- 招聘状态：<input type="text" class="inviteStatus"> --> 
+	         审批状态:<select class="examineStatus">
+	         	<option></option>
+	         	<option>待审</option>
+	         	<option>撤回</option>
+	         	<option>通过</option>
+	         	<option>驳回</option>
+	         </select>
+		<!-- 审批状态:<input type="text" class="examineStatus">  -->
+		<input type="button" value="查询" class="query">
+		<input type="button" value="清空">
+	</div>
+	<div>
+		<table id="invitelistdg"></table>
+	</div>
+</div>
+
+<div class="flow" style="display:none">
+		<div class="flowbar">
+			<input type="button" value="返回" class="back" /> 
+			<input type="button" value="驳回" class="reject" /> 
+			<input type="button" value="备案" class="reference" /> 
+			<input type="button" value="通过" class="past" /> 
+			
+		</div>
+		 <div class="flowplan">
+		
+			<p class="jiachu">招聘名：</p>
+			<p><input type="text" class="planName" value="" readOnly="true"/></p>
+			
+			<p class="jiachu">发起人：</p>
+			<p><input type="text" class="createUserName" value="" readOnly="true"/></p>
+			
+			<p class="jiachu">发起时间：</p>
+			<p><input type="text" class="createTimeStr" value="" readOnly="true"/></p>
+			
+			<p class="jiachu">计划人数：</p>
+			<p><input type="text" class="planCount" value="" readOnly="true"/></p>
+			
+			<!-- <p class="jiachu">已招聘人数：</p>
+			<p><input type="text" class="reallyCount" value="" readOnly="true"/></p> -->
+			
+			<p class="jiachu">计划状态：</p>
+			<p><input type="text" class="inviteStatus" value="" readOnly="true"/></p>
+			
+			<p class="jiachu">招聘描述：</p>
+			<div class="applyDescribe text"></div>
+			
+			<p class="jiachu">招聘原因：</p>
+			<div class="applyDescribe reason"></div>
+		</div>
+		<div class="showView">
+		</div>
+		<!-- 审批驳回意见栏 -->
+		<div class="popup rejectWindow" style="width:332px;height:212px;">
+			<h3>
+				<span>审批驳回信息框</span>
+			</h3>
+			<span class="turnoff"></span>
+			<div class="popuparea">
+				<textarea name="examineIdea"></textarea>
+			</div>
+			<div class="btnarea" style="text-align: center">
+				<input type="button" class="button save" value="保存"/>
+				<input type="button" class="button cannel" value="取消" style="margin-left: 20px;"/>
+			</div>
+		</div>
+		
+		<!-- 提交备案意见栏 -->
+		<div class="popup referenceWindow" style="width:332px;height:212px;">
+			<h3>
+				<span>审批备案信息框</span>
+			</h3>
+			<span class="turnoff"></span>
+			<div class="popuparea referencearea">
+				<textarea  name="examineIdea"></textarea>
+			</div>
+			<div class="btnarea" style="text-align: center">
+				<input type="button" class="button save" value="保存"/>
+				<input type="button" class="button cannel" value="取消" style="margin-left: 20px;"/>
+			</div>
+		</div>
+		
+		<!-- 审批通过提交下级意见栏 -->
+		<div class="popup pastWindow" style="width:332px;height:246px;">
+			<h3>
+				<span>审批通过信息框</span>
+			</h3>
+			<span class="turnoff"></span>
+			<div class="pastarea popuparea">
+				<textarea name="examineIdea"></textarea>
+				<div class="nextExamine">
+				下一级审批人：
+				<input type="text" name="nextExamineUserName" readonly="readonly"/>
+				<input type="button" class="button chooseUser" value="选择"  style="width: 55px"/>
+				<input style="display: none" name="nextExamineUser"/>
+			</div>
+			</div>
+			<div class="btnarea" style="text-align: center">
+				<input type="button" class="button save" value="保存"/>
+				<input type="button" class="button cannel" value="取消" style="margin-left: 20px;"/>
+			</div>
+		</div>
+	</div>
+</div>

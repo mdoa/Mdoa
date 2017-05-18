@@ -1,0 +1,515 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mdoa.personnel.dao.TrainDao">
+<!-- 获取UUID -->
+	<select id="getuuid" resultType="java.lang.String">
+		SELECT uuid() AS uuid
+	</select>
+<!-- 发起培训申请，添加一张培训计划表和一张培训流程表 以及一张培训对象表-->
+<insert id="startTrainApply" parameterType="com.mdoa.personnel.bo.TrainApplyForm">
+	INSERT INTO personnel_train(
+		train_id,
+		train_name,
+		train_reason,
+		start_time,
+		end_time,
+		train_detail,
+		apply_state,
+		obj_type_flag,
+		create_time,
+		create_user_id,
+		create_user_name,
+		alive_flag
+	)
+	VALUE(
+		#{trainId},
+		#{trainName},
+		#{trainReason},
+		#{startTime},
+		#{endTime},
+		#{trainDetail},
+		'1',
+		#{objTypeFlag},
+		NOW(),
+		#{createUserId},
+		#{createUserName},
+		'1'
+	)
+</insert>
+<insert id="startTrainApplyStream" parameterType="com.mdoa.personnel.bo.TrainApplyForm">
+	INSERT INTO personnel_train_stream(
+		train_stream_id,
+		train_id,
+		examine_user_id,
+		examine_user_name,
+		examine_idea,
+		examine_status,
+		create_time,
+		stream_type,
+		alive_flag
+	)
+	VALUE(
+		UUID(),
+		#{trainId},
+		#{examineUserId},
+		#{examineUserName},
+		#{examineIdea},
+		'1',
+		NOW(),
+		'1',
+		'1'
+	)
+</insert>
+
+
+<resultMap id="trainAppleMap" type="com.mdoa.personnel.bo.TrainApplyForm">
+	<id column="trainId" property="trainId" javaType="java.lang.String"/>
+	<result column="trainName" property="trainName" javaType="java.lang.String"/>
+	<result column="trainReason" property="trainReason" javaType="java.lang.String"/>
+	<result column="startTime" property="startTime" javaType="java.util.Date"/>
+	<result column="endTime" property="endTime" javaType="java.util.Date"/>
+	<result column="trainNote" property="trainNote" javaType="java.lang.String"/>
+	<result column="trainDetail" property="trainDetail" javaType="java.lang.String"/>
+	<result column="recordUserId" property="recordUserId" javaType="java.lang.String"/>
+	<result column="recordTime" property="recordTime" javaType="java.util.Date"/>
+	<result column="applyState" property="applyState" javaType="java.lang.String"/>
+	<result column="createTime" property="createTime" javaType="java.util.Date"/>
+	<result column="createUserId" property="createUserId" javaType="java.lang.String"/>
+	<result column="createUserName" property="createUserName" javaType="java.lang.String"/>
+	<result column="updateTime" property="updateTime" javaType="java.util.Date"/>
+	<result column="updateUserId" property="updateUserId" javaType="java.lang.String"/>
+	<result column="updateUserName" property="updateUserName" javaType="java.lang.String"/>
+	<result column="aliveFlag" property="aliveFlag" javaType="java.lang.String"/>
+</resultMap>
+
+<resultMap id="TrainObjMap" type="com.mdoa.personnel.model.TrainObj">
+	<id column="trainObjId" property="trainObjId" javaType="java.lang.String"/>
+	<result column="trainId" property="trainId" javaType="java.lang.String"/>
+	<result column="departmentId" property="departmentId" javaType="java.lang.String"/>
+	<result column="departmentName" property="departmentName" javaType="java.lang.String"/>
+	<result column="postId" property="postId" javaType="java.lang.String"/>
+	<result column="postName" property="postName" javaType="java.lang.String"/>
+	<result column="userId" property="userId" javaType="java.lang.String"/>
+	<result column="userName" property="userName" javaType="java.lang.String"/>
+	<result column="objTypeFlag" property="objTypeFlag" javaType="java.lang.String"/>
+</resultMap>
+
+<!-- 查询培训计划表 -->
+<select id="queryTrainApply" parameterType="com.mdoa.personnel.bo.TrainApplyForm" resultMap="trainAppleMap">
+	SELECT
+		train_id AS trainId,
+		train_name AS trainName,
+		train_reason AS trainReason,
+		start_time AS startTime,
+		end_time AS endTime,
+		train_note AS trainNote,
+		train_detail AS trainDetail,
+		record_user_id AS recordUserId,
+		record_time AS recordTime,
+		apply_state AS applyState,
+		obj_type_flag AS objTypeFlag,
+		create_time AS createTime,
+		create_user_id AS createUserId,
+		create_user_name AS createUserName,
+		update_time AS updateTime,
+		update_user_id AS updateUserId,
+		update_user_name AS updateUserName,
+		alive_flag AS aliveFlag
+	FROM personnel_train
+	<where> 
+			alive_flag = '1'
+		<if test="trainId != null and trainId != '' ">
+			and train_id = #{trainId} </if> 
+		<if test="trainName != null and trainName != '' ">
+			and train_name LIKE ('${trainName}') </if> 
+		<if test="createUserName != null and createUserName != '' ">
+			and create_user_name = #{createUserName} </if> 
+	</where>
+</select>
+
+
+
+<!-- 查询培训计划表O -->
+<select id="queryTrainApplyO" parameterType="com.mdoa.personnel.bo.TrainApplyForm" 
+	resultType="com.mdoa.personnel.bo.TrainApplyForm">
+	SELECT
+		train_id AS trainId,
+		train_name AS trainName,
+		train_reason AS trainReason,
+		start_time AS startTime,
+		end_time AS endTime,
+		train_note AS trainNote,
+		train_detail AS trainDetail,
+		record_user_id AS recordUserId,
+		record_time AS recordTime,
+		apply_state AS applyState,
+		create_time AS createTime,
+		create_user_id AS createUserId,
+		create_user_name AS createUserName,
+		update_time AS updateTime,
+		update_user_id AS updateUserId,
+		update_user_name AS updateUserName
+	FROM personnel_train
+	<where> 
+			alive_flag = '1'
+		<if test="trainId != null and trainId != '' ">
+			AND train_id = #{trainId} </if> 
+		<if test="trainName != null and trainName != '' ">
+			AND train_name LIKE ('${trainName}') </if> 
+		<if test="createUserName != null and createUserName != '' ">
+			AND create_user_name = #{createUserName} </if> 
+	</where>
+</select>
+
+<!-- 查询培训流程表 -->
+<select id="queryTrainApplyStream" parameterType="com.mdoa.personnel.bo.TrainApplyForm" resultType="com.mdoa.personnel.bo.TrainApplyForm">
+	SELECT
+		train_stream_id AS trainStreamId,
+		train_id AS trainId,
+		examine_user_id AS examineUserId,
+		examine_user_name AS examineUserName,
+		examine_idea AS examineIdea,
+		examine_status AS examineStatus,
+		next_examine_user AS nextExamineUser,
+		next_examine_user_name AS nextExamineUserName,
+		examine_time AS examineTime,
+		create_time AS createTime,
+		update_time AS updateTime,
+		stream_type AS streamType,
+		alive_flag AS aliveFlag
+	FROM personnel_train_stream
+	<where> 
+			alive_flag = '1'
+		<if test="streamType != null and streamType != ''">
+			and stream_type = #{streamType}
+		</if>
+		<if test="examineUserName != null and examineUserName != '' ">
+			and examine_user_name = #{examineUserName} </if> 
+		<if test="trainStreamId != null and trainStreamId != '' ">
+			and train_stream_id = #{trainStreamId} </if> 
+		<if test="examineUserId != null and examineUserId != '' ">
+			and examine_user_id = #{examineUserId} </if> 
+		<if test="trainId != null and trainId != '' ">
+			and train_id = #{trainId} </if> 
+		</where>
+	ORDER BY create_time
+</select>
+
+<!-- 查询与我相关的培训审批流程 -->
+<select id="queryMyTrainStream" parameterType="com.mdoa.personnel.bo.TrainApplyForm" resultType="com.mdoa.personnel.bo.TrainApplyForm">
+	SELECT
+		b.train_id AS trainId,
+		b.train_name AS trainName,
+		b.train_reason AS trainReason,
+		b.start_time AS startTime,
+		b.end_time AS endTime,
+		b.train_detail AS trainDetail,
+		b.apply_state AS applyState,
+		b.create_time AS createTime,
+		b.create_user_id AS createUserId,
+		b.create_user_name AS createUserName,
+		a.examine_user_id AS examineUserId,
+		a.examine_user_name AS examineUserName,
+		a.examine_status AS examineStatus,
+		a.next_examine_user AS nextExamineUser,
+		a.examine_time AS examineTime,
+		a.stream_type AS streamType
+	FROM
+		personnel_train_stream a
+	INNER JOIN personnel_train b ON (a.train_id = b.train_id)
+	WHERE
+		a.alive_flag = '1'
+		AND	b.alive_flag = '1'
+		AND	a.examine_user_id = #{userId}
+	<if test="trainName != null and trainName !=''">
+		AND b.train_name LIKE (${trainName})
+	</if>
+	<if test="createUserName != null and createUserName !=''">
+		AND b.create_user_name LIKE (${createUserName})
+	</if>
+	<if test="examineStatus != null and examineStatus !=''">
+		AND a.examine_status = #{examineStatus}
+	</if>
+	<if test="applyState != null and applyState != ''" >
+		AND b.apply_state = #{applyState}
+	</if>
+</select>
+
+<!-- 驳回：流程表和申请表中的状态都改为驳回 -->
+<update id="rejectTrainApplyStream" parameterType="com.mdoa.personnel.bo.TrainApplyForm">
+	UPDATE personnel_train_stream
+	SET 
+		examine_user_id = #{examineUserId},
+		examine_user_name = #{examineUserName},
+		examine_idea = #{examineIdea},
+		examine_status = '4',
+		examine_time = NOW(),
+		update_time = NOW()
+	WHERE
+		train_stream_id = #{trainStreamId} 
+</update>
+<update id="rejectTrainApply" parameterType="com.mdoa.personnel.bo.TrainApplyForm">
+	UPDATE personnel_train
+	SET
+		apply_state = '4',
+		update_time = NOW(),
+		update_user_id = #{updateUserId},
+		update_user_name = #{updateUserName}
+	WHERE
+		train_id = #{trainId}
+</update>
+<!-- 通过审批并给下一级，流程表修改为通过，新建一个新的流程（审批人为next...） -->
+<update id="passAndNextUpdateStream" parameterType="com.mdoa.personnel.bo.TrainApplyForm">
+	UPDATE personnel_train_stream
+	SET
+		examine_idea = #{examineIdea},
+		examine_status = '3',
+		<if test="nextExamineUser != null and nextExamineUser != ''">
+			next_examine_user = #{nextExamineUser},
+		</if>
+		<if test="nextExamineUserName != null and nextExamineUserName != ''">
+			next_examine_user_name = #{nextExamineUserName},
+		</if>
+		examine_time = NOW(),
+		update_time = NOW()
+	WHERE
+		train_stream_id = #{trainStreamId}		
+</update>
+<insert id="passAndNextAddStream" parameterType="com.mdoa.personnel.bo.TrainApplyForm">
+	INSERT INTO personnel_train_stream(
+		train_stream_id,
+		train_id,
+		examine_user_id,
+		examine_user_name,
+		examine_status,
+		create_time,
+		stream_type,
+		alive_flag
+	)
+	VALUE(
+		UUID(),
+		#{trainId},
+		#{examineUserId},
+		#{examineUserName},
+		'1',
+		NOW(),
+		'1',
+		'1'
+	)
+</insert>
+<!-- 进入备案流程：创建streamType为2的培训流程表 -->
+<insert id="joinTrainRecordStream" parameterType="com.mdoa.personnel.bo.TrainApplyForm">
+	INSERT INTO personnel_train_stream(
+		train_stream_id,
+		train_id,
+		examine_status,
+		create_time,
+		stream_type,
+		alive_flag
+	)
+	VALUE(
+		UUID(),
+		#{trainId},
+		'1',
+		NOW(),
+		'2',
+		'1'
+	)
+</insert>
+<!-- 人事进行备案:修改培训申请表和修改流程表 -->
+<update id="hrRecordUpdateTrainApply" parameterType="com.mdoa.personnel.bo.TrainApplyForm">
+	UPDATE personnel_train
+	SET
+		record_user_id = #{recordUserId},
+		record_time = NOW(),
+		apply_state = '3',
+		update_time = NOW(),
+		update_user_id = #{updateUserId},
+		update_user_name = #{updateUserName}
+	WHERE
+		train_id = #{trainId}	
+</update>
+<update id="hrRecordUpdateTrainApplyStream" parameterType="com.mdoa.personnel.bo.TrainApplyForm">
+	UPDATE personnel_train_stream
+	SET
+		examine_user_id = #{examineUserId},
+		examine_user_name = #{examineUserName},
+		examine_idea = #{examineIdea},
+		examine_status = '3',
+		examine_time = NOW(),
+		update_time = NOW()
+	WHERE
+		train_stream_id = #{trainStreamId}	
+</update>
+<!-- 人事驳回并让下一级进行审批:更新流程表和新建一个streamType为1的流程表 -->
+<update id="rejectAndNextUpdateTrainStream" parameterType="com.mdoa.personnel.bo.TrainApplyForm">
+	UPDATE personnel_train_stream
+	SET 
+	    examine_user_id = #{examineUserId},
+	    examine_user_name = #{examineUserName},
+		examine_idea = #{examineIdea},
+		examine_status = '4',
+		next_examine_user = #{nextExamineUser},
+		next_examine_user_name = #{nextExamineUserName},
+		examine_time = NOW(),
+		update_time = NOW()
+	WHERE
+		train_stream_id = #{trainStreamId} 
+</update>
+<insert id="rejectAndNextAddTrainStream" parameterType="com.mdoa.personnel.bo.TrainApplyForm">
+	INSERT INTO personnel_train_stream(
+		train_stream_id,
+		train_id,
+		examine_user_id,
+		examine_user_name,
+		examine_status,
+		create_time,
+		stream_type,
+		alive_flag
+	)
+	VALUE(
+		UUID(),
+		#{trainId},
+		#{nextExamineUser},
+		#{nextExamineUserName},
+		'1',
+		NOW(),
+		'1',
+		'1'
+	)
+</insert>
+<!--撤回培训申请,要撤回培训流程和撤回培训申请 -->
+<update id="backTrainApply" parameterType="com.mdoa.personnel.bo.TrainApplyForm">
+	UPDATE personnel_train
+	SET
+		apply_state = '2',
+		update_time = NOW(),
+		update_user_id = #{examineUserId},
+		update_user_name = #{examineUserName}
+	WHERE
+		train_id = #{trainId}		
+</update>
+<update id="backTrainApplyStream" parameterType="com.mdoa.personnel.bo.TrainApplyForm">
+	UPDATE personnel_train_stream
+	SET
+		examine_status = '2',
+		update_time = NOW()
+	WHERE
+		train_id = #{trainId}
+		
+</update>
+<!-- 写培训记录，修改培训申请表中的培训记录 -->
+<update id="wirteTrainRecord" parameterType="com.mdoa.personnel.bo.TrainApplyForm">
+	UPDATE personnel_train
+	SET
+		train_note = #{trainNote},
+		update_time = NOW(),
+		update_user_id = #{updateUserId},
+		update_user_name = #{updateUserName}
+	WHERE
+		train_id = #{trainId}		
+</update>
+
+
+<!-- 查询培训人员信息 -->
+<select id="queryTrainPersonMessage" parameterType="com.mdoa.personnel.bo.TrainApplyForm" resultType="com.mdoa.personnel.bo.TrainApplyForm">
+	SELECT
+		a.train_doc_id AS trainDocId,
+		a.train_name AS trainName,
+		a.train_id AS trainId,
+		a.user_id AS userId,
+		a.start_time AS startTime,
+		a.end_time AS endTime,
+		a.train_describe AS trainDescribe,
+		a.train_company AS trainCompany,
+		a.create_user_id AS createUserId,
+		a.create_time AS createTime,
+		a.update_user_id AS updateUserId,
+		a.update_time AS updateTime,
+		a.join_flag AS joinFlag,
+		b.user_name AS userName,
+		b.post_name AS postName,
+		b.department_name AS departmentName
+	FROM
+		personnel_doc_train a
+	LEFT JOIN user_info b ON (
+		a.user_id = b.user_id
+		AND b.alive_flag = '1'
+		<if test="departmentName != null and departmentName != ''">
+			AND b.department_name LIKE (${departmentName})
+		</if>
+	)
+	WHERE
+		a.alive_flag = '1'
+		<if test="userName != null and userName != ''">
+			AND a.user_name LIKE (${userName})
+		</if>
+		<if test="trainName != null and trainName != ''">
+			AND a.train_name LIKE (${trainName})
+		</if>
+		
+</select>
+
+<!-- 修改培训人员信息 -->
+<update id="updateTrainRecord" parameterType="com.mdoa.personnel.bo.TrainApplyForm">
+	UPDATE personnel_doc_train
+	SET
+		train_company = #{trainCompany},
+		train_describe = #{trainDescribe},
+		update_user_id = #{updateUserId},
+		update_time = NOW(),
+		join_flag = #{joinFlag}
+	WHERE
+		train_doc_id = #{trainDocId}
+
+</update>
+<!-- 删除培训人员信息 -->
+<update id="deleteTrainRecord" parameterType="com.mdoa.personnel.bo.TrainApplyForm">
+	UPDATE personnel_doc_train
+	SET
+		update_user_id = #{updateUserId},
+		update_time = NOW(),
+		alive_flag = '0'
+	WHERE
+		train_doc_id = #{trainDocId}		
+</update>
+
+<select id="queryTrainRecordStream" parameterType="com.mdoa.personnel.bo.TrainApplyForm" resultType="com.mdoa.personnel.bo.TrainApplyForm">
+	SELECT
+		b.train_id AS trainId,
+		b.train_name AS trainName,
+		b.train_reason AS trainReason,
+		b.start_time AS startTime,
+		b.end_time AS endTime,
+		b.train_detail AS trainDetail,
+		b.apply_state AS applyState,
+		b.create_time AS createTime,
+		b.create_user_id AS createUserId,
+		b.create_user_name AS createUserName,
+		a.examine_user_id AS examineUserId,
+		a.examine_user_name AS examineUserName,
+		a.examine_status AS examineStatus,
+		a.next_examine_user AS nextExamineUser,
+		a.examine_time AS examineTime,
+		a.stream_type AS streamType
+	FROM
+		personnel_train_stream a
+	INNER JOIN personnel_train b ON (a.train_id = b.train_id)
+	WHERE
+		a.alive_flag = '1'
+		AND	b.alive_flag = '1'
+		AND a.stream_type = '2'
+		AND a.examine_status = '1'
+</select>
+
+<update id="updateTrainJoinFlag" parameterType="java.util.HashMap">
+	UPDATE
+		personnel_doc_train
+	SET
+		join_flag = #{joinFlag},
+		update_user_id = #{userId},
+		update_time = now()
+	WHERE
+		train_doc_id = #{trainDocId}
+</update>
+</mapper>

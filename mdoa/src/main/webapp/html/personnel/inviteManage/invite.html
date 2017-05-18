@@ -1,0 +1,198 @@
+<div id="invite" title="招聘信息">
+	<div style="display: block" class="list">
+		 <div class="maintop">
+		</div>
+		<div class="invitetop">
+			请输入查询条件：招聘计划名：<input type="text" class="planName"> 
+		          招聘状态:<select class="inviteStatus">
+		          	<option></option>
+		          	<option>审批中</option>
+					<option>撤回</option>
+					<option>招聘中</option>
+					<option>驳回</option>
+					<option>招满</option>
+		          </select>	 
+			 <!-- 招聘状态：<input type="text" class="inviteStatus">  -->
+			<input type="button" value="查询" class="query">
+			<input type="button" value="清空" class="clean">
+		</div>
+		<div>
+			<table id="invitedg"></table>
+		</div>
+	</div>
+	<div  class="popups" style="text-align: left;">
+		<div class="popup saveInvite" style="height: 300px;width: 400px;">
+			<h3>新建招聘信息</h3>
+			<span class="turnoff"></span>
+			<div class="popuparea" style="padding: 10px 36px;">
+				<table style="text-align: right;width: 300px;height: 210px">
+					<tr>
+						<td>招聘计划名:</td>
+						<td><input type="text" style="width:220px;" name="invitePlan" /></td>
+					</tr>
+					<tr>
+						<td>计划人数:</td>
+						<td><input type="text" style="width:220px;" name="planNumber" /></td>
+					</tr>
+					<!-- <tr>
+						<td>已招聘人数:</td>
+						<td><input type="text" style="width:220px;" name="alreadyNumber"/></td>
+					</tr> -->
+					<tr>
+						<td style="padding-bottom:24px;">招聘描述:</td>
+						<td><textarea style="width: 217px" name="condition"/></textarea></td>
+					</tr>
+					<tr>
+						<td style="padding-bottom:24px;">招聘原因:</td>
+						<td><textarea style="width: 217px" name="reason"></textarea></td>
+					</tr>
+					<tr>
+						<td>审批人:</td>
+						<td>
+							<input type="text" style="width:160px;" name="examineUserName" readonly="readonly"/>
+							<input type="button" class="button chooseUser" value="选择"  style="width: 55px"/>
+							<input style="display: none" name="examineUserId"/>
+						</td>
+					</tr>
+				</table>
+			</div>
+			<div class="btnarea" style="text-align: center">
+				<input type="button" class="button confirm" value="确定"/>
+				<input type="button" class="button cannel" value="取消" style="margin-left: 20px;"/>
+			</div>
+		</div>
+		<!-- 查看招聘详情弹窗 -->
+		<div class="popup selectInvitePlan" style="height: 300px;width: 483px;overflow-y:auto;">
+			<h3>查看招聘详情</h3>
+			<span class="turnoff"></span>
+			<div class="popuparea" style="overflow-y: auto;">
+				<table style="text-align: right;width: 300px;height:230px;float: left;padding: 8px 8px 8px 0px;border-right: 1px #a3c8f8 solid;">
+					<tr>
+						<td style="width: 85px">招聘计划名：</td>
+						<td style="width: 200px;"><input type="text" style="width:192px;" name="planName"/></td>
+					</tr>
+					<tr>
+						<td>招聘人数：</td>
+						<td>
+							<input type="text" style="width:192px;" name="planCount"/>
+						</td>
+					</tr>
+					<!-- <tr>
+						<td>已聘人数：</td>
+						<td>
+							<input type="text" style="width:192px;" name="reallyCount"/>
+						</td>
+					</tr> -->
+					<!-- <tr>
+						<td>招聘状态：</td>
+						<td>
+							<input type="text" style="width:192px;" name="inviteStatus"/>
+						</td>
+					</tr>
+					<tr>
+						<td>申请人：</td>
+						<td>
+							<input type="text" style="width:192px;" name="applyUserName"/>
+						</td>
+					</tr>
+					<tr>
+						<td>申请时间：</td>
+						<td>
+							<input style="width:194px;" name="applyTimeStr" class="jqdate date_picker applyTime" type="text" 
+								readonly="readonly"/>
+						</td>
+					</tr>
+					<tr>
+						<td>创建人：</td>
+						<td>
+							<input type="text" style="width:192px;" name="createUserName"/>
+						</td>
+					</tr>
+					<tr>
+						<td>创建时间：</td>
+						<td>
+							<input style="width:194px;" name="createTimeStr" class="jqdate date_picker createTime" type="text" 
+								readonly="readonly"/>
+						</td>
+					</tr>
+					<tr>
+						<td>修改人：</td>
+						<td>
+							<input type="text" style="width:192px;" name="updateUserName"/>
+						</td>
+					</tr>
+					<tr>
+						<td>修改时间：</td>
+						<td>
+							<input style="width:194px;" name="updateTimeStr" class="jqdate date_picker updateTime" type="text" 
+								readonly="readonly"/>
+						</td>
+					</tr>
+					<tr>
+						<td>备案人：</td>
+						<td>
+							<input type="text" style="width:192px;" name="recordUserName"/>
+						</td>
+					</tr>
+					<tr>
+						<td>备案时间：</td>
+						<td>
+							<input style="width:194px;" name="recordTimeStr" class="jqdate date_picker recordTime" type="text" 
+								readonly="readonly"/>
+						</td>
+					</tr> -->
+					<tr>
+						<td style="padding-bottom: 22px;">招聘描述：</td>
+						<td>
+							<textarea name="text" style="width: 190px;"></textarea>
+						</td>
+					</tr>
+					<tr>
+						<td style="padding-bottom: 22px;">招聘原因：</td>
+						<td>
+							<textarea name="reason" style="width: 190px;"></textarea>
+						</td>
+					</tr>
+					
+				</table>
+			</div>
+			<div class="btnarea" style="text-align: center;">
+				<input type="button" class="button cannel" value="关闭"/>
+			</div>
+		</div>
+		
+	</div>
+	<div class="flow" style="display:none">
+		<div class="flowbar">
+				<input type="button" value="返回" class="back" /> 
+		</div>
+		<div class="flowplan">
+		
+			<p class="jiachu">招聘名：</p>
+			<p><input type="text" class="planName" value="" readOnly="true"/></p>
+			
+			<p class="jiachu">发起人：</p>
+			<p><input type="text" class="createUserName" value="" readOnly="true"/></p>
+			
+			<p class="jiachu">发起时间：</p>
+			<p><input type="text" class="createTimeStr" value="" readOnly="true"/></p>
+			
+			<p class="jiachu">计划人数：</p>
+			<p><input type="text" class="planCount" value="" readOnly="true"/></p>
+			
+			<!-- <p class="jiachu">已招聘人数：</p>
+			<p><input type="text" class="reallyCount" value="" readOnly="true"/></p> -->
+			
+			<p class="jiachu">计划状态：</p>
+			<p><input type="text" class="inviteStatus" value="" readOnly="true"/></p>
+			
+			<p class="jiachu">招聘描述：</p>
+			<div class="applyDescribe text"></div>
+			
+			<p class="jiachu">招聘原因：</p>
+			<div class="applyDescribe reason"></div>
+		</div> 
+		<div class="showView"> </div>
+	</div>
+</div>
+

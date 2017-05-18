@@ -1,0 +1,146 @@
+ <div id="pact" title="合同信息">
+	<div class="maintop">
+	</div>
+	<div  class="invitetop">
+		请输入查询条件：用户名：<input type="text" class="userName">
+		<input type="button" class="query" value="查询" >
+		<input type="button" class="clean" value="清空" >
+	</div> 
+	<div >
+	 <table id="pactdg" ></table>	
+	</div>
+	<!-- 图片批量上传图片 -->
+	<div  class="popups" style="text-align: left;">
+		<div class="popup saveAllPhoto" style="height: 500px;width: 720px;">
+			<h3>上传合同照片</h3>
+			<span class="turnoff"></span>
+			<div class="popuparea" style="padding: 10px 36px;overflow-y:auto;height: 433px">
+				<table class="imgTable" style="text-align: center;width: 620px;height: 210px">
+					<tr>
+						<td colspan="3">
+							<div class="preview"></div>
+						</td>
+					</tr>
+					<tr>
+						<td>第1页:</td>
+						<td class="tdClass" style="text-align:left;">
+							<input size="60" id="uploadImg1" type="file" onchange="preview(this)">
+						</td>
+						
+						<td><span class="deletePhoto" onclick="deletePhoto(this)">删除此图片</span></td>
+						<td><span class="showImage"></span></td>
+					</tr>
+				</table>
+			</div>
+			<div class="btnarea" style="text-align: center">
+				<input type="button" class="button confirm" value="开始上传" id="look"/>
+				<input type="button" class="button cannel" value="关闭" style="margin-left: 20px;"/>
+				<input type="button" class="button addPhoto" value="添加图片" style="margin-left: 20px;"/>
+			</div>
+		</div>
+	</div>	
+	<!-- 点击添加合同信息的时候 -->
+	<div  class="popups" style="text-align: left;">
+		<div class="popup savePact" style="height: 300px;width: 400px;">
+			<h3>新建合同信息</h3>
+			<span class="turnoff"></span>
+			<div class="popuparea" style="padding: 10px 36px;">
+				<table style="text-align: right;width: 300px;height: 210px;">
+					<tr>
+						<td>员工名字：</td>
+						<td>
+						<input type="text" style="width: 140px;text-align:left" name="peopleName" readonly="readonly"/>
+						<input type="button" class="button chooseUser" value="选择"  style="width: 50px"/>
+						<input style="display: none" name="userId"/>
+						</td>
+					</tr>
+					<tr>
+						<td>合同类型：</td>
+						<td  style="text-align: center;">
+							<input type="radio" name="pactType" value="0"/>初聘
+							<input type="radio" name="pactType" value="1"/>续签
+							<input type="radio" name="pactType" value="2"/>返聘
+						</td>
+					</tr>
+					<tr>
+						<td>开始时间：</td>
+						<td>
+							<input style="width:194px;" name="startTime" class="jqdate date_picker beginTime" type="text" 
+								 onblur="testDate(this)" onclick="testShow(this);"/>
+						</td>
+					</tr>
+					<tr>
+						<td>结束时间：</td>
+						<td>
+							<input class="jqdate date_picker endTime" name="endTime" style="width: 194px"
+								type="text" onblur="testDate(this)" onclick="testShow(this);">
+						</td>					</tr>
+					<tr>
+						<td>试用开始时间：</td>
+						<td>
+							<input class="jqdate date_picker endTime" name="tryStarTime" style="width: 194px"
+								type="text" onblur="testDate(this)" onclick="testShow(this);">
+						</td>
+					</tr>
+					<tr>
+						<td>试用结束时间：</td>
+						<td>
+							<input class="jqdate date_picker endTime" name="tryEndTime" style="width: 194px"
+								type="text" onblur="testDate(this)" onclick="testShow(this);">
+						</td>
+					</tr>
+				</table>
+			</div>
+			<div class="btnarea" style="text-align: center">
+				<input type="button" class="button confirm" value="确定" />
+				<input type="button" class="button cannel" value="取消" style="margin-left: 20px;"/>
+			</div>
+		</div>
+	</div>
+	<!-- 修改合同信息 -->
+	<div  class="popups" style="text-align: left;">
+		<div class="popup updatePact" style="height: 300px;width: 400px;">
+			<h3>修改合同信息</h3>
+			<span class="turnoff"></span>
+			<div class="popuparea" style="padding: 10px 36px;">
+				<table style="text-align: right;width: 300px;height: 210px;">
+					<tr>
+						<td>员工名字:</td>
+						<td><input type="text" style="width: 194px" name="peopleName"/>
+					</tr>
+					<tr>
+						<td>开始时间：</td>
+						<td>
+							<input style="width:194px;" name="startTime" class="jqdate date_picker beginTime" type="text" 
+								onblur="testDate(this)" onclick="testShow(this);"/>
+						</td>
+					</tr>
+					<tr>
+						<td>结束时间：</td>
+						<td>
+							<input class="jqdate date_picker endTime" name="endTime" style="width: 194px"
+								type="text" onblur="testDate(this)" onclick="testShow(this);">
+						</td>					</tr>
+					<tr>
+						<td>试用开始时间：</td>
+						<td>
+							<input class="jqdate date_picker endTime" name="tryStarTime" style="width: 194px"
+								type="text" onblur="testDate(this)" onclick="testShow(this);">
+						</td>
+					</tr>
+					<tr>
+						<td>试用结束时间：</td>
+						<td>
+							<input class="jqdate date_picker endTime" name="tryEndTime" style="width: 194px"
+								type="text" onblur="testDate(this)" onclick="testShow(this);">
+						</td>
+					</tr>
+				</table>
+			</div>
+			<div class="btnarea" style="text-align: center">
+				<input type="button" class="button confirm" value="确定" />
+				<input type="button" class="button cannel" value="取消" style="margin-left: 20px;"/>
+			</div>
+		</div>
+	</div>
+</div>

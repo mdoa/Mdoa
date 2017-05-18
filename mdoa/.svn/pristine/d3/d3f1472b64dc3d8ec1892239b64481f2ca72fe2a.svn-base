@@ -1,0 +1,560 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mdoa.personnel.dao.InviteDao">
+<!-- 获取UUID -->
+	<select id="getuuid" resultType="java.lang.String">
+		SELECT uuid() AS uuid
+	</select>
+	
+<!--添加招聘计划  -->
+<insert id="addInvitePlan" parameterType="com.mdoa.personnel.bo.InviteApplyForm" >
+	INSERT INTO personnel_invite (
+		invite_id,
+		plan_name,
+		apply_user_id,
+		text,
+		reason, 
+		plan_count,
+		really_count,
+		apply_user_name,
+		apply_time,
+		create_time,
+		create_user_id,
+		create_user_name,
+		invite_status,
+		alive_flag
+	)
+	VALUE
+		(
+			#{inviteId},
+			#{planName},
+			#{applyUserId},
+			#{text},
+			#{reason},
+			#{planCount},
+			#{reallyCount},
+			#{applyUserName},
+			NOW(),
+			NOW(),
+			#{createUserId},
+			#{createUserName},
+			'1',
+			'1')
+</insert>
+<!--发起的时候添加的招聘计划流  -->
+<insert id="addInvitePlanStream" parameterType="com.mdoa.personnel.bo.InviteApplyForm" >
+	INSERT INTO personnel_invite_stream (
+		invite_stream_id,
+		invite_id,
+		examine_user_id,
+		examine_user_name,
+		examine_status,
+		create_time,
+		stream_type,
+		alive_flag
+	)
+	VALUE(
+		UUID(),
+		#{inviteId}, 
+		#{examineUserId},
+		#{examineUserName},
+		'1',
+		NOW(),
+		'1',
+		'1'
+		)
+</insert>
+
+
+<!-- 查询招聘计划 -->
+<select id="queryInviteApply" parameterType="com.mdoa.personnel.bo.InviteApplyForm"  resultType="com.mdoa.personnel.bo.InviteApplyForm">
+	SELECT
+		invite_id AS inviteId,
+		plan_name AS planName,
+		apply_user_id AS applyUserId,
+		text AS text,
+		reason AS reason,
+		plan_count AS planCount,
+		really_count AS reallyCount,
+		apply_user_name AS applyUserName,
+		apply_time AS applyTime,
+		invite_status AS inviteStatus,
+		record_user_id AS recordUserId,
+		record_user_name AS recordUserName,
+		record_time AS recordTime,
+		create_time AS createTime,
+		create_user_id AS createUserId,
+		create_user_name AS createUserName,
+		update_time AS updateTime,
+		update_user_id AS updateUserId,
+		update_user_name AS updateUserName,
+		alive_flag AS aliveFlag
+	FROM
+		personnel_invite
+	WHERE 
+			alive_flag = '1'
+		<if test="planName != null and planName != '' ">
+			AND plan_name LIKE ('${planName}') </if> 
+		<if test="applyUserName != null and applyUserName != '' ">
+			AND apply_user_name LIKE ('${applyUserName}') </if> 
+		<if test="applyUserId != null and applyUserId != '' ">
+			AND apply_user_id = #{applyUserId} </if> 
+		<if test="inviteId != null and inviteId != '' ">
+			AND invite_id = #{inviteId} </if> 
+		<if test="examineUserId != null and examineUserId != '' ">
+			AND invite_id IN(
+				SELECT
+					invite_id AS inviteId
+				FROM
+					personnel_invite_stream
+				WHERE
+					examine_user_id = #{examineUserId}
+			)
+		</if>		
+		<if test="createUserName != null and createUserName != '' ">
+			AND create_user_name LIKE ('${createUserName}') </if> 
+		<if test="updateUserName != null and updateUserName != '' ">
+			AND update_user_name LIKE ('${updateUserName}') </if>
+		<if test="inviteStatus != null and inviteStatus != '' ">
+			AND invite_status = #{inviteStatus} </if> 
+	ORDER BY
+		create_time DESC
+</select>
+<!-- 查询我参与的审批流程 -->
+ <select id="queryInviteApplyByMy" parameterType="com.mdoa.personnel.bo.InviteApplyForm" resultType="com.mdoa.personnel.bo.InviteApplyForm">
+	SELECT 
+		a.invite_id AS inviteId,
+		a.plan_name AS planName,
+		a.apply_user_id AS applyUserId,
+		a.text AS text,
+		a.reason AS reason,
+		a.plan_count AS planCount,
+		a.really_count AS reallyCount,
+		a.apply_user_name AS applyUserName,
+		a.apply_time AS applyTime,
+		a.invite_status AS inviteStatus,
+		a.record_user_id AS recordUserId,
+		a.record_user_name AS recordUserName,
+		a.record_time AS recordTime,
+		a.create_time AS createTime,
+		a.create_user_id AS createUserId,
+		a.create_user_name AS createUserName,
+		a.update_time AS updateTime,
+		a.update_user_id AS updateUserId,
+		a.update_user_name AS updateUserName,
+		b.examine_status AS examineStatus,
+		b.invite_stream_id AS inviteStreamId
+	FROM 
+		personnel_invite a,
+		personnel_invite_stream b
+	WHERE
+		a.invite_id = b.invite_id
+		AND b.examine_user_id = #{examineUserId}
+		AND a.alive_flag = '1'
+		AND b.alive_flag= '1'
+		<if test="planName != null and planName != '' ">
+			AND a.plan_name LIKE ('${planName}') </if> 
+		<if test="applyUserName != null and applyUserName != '' ">
+			AND a.apply_user_name LIKE ('${applyUserName}') </if>
+		<if test="createUserName != null and createUserName != '' ">
+			AND a.create_user_name LIKE ('${createUserName}') </if>
+		<if test="updateUserName != null and updateUserName != '' ">
+			AND a.update_user_name LIKE ('${updateUserName}') </if>
+		<if test="inviteStatus != null and inviteStatus != '' ">
+			AND a.invite_status = #{inviteStatus} </if>
+		<if test="recordUserName != null and recordUserName != '' ">
+			AND a.record_user_name = #{recordUserName} </if>
+		<if test="examineStatus != null and examineStatus != ''">
+			AND b.examine_status = #{examineStatus} </if> 
+	ORDER BY
+		a.create_time DESC
+</select> 
+<!-- 查询待备案的流程 -->
+<select id="queryInviteRecordApply" parameterType="com.mdoa.personnel.bo.InviteApplyForm" resultType="com.mdoa.personnel.bo.InviteApplyForm">
+	SELECT
+	 	a.invite_id AS inviteId,
+		a.plan_name AS planName,
+		a.apply_user_id AS applyUserId,
+		a.text AS text,
+		a.reason AS reason,
+		a.plan_count AS planCount,
+		a.really_count AS reallyCount,
+		a.apply_user_name AS applyUserName,
+		a.apply_time AS applyTime,
+		a.invite_status AS inviteStatus,
+		a.record_user_id AS recordUserId,
+		a.record_user_name AS recordUserName,
+		a.record_time AS recordTime,
+		a.create_time AS createTime,
+		a.create_user_id AS createUserId,
+		a.create_user_name AS createUserName,
+		a.update_time AS updateTime,
+		a.update_user_id AS updateUserId,
+		a.update_user_name AS updateUserName,
+		b.examine_status AS examineStatus,
+		b.invite_stream_id AS inviteStreamId
+	FROM 
+		personnel_invite a,
+		personnel_invite_stream b
+	WHERE
+		a.invite_id = b.invite_id
+		AND b.stream_type = '2'
+		AND a.alive_flag = '1'
+		AND b.alive_flag= '1'
+		<if test="planName != null and planName != '' ">
+			AND a.plan_name LIKE ('${planName}') </if> 
+		<if test="applyUserName != null and applyUserName != '' ">
+			AND a.apply_user_name LIKE ('${applyUserName}') </if>
+		<if test="createUserName != null and createUserName != '' ">
+			AND a.create_user_name LIKE ('${createUserName}') </if>
+		<if test="updateUserName != null and updateUserName != '' ">
+			AND a.update_user_name LIKE ('${updateUserName}') </if>
+		<if test="inviteStatus != null and inviteStatus != '' ">
+			AND a.invite_status = #{inviteStatus} </if>
+		<if test="recordUserName != null and recordUserName != '' ">
+			AND a.record_user_name = #{recordUserName} </if>
+		<if test="examineStatus != null and examineStatus != '' ">
+			AND b.examine_status = #{examineStatus} </if> 
+	ORDER BY
+		a.create_time DESC
+</select>
+<!-- 查询招聘计划流 -->
+<select id="queryStreamInviteApply" parameterType="com.mdoa.personnel.bo.InviteApplyForm"  resultType="com.mdoa.personnel.bo.InviteApplyForm">
+	SELECT
+		invite_stream_id AS inviteStreamId,
+		invite_id AS inviteId,
+		examine_user_id AS examineUserId,
+		examine_user_name AS examineUserName,
+		examine_idea AS examineIdea,
+		examine_status AS examineStatus,
+		next_examine_user AS nextExamineUser,
+		next_examine_user_name AS nextExamineUserName,
+		examine_time AS examineTime,
+		create_time AS createTime,
+		update_time AS updateTime,
+		stream_type AS streamType,
+		alive_flag AS aliveFlag
+	FROM
+		personnel_invite_stream
+		<where> 
+			alive_flag = '1'
+		<if test="inviteId != null and inviteId != '' ">
+			AND invite_id = #{inviteId} </if>
+		<if test="examineUserName != null and examineUserName != '' ">
+			AND examine_user_name LIKE ('${examineUserName}') </if> 
+		<if test="streamType != null and streamType != '' ">
+			AND stream_type = #{streamType} </if> 
+		<if test="examineUserName != null and examineUserName != '' ">
+			AND examine_user_name LIKE ('${examineUserName}') </if> 
+		<if test="examineUserId != null and examineUserId != '' ">
+			AND examine_user_id = #{examineUserId} </if> 
+		</where>
+		
+</select>
+<!-- 撤回招聘计划 -->
+<update id="backInviteApply" parameterType="com.mdoa.personnel.bo.InviteApplyForm">
+	UPDATE personnel_invite
+	SET
+		invite_status = '2',
+		update_time = NOW(),
+		update_user_id = #{updateUserId},
+		update_user_name = #{updateUserName}
+	WHERE
+		invite_id = #{inviteId}
+</update>
+<!-- 撤回招聘计划流 -->
+<update id="backInviteStreamApply" parameterType="com.mdoa.personnel.bo.InviteApplyForm">
+	UPDATE personnel_invite_stream
+	SET
+		examine_status='2',
+		update_time = NOW()
+	WHERE
+		invite_id = #{inviteId}
+</update>
+<!-- 审批流程通过的情况，并指定下一个审批人 -->
+<update id="examineUpdateStream" parameterType="com.mdoa.personnel.bo.InviteApplyForm">
+	UPDATE personnel_invite_stream
+	SET
+		examine_idea = #{examineIdea},
+		examine_status = '3',
+		next_examine_user = #{nextExamineUser},
+		next_examine_user_name = #{nextExamineUserName},
+		examine_time = NOW(),
+		update_time = NOW(),
+		stream_type = '1'
+	WHERE
+		invite_stream_id = #{inviteStreamId} 
+	
+</update>
+<insert id="examineAddStream" parameterType="com.mdoa.personnel.bo.InviteApplyForm">
+	INSERT INTO personnel_invite_stream(
+		invite_stream_id,
+		invite_id,
+		examine_user_id,
+		examine_user_name,
+		examine_status,
+		create_time,
+		stream_type,
+		alive_flag
+	)
+	VALUE(
+		UUID(),
+		#{inviteId},
+		#{nextExamineUser},
+		#{nextExamineUserName},
+		'1',
+		NOW(),
+		'1',
+		'1'
+	)
+</insert>
+<!-- 审批流程被驳回的情况 -->
+<update id="rejectInviteStream" parameterType="com.mdoa.personnel.bo.InviteApplyForm">
+	UPDATE personnel_invite_stream
+	SET
+		examine_user_id = #{examineUserId},
+		examine_user_name = #{examineUserName},
+		examine_idea = #{examineIdea},
+		examine_status = '4',
+		examine_time = NOW(),
+		update_time = NOW(),
+		alive_flag = '1'
+	WHERE
+		invite_stream_id =#{inviteStreamId} 
+	
+</update>
+<update id="rejectInviteApply" parameterType="com.mdoa.personnel.bo.InviteApplyForm">
+	UPDATE personnel_invite
+	SET
+		invite_status = '4',
+		update_time = NOW(),
+		update_user_id = #{updateUserId},
+		update_user_name = #{updateUserName}
+	WHERE
+		invite_id =#{inviteId} 
+</update>
+<!-- 备案:添加备案计划流-->
+<insert id="recordAddInviteStream" parameterType="com.mdoa.personnel.bo.InviteApplyForm">
+	INSERT INTO personnel_invite_stream(
+		invite_stream_id,
+		invite_id,
+		examine_status,
+		create_time,
+		stream_type,
+		alive_flag
+	)
+	VALUE(
+		UUID(),
+		#{inviteId},
+		'1',
+		NOW(),
+		'2',
+		'1'
+	)
+</insert>
+<!-- 备案后（通过），修改计划表和修改流部分 -->
+<update id="recordUpdateInviteApply" parameterType="com.mdoa.personnel.bo.InviteApplyForm">
+	UPDATE personnel_invite
+	SET
+		invite_status = '3',
+		record_user_id = #{examineUserId},
+		record_user_name = #{examineUserName},
+		record_time = NOW(),
+		update_time = NOW(),
+		update_user_id = #{examineUserId},
+		update_user_name = #{examineUserName}
+	WHERE
+		invite_id = #{inviteId}
+</update>
+<update id="recordUpdateInviteApplyStream" parameterType="com.mdoa.personnel.bo.InviteApplyForm">
+	UPDATE personnel_invite_stream
+	SET
+		examine_user_id = #{examineUserId},
+		examine_user_name = #{examineUserName},
+		examine_idea = #{examineIdea},
+		examine_status = '3',
+		examine_time = NOW(),
+		update_time = NOW()
+	WHERE
+		invite_stream_id = #{inviteStreamId}
+</update>
+
+
+<!-- 删除招聘计划 -->
+<update id="deleteInviteApply" parameterType="com.mdoa.personnel.bo.InviteApplyForm">
+	UPDATE personnel_invite
+	SET
+		alive_flag = '0',
+		update_time = NOW(),
+		update_user_id = #{applyUserId},
+		update_user_name = #{applyUserName}
+	WHERE
+		invite_id = #{inviteId}
+</update>
+<!-- 删除招聘计划流 -->
+<update id="deleteInviteStreamApply" parameterType="com.mdoa.personnel.bo.InviteApplyForm">
+	UPDATE personnel_invite_stream
+	SET
+		alive_flag = '0',
+		update_time = NOW()
+	WHERE
+		invite_id = #{inviteId}
+</update>
+<!-- 人事驳回并添加下一个人 ，修改计划流-->
+<update id="rejectUpdateNextInviteStream" parameterType="com.mdoa.personnel.bo.InviteApplyForm">
+	UPDATE personnel_invite_stream
+	SET
+		examine_user_id = #{examineUserId},
+		examine_user_name = #{examineUserName},
+		examine_idea = #{examineIdea},
+		examine_status = '4',
+		next_examine_user = #{nextExamineUser},
+		next_examine_user_name = #{nextExamineUserName},
+		examine_time = NOW(),
+		update_time = NOW(),
+		alive_flag = '1'
+	WHERE
+	<!--invite_id = #{inviteId} and examine_user_id = #{examineUserId}--> invite_stream_id =#{inviteStreamId} 
+</update>
+<!-- 人事驳回并添加下一个人，添加一张流程表 -->
+<insert id="rejectAddNextInviteStream" parameterType="com.mdoa.personnel.bo.InviteApplyForm">
+	INSERT INTO personnel_invite_stream(
+		invite_stream_id,
+		invite_id,
+		examine_user_id,
+		examine_user_name,
+		examine_status,
+		create_time,
+		stream_type,
+		alive_flag
+	)
+	VALUE(
+		UUID(),
+		#{inviteId},
+		#{nextExamineUser},
+		#{nextExamineUserName},
+		'1',
+		NOW(),
+		'1',
+		'1'
+	)
+</insert>
+
+<!-- 编辑招聘计划 -->
+<update id="updateInvitePlan" parameterType="com.mdoa.personnel.bo.InviteApplyForm">
+	UPDATE personnel_invite
+	SET 
+		plan_name = #{planName},
+		text = #{text},
+		reason = #{reason},
+		plan_count = #{planCount},
+		really_count = #{reallyCount},
+		invite_status = #{inviteStatus},
+		record_user_id = #{recordUserId},
+		record_user_name = #{recordUserName},
+		alive_flag = #{aliveFlag}
+	WHERE
+		invite_id = #{inviteId} AND alive_flag = '1'
+		
+</update>
+<!-- 编辑招聘计划流 -->
+<update id="updateInviteStream" parameterType="com.mdoa.personnel.bo.InviteApplyForm" >
+	UPDATE personnel_invite_stream
+		SET 
+		invite_id = #{inviteId},
+		examine_user_id = #{examineUserId},
+		examine_user_name = #{examineUserName},
+		examine_idea = #{examineIdea},
+		examine_status = #{examineStatus},
+		next_examine_user = #{nextExamineUser},
+		update_time = NOW(),
+		stream_type = #{streamType},
+	WHERE
+		invite_id = #{inviteId} AND alive_flag = '1'
+</update>
+
+<!-- 添加记录表 -->
+<insert id="addInviteRecord" parameterType="com.mdoa.personnel.model.InviteRecord">
+	INSERT INTO personnel_invite_record (
+			invite_record_id,
+			NAME,
+			sex,
+			age,
+			married_flag,
+			phone_num,
+			id_card,
+			education_info,
+			work_info,
+			train_info,
+			address,
+			native_place,
+			education_background,
+			birthday,
+			alive_flag,
+			grade,
+			post_id,
+			post_name
+	)
+	VALUE
+		(
+			UUID(),
+			#{name},
+			#{sex},
+			#{age},
+			#{marriedFlag},
+			#{phoneNum},
+			#{idCard},
+			#{educationInfo},
+			#{workInfo},
+			#{trainInfo},	
+			#{address},
+			#{nativePlace},
+			#{educationBackground},
+			#{birthday},
+			'1',
+			#{grade},
+			#{postId},
+			#{postName})
+</insert>
+<!-- 删除记录表 -->
+<update id="deleteInviteRecord" parameterType="com.mdoa.personnel.model.InviteRecord">
+	UPDATE personnel_invite_record
+		SET alive_flag = '0'
+	WHERE
+		invite_record_id = #{inviteRecordId}
+</update>
+<!-- 批量删除招聘记录表 -->
+<update id="deleteInviteRecordAll" parameterType="com.mdoa.personnel.model.InviteRecord">
+	UPDATE personnel_invite_record
+		SET alive_flag = '0'
+	WHERE
+	invite_record_id in
+	<foreach collection="inviteRecordIds" item="inviteRecordIds" separator="," open="(" close=")">
+		${inviteRecordIds}
+	</foreach>
+</update>
+<!-- 修改记录表 -->
+<update id="updateInviteRecord" parameterType="com.mdoa.personnel.model.InviteRecord">
+	UPDATE personnel_invite_record
+	SET 
+		name = #{name},
+		sex = #{sex},
+		age = #{age},
+		married_flag = #{marriedFlag},
+		phone_num = #{phoneNum},
+		id_card = #{idCard},
+		education_info = #{educationInfo},
+		work_info = #{workInfo},
+		train_info = #{trainInfo},
+		address = #{address},
+		native_place = #{nativePlace},
+		education_background = #{educationBackground},
+		birthday = #{birthday},
+		grade = #{grade},
+		post_id = #{postId},
+		post_name = #{postName}
+	WHERE
+		invite_record_id = #{inviteRecordId} and
+		alive_flag = '1'
+</update> 
+</mapper>

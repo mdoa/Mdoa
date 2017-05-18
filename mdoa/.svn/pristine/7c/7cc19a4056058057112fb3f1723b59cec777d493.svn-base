@@ -1,0 +1,43 @@
+$(function(){
+	var leftCellWidth = $('#checkGroupAllot .checkGroupName').width()-3;
+	var rightCellWidth = $('#checkGroupAllot .checkGroupAllotDetail').width()-3;
+	$('#checkGroupAllot .checkGroupAllotMain #checkGroupNameDg').css('height',$('#loadarea').height()-63+'px');
+	//左侧所有考勤组列表
+	$("#checkGroupNameDg").datagrid({
+		url:'../../attendance/findGroupByCondition.do?getMs='+getMS(),
+		singleSelect:true,
+		method:"post",
+		onLoadSuccess:function(){
+			$('#checkGroupAllot .checkGroupName .datagrid-cell:eq(0)').css({'height':'32px','line-height':'32px','font-size':'14px'});
+			$('#checkGroupAllot .checkGroupAllotDetail #checkGroupAllotDetailDg').parent().css('height',$('#loadarea').height()-63+'px');
+		},
+		onDblClickRow:function(rowIndex, rowData){
+			console.log(rowData)
+			var selectedRow = $('#checkGroupNameDg').datagrid('getSelected');
+			var groupId  = selectedRow.groupId;
+//			$('#checkGroupAllotDetailDg').datagrid({
+//				url:"../../attendance/findClassByCondition.do?getMs="+getMS(),
+//				queryParams:{
+//					groupId:groupId
+//				},
+//				singleSelect:true,
+//				method:"post",
+//				pagination:false,
+//				onLoadSuccess:function(data){
+//					$('#checkGroupAllot .checkGroupAllotDetailDg .datagrid-cell:eq(0)').css({'height':'32px','line-height':'32px','font-size':'14px'});
+//				},
+//				columns:[[
+//				    
+//				]]
+//			});
+			$('#checkGroupAllot .maintop input[name=add]').css('display','inline');
+		},
+		columns:[[
+		     {field:"groupName",title:"考勤组",fitColumns:true,resizable:true,align:"center",sortable:true,width:leftCellWidth},
+		]]
+	});
+	
+	
+	
+	
+})

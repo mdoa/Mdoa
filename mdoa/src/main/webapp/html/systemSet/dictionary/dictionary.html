@@ -1,0 +1,87 @@
+<div id="dictionary" title="数据字典"">
+	
+	<div class="maintop">
+		<input type="button" name="addDictionary" value="添加数据项" style="margin-left:12%;margin-right:8px;;display:none;"/>
+		<input type="button" name="sortDictionary" style="width:120px;display:none" value="确认修改排序">
+	</div>
+	
+	<div class="dictionaryMain">
+		<!-- 左侧数据类别区域 -->
+		<div class="dictionaryType">
+			<table id="dictionaryTypeDg"></table>
+		</div>
+		
+		<!-- 右侧数据键值区域 -->
+		<div class="dictionaryDetail">
+			<table id="dictionaryDetailDg"></table>
+		</div>
+	</div>
+	
+	<!--弹窗区 -->
+	<div class="popups" style="text-align:left;" >
+		<!--编辑数据项内容弹窗 -->
+		<div class="popup editDictionary" style="height: 160px;width: 220px;">
+			<h3>编辑数据项内容</h3>
+			<span class="turnoff"></span>
+			<div class="popuparea" style="height: 100px;">
+				<table style="width:185px;margin-top: 16px;" >
+				
+					<tr>
+						<td>
+							编号:
+						</td>
+						<td>
+							<input name="selectKey" type="hidden">
+							<input name="optionKey" type="text">
+							<input class="hidden" name="id">
+						</td>
+					</tr>
+					<tr style="margin-top: 5px">
+						<td>
+							名称:
+						</td>
+						<td>
+							<input name="optionValue" type="text">
+						</td>
+					</tr>
+				</table>
+			</div>
+			<div class="btnarea">
+				<input type="button" name="ensure" class="button confirm" value="确定">
+				<input type="button" name="cancel" class="button cannel" value="取消">
+			</div>
+		</div>
+		<!-- 添加弹窗 -->
+		<div class="popup addDictionary" style="height: 160px;width: 220px;">
+			<h3>添加数据项内容</h3>
+			<span class="turnoff"></span>
+			<div class="popuparea" style="height: 100px;">
+				<table style="width:185px;margin-top: 16px;" >
+				
+					<tr>
+						<td>
+							编号:
+						</td>
+						<td>
+						    <input name="selectKey" type="hidden">
+							<input name="optionKey" type="text">
+						</td>
+					</tr>
+					<tr style="margin-top: 5px">
+						<td>
+							名称:
+						</td>
+						<td>
+							<input name="optionValue" type="text">
+						</td>
+					</tr>
+				</table>
+			</div>
+			<div class="btnarea">
+				<input type="button" class="button confirm" value="确定">
+				<input type="button" class="button cannel" value="取消">
+			</div>
+		</div>
+	</div>
+			
+</div>

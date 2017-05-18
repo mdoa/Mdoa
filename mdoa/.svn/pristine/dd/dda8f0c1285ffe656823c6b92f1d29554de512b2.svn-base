@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mdoa.framework.dao.LeadDao">
+	<!-- 获取员工上级 -->
+	<select id="getLeader" parameterType="com.mdoa.framework.bo.LeadForm" resultType="com.mdoa.user.model.UserInfo">
+		SELECT
+			b.user_id AS userId,
+			b.user_name AS userName,
+			b.post_id AS postId,
+			b.post_name AS postName,
+			b.department_url AS departmentUrl,
+			b.department_name AS departmentName,
+			a.create_time AS createTime,
+			a.create_user_name AS createUserName,
+			a.update_time AS updateTime,
+			a.update_user_name AS updateUserName,
+			a.lead_user_id AS leadUserId
+		FROM
+			framework_user_lead a
+		LEFT JOIN
+			user_info b
+		ON (a.lead_id = b.user_id)
+		WHERE
+			a.alive_flag = '1'
+			AND b.alive_flag = '1'
+			AND a.user_id = #{userId}
+	</select>
+	
+	<!-- 获取员工的下级  -->
+	<select id="getLower" parameterType="com.mdoa.framework.bo.LeadForm" resultType="com.mdoa.user.model.UserInfo">
+		SELECT
+			b.user_name AS userName,
+			b.user_id AS userId,
+			b.department_url AS departmentUrl,
+			b.department_name AS departmentName,
+			a.create_time AS createTime,
+			a.create_user_name AS createUserName,
+			a.update_time AS updateTime,
+			a.update_user_name AS updateUserName,
+			a.lead_user_id AS leadUserId
+		FROM
+			framework_user_lead a
+		LEFT JOIN
+			user_info b
+		ON(a.user_id = b.user_id)
+		WHERE
+			a.alive_flag = '1'
+			AND b.alive_flag = '1'
+			AND a.lead_id = #{userId}
+	</select>
+	
+	<!-- 为员工添加上级 -->
+	<update id="addLeader" parameterType="com.mdoa.framework.bo.LeadForm">
+		INSERT INTO
+			framework_user_lead
+		(
+			lead_user_id,
+			user_id,
+			user_name,
+			lead_id,
+			lead_name,
+			create_user_id,
+			create_user_name,
+			create_time,
+			alive_flag
+		)VALUES(
+			UUID(),
+			#{userId},
+			#{userName},
+			#{leadId},
+			#{leadName},
+			#{createUserId},
+			#{createUserName},
+			NOW(),
+			'1'
+		)
+	</update>
+	
+	<!-- 为员工添加下级 -->
+	<update id="addLower" parameterType="com.mdoa.framework.bo.LeadForm">
+		INSERT INTO
+			framework_user_lead
+		(
+			lead_user_id,
+			user_id,
+			user_name,
+			lead_id,
+			lead_name,
+			create_user_id,
+			create_user_name,
+			create_time,
+			alive_flag
+		)VALUES
+		<foreach collection="lowers" item="lower" separator=",">
+			(
+				UUID(),
+				#{lower.userId},
+				#{lower.userName},
+				#{leadId},
+				#{leadName},				
+				#{createUserId},
+				#{createUserName},
+				NOW(),
+				'1'
+			)
+		</foreach>
+	</update>
+	
+	<!-- 删除员工上级 -->
+	<update id="deleteLeader" parameterType="com.mdoa.framework.bo.LeadForm">
+		UPDATE
+			framework_user_lead
+		SET
+			alive_flag = '0',
+			update_user_id = #{updateUserId},
+			update_user_name = #{updateUserName}
+		WHERE
+			lead_id = #{leadId}
+			AND user_id = #{userId}
+	</update>
+	
+	<!-- 删除员工下级 -->
+	<update id="deleteLower" parameterType="com.mdoa.framework.bo.LeadForm">
+		UPDATE
+			framework_user_lead
+		SET
+			alive_flag = '0',
+			update_user_id = #{updateUserId},
+			update_user_name = #{updateUserName}
+		WHERE
+			user_id in (${lowerIds})
+			AND lead_id = #{leadId}
+	</update>
+	
+	<!-- 查询员工的上下级信息 -->
+	<select id="getLeadLowerList" parameterType="java.lang.String" resultType="com.mdoa.framework.model.Lead">
+		SELECT
+			a.user_id AS userId,
+			a.user_name AS userName,
+			a.lead_id AS leadId,
+			a.lead_name AS leadName,
+			b.department_url AS userDepartmentUrl,
+			b.department_name AS userDepartmentName,
+			c.department_url AS leadDepartmentUrl,
+			c.department_name AS leadDepartmentName
+		FROM
+			framework_user_lead a
+		LEFT JOIN
+			user_info b
+		ON (a.user_id = b.user_id)
+		LEFT JOIN
+			user_info c
+		ON (a.lead_id = c.user_id)
+		WHERE
+			a.alive_flag = '1'
+			<if test="leadName != null and leadName != ''">
+				AND a.lead_name LIKE (${leadName})
+			</if>
+			<if test="userName != null and userName != ''">
+				AND a.user_name LIKE (${userName})
+			</if>
+	</select>
+	
+	<update id="updateUserLead" parameterType="com.mdoa.framework.bo.LeadForm">
+		UPDATE
+			framework_user_lead
+		SET
+			lead_id = #{leadId},
+			lead_name = #{leadName},
+			update_user_id = #{updateUserId},
+			update_user_name = #{updateUserName}
+		WHERE
+			user_id = #{userId}
+	</update>
+</mapper>

@@ -1,0 +1,359 @@
+$(function(){	
+	$('#checkGroupManage #checkGroupManagedg').css('height',$('#loadarea').height()-64 + 'px');
+	
+	//加载时间控件
+	timeWidget('checkGroupManage');
+	
+	//产生数据网格
+	$('#checkGroupManagedg').datagrid({
+		url:'../../attendance/findGroupByCondition.do?getMs='+getMS(),
+		rownumbers:"true",
+		singleSelect:true,
+		toolbar:"#checkGroupManage .invitetop",
+		method:"post",
+		columns:[[			
+			{
+				field:'groupName',
+				title:'组名',
+				width:100,
+				align:"center"
+			},
+			{
+				field:'defaultOnTime',
+				title:'默认上班时间',
+				width:100,
+				align:"center"
+			},
+			{
+				field:'defaultOffTime',
+				title:'默认下班时间',
+				width:100,
+				align:"center"
+			},
+			{
+				field:"_opera",
+				title:"操作",
+				width:60,
+				align:"center",
+				formatter:function(value,row,index){
+				   var opera = '';
+				   var groupId = "'"+ row.groupId +"'";
+				   var groupName = "'"+ row.groupName +"'";
+				   var defaultOnTime = "'"+ row.defaultOnTime +"'";
+				   var defaultOffTime = "'"+ row.defaultOffTime +"'";
+				   opera += '<div class="imgBox">'
+					   opera += '<span style="float:left;" class="small-button edit" title="修改" onclick="checkGroupManageUpdate('+ groupId +','+ groupName +','+ defaultOnTime +','+ defaultOffTime +')"></span>'
+					   opera += '<span style="float:left;" class="small-button delete" title="删除" onclick="checkGroupManageDel('+ groupId +','+ groupName +')"></span>';
+				   opera += '</div>'
+				   return opera;
+				}
+			}
+	    ]]
+	});
+	//查询
+	$('#checkGroupManage .invitetop .selectGroup').click(function(){
+		$('#checkGroupManagedg').datagrid({
+			queryParams: {
+				groupName: function(){
+					return $('#checkGroupManage .invitetop input[name=groupName]').val();
+				}
+			}
+		});
+	});
+	
+	//点击添加事件
+	$('#checkGroupManage .maintop .addCheckGroup').click(function(){
+		$('#checkGroupManage .popups .addGroup').show();
+	})
+	$('#checkGroupManage .popups .addGroup .comfirm').click(function(){
+		var groupName = $('#checkGroupManage .popups .addGroup input[name=groupName]').val();
+		var defaultOnTime = $('#checkGroupManage .popups .addGroup input[name=defaultOnTime]').val();
+		var defaultOffTime = $('#checkGroupManage .popups .addGroup input[name=defaultOffTime]').val();
+		if(groupName == null || groupName == ''){
+			windowControl("考勤组名称不能为空！")
+			return ;
+		}
+		else if(defaultOnTime == null || defaultOnTime == ''){
+			windowControl("上班时间不能为空！")
+			return ;
+		}else if(defaultOffTime ==null || defaultOffTime == ''){
+			windowControl("下班时间不能为空！")
+			return ;
+		}
+		var list = {
+			groupName:groupName,
+			defaultOnTime:defaultOnTime,
+			defaultOffTime:defaultOffTime
+		};
+		$('#checkGroupManage .popups .addGroup').hide();
+		$('#checkGroupManage .popups .addGroup .popuparea input').val(null);
+		checkGroupManageAdd(list);
+	})
+	
+})
+//添加考勤组
+function checkGroupManageAdd(obj){
+	$.ajax({
+		url:'../../attendance/insertGroup.do?getMs='+getMS(),
+		data:obj,
+		type:'post',
+		success:function(data){
+			if(data == 200){
+				windowControl("添加成功！")
+				$('#checkGroupManagedg').datagrid("reload");
+			}else{
+				windowControl("添加失败！")
+			}	
+		},
+		error:function(){
+			windowControl("服务器未响应");
+		}
+	})
+}
+//删除考勤组
+function checkGroupManageDel(groupId,groupName){
+	ui.confirm('确定将 '+groupName+' 删除吗？',function(z){
+		if(z){
+			$.ajax({
+				url:'../../attendance/deleteGroup.do?getMs='+getMS(),
+				data:{
+					groupId:groupId,
+				},
+				type:'post',
+				success:function(data){
+					if(data == 200){
+						windowControl("删除成功！")
+						$('#checkGroupManagedg').datagrid("reload");
+					}else{
+						windowControl("删除失败！")
+					}					
+				},
+				error:function(){
+					windowControl("服务器未响应");
+				}
+			})
+		}		
+	},false)
+}
+//修改考勤组
+function checkGroupManageUpdate(groupId,groupName,defaultOnTime,defaultOffTime){
+	$('#checkGroupManage .popups .updateGroup').show();
+	$('#checkGroupManage .popups .updateGroup input[name=groupName]').val(groupName);
+	$('#checkGroupManage .popups .updateGroup input[name=defaultOnTime]').val(defaultOnTime);
+	$('#checkGroupManage .popups .updateGroup input[name=defaultOffTime]').val(defaultOffTime);
+	$('#checkGroupManage .popups .updateGroup .update').unbind();
+	$('#checkGroupManage .popups .updateGroup .update').click(function(){
+		var groupName = $('#checkGroupManage .popups .updateGroup input[name=groupName]').val();
+		var defaultOnTime = $('#checkGroupManage .popups .updateGroup input[name=defaultOnTime]').val();
+		var defaultOffTime = $('#checkGroupManage .popups .updateGroup input[name=defaultOffTime]').val();
+		if(groupName == null || groupName == ''){
+			windowControl("考勤组名称不能为空！")
+			return ;
+		}
+		else if(defaultOnTime == null || defaultOnTime == ''){
+			windowControl("上班时间不能为空！")
+			return ;
+		}else if(defaultOffTime ==null || defaultOffTime == ''){
+			windowControl("下班时间不能为空！")
+			return ;
+		}
+		var list = {
+			groupId:groupId,
+			groupName:groupName,
+			defaultOnTime:defaultOnTime,
+			defaultOffTime:defaultOffTime
+		};
+		$('#checkGroupManage .popups .updateGroup').hide();
+		$('#checkGroupManage .popups .updateGroup .popuparea input').val(null);
+		$.ajax({
+			url:'../../attendance/updateGroupByCondition.do?getMs='+getMS(),
+			data:list,
+			type:'post',
+			success:function(data){
+				if(data == 200){
+					windowControl("修改成功！")
+					$('#checkGroupManagedg').datagrid("reload");
+				}else{
+					windowControl("修改失败！")
+				}	
+			},
+			error:function(){
+				windowControl("服务器未响应");
+			}
+		})
+	})
+
+}
+
+
+//时间控件
+function timeWidget(obj){
+	/******************时间控件*************************/
+	/*
+	1.声明dateObj变量，并赋初值为当前系统时间
+	2.给div中渲染html元素
+	3.通过dateObj获取当月1号的信息，并以此遍历出表格中所有日期
+	4.绑定事件
+	*/
+    /*
+    * 用于记录日期，显示的时候，根据dateObj中的日期的年月显示
+    */
+    var dateObj = (function(){
+        var _date = new Date();    // 默认为当前系统时间
+        return {
+          getDate : function(){
+            return _date;
+          },
+          setDate : function(date) {
+            _date = date;
+          }
+        };
+    })();
+ 
+    // 初始化
+    renderHtml();
+    showCalendarData();
+    
+    // 绑定事件
+    //点击上下月
+    $("#"+ obj +" .calendarTop .prevMonth").click(function(){
+    	var date = dateObj.getDate();
+        dateObj.setDate(new Date(date.getFullYear(), date.getMonth() - 1, 1));
+        showCalendarData();
+    })
+    $("#"+ obj +" .calendarTop .nextMonth").click(function(){
+    	 var date = dateObj.getDate();
+         dateObj.setDate(new Date(date.getFullYear(), date.getMonth() + 1, 1));
+         showCalendarData();
+    })
+    //给每个td绑定点击事件
+    $("#"+ obj +" .calendarTable td").click(function(){
+    	alert($(this).attr('data'));
+    });
+    
+    //年月输入框变化事件
+    $("#"+ obj +" .calendarTop .yearsSelect").change(function(){
+    	var date = dateObj.getDate();
+        dateObj.setDate(new Date($(this).val(), date.getMonth(), 1));
+        showCalendarData();
+    });
+    $("#"+ obj +" .calendarTop .monthsSelect").change(function(){
+    	var date = dateObj.getDate();
+        dateObj.setDate(new Date(date.getFullYear(), $(this).val(), 1));
+        showCalendarData();
+    });
+ 
+    /**
+    * 渲染html结构
+    */
+    function renderHtml() {
+        var titleBox = "<div class='calendarTitle'>";
+        var bodyBox = "<div class='calendarBody'>";
+
+        // 设置顶部盒子中的html
+        var yearsOptions = '';
+        var monthOptions = '';
+        //生成年份
+        for (var i = 2000; i < 2051; i++) {
+          yearsOptions += '<option value="'+ i +'">'+ i +'年</option>'
+        };
+        //生成月份
+        for (var i = 0; i < 12; i++) {
+          monthOptions += '<option value="'+ i +'">'+ (i+1) +'月</option>'
+        };
+        titleBox += "<div class='calendarTop'>"+
+			            "<select class='yearsSelect'>"+ yearsOptions +"</select>"+
+			            "<span class='prevMonth'>&lt;</span>" +
+			            "<select class='monthsSelect'>"+ monthOptions +"</select>"+
+			            "<span class='nextMonth'>&gt;</span>"+
+			          "</div></div>";       
+          
+        $("#"+ obj +" .Calendar").append(titleBox);    // 添加到calendar div中
+
+        // 设置表格区的html结构
+        var _headHtml = "<tr>" + 
+                  "<th>日</th>" +
+                  "<th>一</th>" +
+                  "<th>二</th>" +
+                  "<th>三</th>" +
+                  "<th>四</th>" +
+                  "<th>五</th>" +
+                  "<th>六</th>" +
+                "</tr>";
+        var _bodyHtml = "";
+
+        // 一个月最多31天，所以一个月最多占6行表格
+        for(var i = 0; i < 6; i++) {  
+          _bodyHtml += "<tr>" +
+                  "<td></td>" +
+                  "<td></td>" +
+                  "<td></td>" +
+                  "<td></td>" +
+                  "<td></td>" +
+                  "<td></td>" +
+                  "<td></td>" +
+                "</tr>";
+        }
+        bodyBox += "<table class='calendarTable'>" +
+                  _headHtml + _bodyHtml +
+                  "</table></div>";
+        // 添加到calendar div中
+        $("#"+ obj +" .Calendar").append(bodyBox);
+    }
+ 
+    /**
+    * 表格中显示数据，并设置类名
+    */
+    function showCalendarData() {
+        var _year = dateObj.getDate().getFullYear();
+        var _month = dateObj.getDate().getMonth() + 1;
+        var _dateStr = getDateStr(dateObj.getDate());
+
+        // 设置顶部标题栏中的 年、月信息
+        //年
+        var yearsSelect = $("#"+ obj +" .yearsSelect").find('option');
+        var monthsSelect = $("#"+ obj +" .monthsSelect").find('option');
+        for(var data in yearsSelect){
+          if(_dateStr.substr(0,4) == yearsSelect[data].value){
+            yearsSelect[data].selected = true;
+          }
+        }
+        //月
+        for(var data in monthsSelect){
+          if(Number(_dateStr.substr(4,2)) == Number(monthsSelect[data].value)+1){
+            monthsSelect[data].selected = true;
+          }
+        }
+
+        // 设置表格中的日期数据
+        var _table = $("#"+ obj +" .calendarTable");
+        var _tds = _table.find("td");
+        var _firstDay = new Date(_year, _month - 1, 1);  // 当前月第一天
+        for(var i = 0; i < _tds.length; i++) {
+          var _thisDay = new Date(_year, _month - 1, i + 1 - _firstDay.getDay());
+          var _thisDayStr = getDateStr(_thisDay);
+          _tds[i].innerText = _thisDay.getDate();
+          _tds[i].setAttribute('data', _thisDayStr);
+          if(_thisDayStr == getDateStr(new Date())) {    // 当前天
+            _tds[i].className = 'currentDay';
+          }else if(_thisDayStr.substr(0, 6) == getDateStr(_firstDay).substr(0, 6)) {
+            _tds[i].className = 'currentMonth';  // 当前月
+          }else {    // 其他月
+            _tds[i].className = 'otherMonth';
+          }
+        }
+    }
+
+    /**
+    * 日期转化为字符串， 4位年+2位月+2位日
+    */
+    function getDateStr(date) {
+        var _year = date.getFullYear();
+        var _month = date.getMonth() + 1;    // 月从0开始计数
+        var _d = date.getDate();
+         
+        _month = (_month > 9) ? ("" + _month) : ("0" + _month);
+        _d = (_d > 9) ? ("" + _d) : ("0" + _d);
+        return _year + _month + _d;
+    }
+}

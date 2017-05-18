@@ -1,0 +1,86 @@
+<div id="userTransfer" title="基本信息">
+	<div class="main">
+		<div class="maintop">
+		</div>
+		<div class="invitetop">
+			请输入查询条件：
+			姓名：
+				<input type="text" name="peopleName" style="width: 100px">
+			原岗位：
+				<input type="text" name="oldPostName" style="width: 100px">
+				<input type="button" class="button oldPostChooseObj" value="选择"  style="width: 55px"/>			
+			原部门：
+				<input type="text" name="oldDepartmentName" style="width: 100px">
+				<input type="button" class="button oldDepartmentChooseObj" value="选择"  style="width: 55px"/> 
+			新岗位：
+				<input type="text" name="newPostName" style="width: 100px">
+				<input type="button" class="button newPostChooseObj" value="选择"  style="width: 55px"/>
+			新部门：
+				<input type="text" name="newDepartmentName" style="width: 100px">
+				<input type="button" class="button newDepartmentChooseObj" value="选择"  style="width: 55px"/>
+			调动时间：
+				<input class="jqdate" type="text" style="width: 212px" name="startTimeStr" onblur="testDate(this)" onclick="testShow(this);">
+			~ 
+				<input class="jqdate" type="text" style="width: 212px" name="endTimeStr" onblur="testDate(this)" onclick="testShow(this);">
+			<a class="easyui-linkbutton query" iconCls="icon-search" style="line-height:16px;">查询</a>
+			<input type="button" class="button clean-all" value="清空"/> 
+		</div>
+		<div>
+			<table class="userTransferDg" style="height: 800px;"></table>
+		</div>
+	</div>
+	<div>
+		<div class="popup updateUserTransfer" style="height: 250px;width: 325px;">
+			<h3>员工调动</h3>
+			<span class="turnoff"></span>
+			<table style="width:298px;height: 150px;padding: 8px;text-align: right;" class="popuparea">
+				<tr>
+					<td>原岗位:</td>
+					<td>
+						<input name="userTransferInfoId" type="hidden"/>
+						<input name="userId" type="hidden"/>
+						<input name="oldPostName" style="width: 212px" readonly="readonly"/>
+						<input name="oldPostId" type="hidden"/>
+					</td>
+				</tr>
+				<tr>
+					<td>原部门:</td>
+					<td>
+						<input name="oldDepartmentName" style="width: 212px" readonly="readonly"/>
+						<input name="oldDepartmentUrl" type="hidden"/>
+					</td>
+				</tr>
+				<tr>
+					<td>新岗位:</td>
+					<td>
+						<input name="newPostName" readonly="readonly"/>
+						<input name="newPostId" type="hidden"/>
+						<input type="button" class="button choosePost" value="选择" style="width: 50px;margin-left: 10px">
+					</td>
+				</tr>
+				<tr>
+					<td>新部门:</td>
+					<td>
+						<input name="newDepartmentName" readonly="readonly"/>
+						<input name="newDepartmentUrl" type="hidden"/>
+						<input type="button" class="button chooseDept" value="选择" style="width: 50px;margin-left: 10px">
+					</td>
+				</tr>
+				<tr>
+					<td>调动时间:</td>
+					<td><input  class="jqdate" type="text" style="width: 212px" name="transferTime" onblur="testDate(this)" onclick="testShow(this);"></td>
+				</tr>
+				<tr>
+					<td>备注:</td>
+					<td>
+						<textarea style="width: 208px;heitght:50px;" name="remark"></textarea>
+					</td>
+				</tr>
+			</table>
+			<div class="btnarea" style="text-align: center">
+				<input type="button" class="button comfirm" value="确定">
+				<input type="button" class="button cannel" value="取消">
+			</div>
+		</div>
+	</div>
+</div>

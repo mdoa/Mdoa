@@ -1,0 +1,54 @@
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<link rel="SHORTCUT ICON" href="../../img/index/Mender.ico"/>
+<link rel="stylesheet" type="text/css" href="../../css/user/login.css">
+<script type="text/javascript" src="../../js/user/login.js"></script>
+<script type="text/javascript" src="../../js/jquery/jquery-1.8.0.min.js"></script>
+</head>
+<body id="body">
+	<img style="position:absolute;left:0px;top:0px;width:100%;height:100%;z-Index:-1;" src="../../img/login/background.png" />
+	<div class="login-border">
+		<div class="login-title">
+			<span style="font-size: 22px;">用户登录</span>
+		</div>
+		<div style="height: 125px" >
+			<table style="margin-top: 10px">
+			
+				<tr height="40px">
+					<td class="login-state">用户名：</td>
+					<td><input class="login-input" name="userAccount" type="text" value="admin"/></td>
+				</tr>
+				<tr height="40px">
+					<td class="login-state">密码：</td>
+					<td><input class="login-input" name="password" type="password" value="1"/></td>
+				</tr>
+				<!-- <tr height="40px">
+					<td class="login-state">验证码：</td>
+					<td>
+						<div><input class="login-input-code" name="authcode" type="text" value="123"/></div>
+						<div id="login-auth-code"></div>
+						<div style="float: right;">
+							<a href="#" style="font-size: 13px;">看不清</a>
+						</div>
+					</td>
+				</tr>  -->
+				<tr>
+					<td></td>
+					<td>
+						<span id="login-tip"></span>
+					</td>
+				</tr>
+				<tr height="40px">
+					<td>
+					</td>
+					<td>
+						<button style="margin-left: 20px;" onclick="fun()">登录</button>
+						<input type="checkbox" name="reamberMe" value="1"/>记住我
+					</td>
+				</tr>
+			</table>
+		</div>
+		<img src="../../img/index/logo.jpg" width="100px" height="50px" style="float: right;"/>
+	</div>
+</body>
+</html>

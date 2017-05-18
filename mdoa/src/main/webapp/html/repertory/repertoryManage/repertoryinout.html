@@ -1,0 +1,150 @@
+<div id="repertoryinout">
+	<input class="goodsTypeUrl" type="hidden" style="display:none;">
+	<div class="treearea">
+		<h3>选择物品类别</h3>
+		<ul id="repertoryinouttg" data-options="region:'center',border: true"  class="easyui-tree">  
+     	</ul>
+	</div>
+	<div class="listForm">
+		<div class="toolbar" >
+			<input type="button" class="button" value="批量删除"/>
+			<input type="button" class="button" value="导出到Excel" />
+		</div>
+		<div class="queryForm">
+			物品名称：<input type="text" class="goodsName">
+			物品规格：<input type="text" class="goodsSize">
+			物品数量：<input type="text" class="goodsNumSm"/> ~ <input type="text" class="goodsNumBg"/>
+			仓位：<input type="text" class="goodsPosition"/>
+			进库人：<input type="text" class="putUserName"/>
+			部门：<select class="departmentName"></select>
+			仓库：<select class="repertoryName"></select>
+			时间：<input type="text" class="time jqdate startTime" readonly="readonly" onclick="YMD(this)"/> ~ 
+			<input type="text" class="time jqdate endTime" readonly="readonly" onclick="YMD(this)"/>	
+			<a class="easyui-linkbutton query" iconCls="icon-search" style="line-height:16px;">查询</a>
+			<input type="button" value="清空">
+		</div>
+		<div>
+			<table id="repertoryinoutdg">
+			</table>
+		</div>
+		<!-- 汇总 -->
+		<div class="sumBar">
+		</div>
+		<input type="button" class="button controlSumBar" value="隐藏"/>
+	</div>
+	<div class="popups">
+	<!-- 物品出库弹窗  -->
+		<div class="popup outUpdate">
+			<h3>修改物品出库记录</h3>
+			<span class="turnoff"></span>
+			<div class="popuparea">
+				<table>
+					<tr>
+						<td>出库仓位:</td> <!-- //自动获取 -->
+						<td><input type="text" disabled="disabled" class="goodsPositionName"/></td>
+					</tr>
+					<tr>
+						<td>出库仓库:</td>
+						<td><input type="text" disabled="disabled" class="repertoryName"/></td>
+					</tr>
+					<tr>	
+						<td>出库数量:</td>
+						<td><input type="text" class="outNumber"/></td>
+					</tr>
+					<tr>	
+						<td>领用人:</td>
+						<td><input type="text" class="getUserName"/></td>
+					</tr>
+					<tr>	
+						<td>领用部门:</td>
+						<td><select class="getDepartmentName"></select></td>
+					</tr>
+					<tr>
+						<td>领用金额:</td>
+						<td><input type="text" class="taxAmount"/></td>
+					</tr>
+					<tr>
+						<td>领用用途:</td>
+						<td><select class="useType"/></select></td>
+					</tr>
+					<tr>
+						<td class="popuptext">备注:</td>
+						<td><textarea class="record"></textarea></td>
+						<td><input type="text" style="display:none" class="goodsId"/></td>
+					</tr>
+				</table>
+			</div>
+			<div class="btnarea">
+				<input type="button" class="button confirm" value="保存"/>
+				<input type="button" class="button cannel" value="取消" />
+			</div>
+		</div>
+	<!-- 物品入库弹窗 -->
+		<div class="popup inUpdate">
+			<h3>修改入库流水</h3>
+			<span class="turnoff"></span>
+			<div class="popuparea">
+				<table>
+					<tr>
+						<td>入库人:</td>
+						<td><input type="text" class="putUserName"/></td>
+						<td>仓库:</td>
+						<td><input type="text" class="repertoryName" disabled="disabled"/></td>
+					</tr>
+					<tr>
+						<td>仓位:</td>
+						<td><input type="text" class="goodsPositionName" disabled="disabled"/></td>
+						<td>总数量：</td>
+						<td>
+							<input type="text" class="totalNumber" disabled="disabled"/>
+						</td>
+					</tr>
+					<tr>
+						<td>入库数量:</td>
+						<td><input type="text" class="inNumber"/></td>
+						<td>入库总价(含税):</td>
+						<td><input type="text" class="pretaxAmount"/></td>
+					</tr>
+					<tr>
+						<td>税率(%):</td>
+						<td><input type="text" class="taxRate"/></td>
+						<td>入库均价(含税):</td>
+						<td><input type="text" disabled="disabled" class="pretaxAverPrice"/></td>
+					</tr>
+					<tr>
+						<td>入库总价(无税):</td>
+						<td><input type="text" disabled="disabled" class="taxAmount"/></td>
+						<td>入库均价(无税):</td>
+						<td><input type="text" disabled="disabled" class="taxAverPrice"/></td>
+					</tr>
+					<tr>
+						<td>供应商:</td>
+						<td><select class="supplier"></select></td>
+						<td><input type="text" style="display:none" class="goodsId"/></td>
+						<td><input type="text" style="display:none" class="goodsPositionId"/></td>
+					</tr>
+					<tr>
+						<td class="popuptext">备注:</td>
+						<td colspan="3"><textarea class="record"></textarea></td>
+					</tr>
+				</table>
+			</div>
+			<div class="btnarea">
+				<input type="button" class="button confirm" value="确定"/>
+				<input type="button" class="button cannel" value="取消" />
+			</div>
+		</div>
+	<!-- 删除物品    -->
+		<div class="popup del">
+			<h3>删除物品信息</h3>
+			<span class="turnoff"></span>
+			<div class="popuparea delarea">
+				确定要删除该物品么？
+			</div>
+			<div class="btnarea">
+				<input type="button" class="button confirm" value="确定"/>
+				<input type="button" class="button cannel" value="取消" />
+			</div>
+		</div>
+	</div>
+</div>

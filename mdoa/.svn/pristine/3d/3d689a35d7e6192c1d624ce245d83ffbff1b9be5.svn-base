@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mdoa.personnel.dao.ClockDao" >
+	
+	<!-- 对today表迟到早退标志位做处理 -->
+	<update id="dealToday">
+	
+		UPDATE
+			personnel_attendance_today
+		SET
+			be_late_flag = IF(STR_TO_DATE(clock_in_time,'%H:%i:%s') > STR_TO_DATE(on_duty_time,'%H:%i:%s'),'1','0'),
+			leave_early_flag = IF(STR_TO_DATE(clock_out_time,'%H:%i:%s') &lt; STR_TO_DATE(on_duty_time,'%H:%i:%s'),'1','0'),
+			be_late_flag = IF(ISNULL(clock_in_time),'2',be_late_flag),
+			leave_early_flag = IF(ISNULL(clock_out_time),'2',leave_early_flag)
+	
+		<!-- 统计迟到 -->
+		<!-- UPDATE
+			personnel_attendance_today
+		SET
+			be_late_flag = '1'
+		WHERE
+			STR_TO_DATE(clock_in_time,'%H:%i:%s') > STR_TO_DATE(on_duty_time,'%H:%i:%s'); -->
+			
+		<!-- 统计早退 -->
+		<!-- UPDATE 
+			personnel_attendance_today
+		SET
+			leave_early_flag = '1'
+		WHERE
+			STR_TO_DATE(clock_out_time,'%H:%i:%s') &lt; STR_TO_DATE(on_duty_time,'%H:%i:%s'); -->
+		
+		<!-- 统计上班打卡缺卡 -->
+		<!-- UPDATE
+			personnel_attendance_today
+		SET 
+			be_late_flag = '2'
+		WHERE
+			clock_in_time = NULL; -->
+			
+		<!-- 统计下班打卡缺卡 -->
+		<!-- UPDATE
+			personnel_attendance_today
+		SET 
+			leave_early_flag = '2'
+		WHERE
+			clock_out_time = NULL; -->	
+	</update>
+	
+	<!-- 对today表leave_flag标志位进行处理 -->
+	<update id="dealTodayAgain">
+		<!-- 统计请假 -->
+		UPDATE personnel_attendance_today a,
+		 (
+			SELECT
+				a.user_id,
+				a.leave_type
+			FROM
+				personnel_ask_for_leave_apply a
+			LEFT JOIN personnel_attendance_today b ON (a.user_id = b.user_id)
+			WHERE
+				a.alive_flag = '1'
+			AND a.examine_status = '3'
+			AND (
+				DATE_FORMAT(b.date, '%Y-%m-%d') = DATE_FORMAT(a.over_time, '%Y-%m-%d')
+				OR DATE_FORMAT(b.date, '%Y-%m-%d') BETWEEN DATE_FORMAT(a.start_time, '%Y-%m-%d')
+				AND DATE_FORMAT(a.over_time, '%Y-%m-%d')
+			)
+		) b
+		SET a.leave_early_flag = '0',
+		 a.be_late_flag = '0',
+		 a.leave_flag = b.leave_type
+		WHERE a.user_id = b.user_id;
+		
+		<!-- 统计外出 -->
+		UPDATE personnel_attendance_today a,
+		 (
+			SELECT
+				a.go_out_user_id
+			FROM
+				personnel_go_out_apply a
+			LEFT JOIN personnel_attendance_today b ON (a.go_out_user_id = b.user_id)
+			WHERE
+				a.alive_flag = '1'
+			AND a.examine_status = '3'
+			AND (
+				DATE_FORMAT(b.date, '%Y-%m-%d') = DATE_FORMAT(a.over_time, '%Y-%m-%d')
+				OR DATE_FORMAT(b.date, '%Y-%m-%d') BETWEEN DATE_FORMAT(a.start_time, '%Y-%m-%d')
+				AND DATE_FORMAT(a.over_time, '%Y-%m-%d')
+			)
+		) b
+		SET a.leave_early_flag = '0',
+		 a.be_late_flag = '0',
+		 a.leave_flag = '3',
+		WHERE a.user_id = b.go_out_user_id;
+		
+		<!-- 统计休息 -->
+		UPDATE 
+			personnel_attendance_today a
+		SET 
+			leave_early_flag = '0',
+			be_late_flag = '0',
+			leave_flag = '4'
+		WHERE
+			user_id IN (
+				SELECT
+					user_id
+				FROM
+					user_info
+				WHERE
+					alive_flag = '1'
+				AND attendance_group_id IN (
+					SELECT
+						group_id
+					FROM
+						personnel_attendance_class
+					WHERE
+						alive_flag = '1'
+					AND work_flag = '0'
+					AND class_date = a.date
+				)
+			);
+	</update>
+	
+	<!-- 将today表记录转存进record表 -->
+	<insert id="saveRecordFromToday">
+		INSERT INTO personnel_attendance_record
+		(
+			record_id,
+			user_id,
+			record_date,
+			on_duty_time,
+			off_duty_time,
+			clock_in_time,
+			clock_out_time,
+			leave_flag,
+			out_flag,
+			be_late_flag,
+			leave_early_flag,
+			create_user_id,
+			create_user_name,
+			create_time,
+			alive_flag
+		)
+		SELECT
+			UUID(),
+			user_id,
+			date,
+			on_duty_time,
+			off_duty_time,
+			clock_in_time,
+			clock_out_time,
+			leave_flag,
+			out_flag,
+			be_late_flag,
+			leave_early_flag,
+			'admin',
+			'超级管理员',
+			NOW(),
+			'1'
+		FROM
+			personnel_attendance_today
+	</insert>
+	
+	<!-- 删除前一天today表记录 -->
+	<delete id="truncateToday">
+		TRUNCATE personnel_attendance_today;
+	</delete>
+	
+	<!-- 插入新的today预备记录 -->
+	<insert id="insertPreToday">
+		INSERT INTO personnel_attendance_today (
+			today_id,
+			user_id,
+			date,
+			on_duty_time,
+			off_duty_time,
+			leave_flag
+		) SELECT
+			UUID(),
+			b.user_id,
+			a.class_date,
+			a.on_duty_time,
+			a.off_duty_time,
+			IF(a.work_flag = '1', '0', '4')
+		FROM
+			personnel_attendance_class a
+		LEFT JOIN user_info b ON (
+			a.group_id = b.attendance_group_id
+			AND b.alive_flag = '1'
+		)
+		WHERE
+			a.alive_flag = '1'
+		AND DATE_FORMAT(a.class_date, '%Y-%m-%d') = DATE_FORMAT(NOW(), '%Y-%m-%d')
+	</insert>
+	
+</mapper>

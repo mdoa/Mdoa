@@ -1,0 +1,22 @@
+<div id="resetUserPassword" title="重置员工密码">
+	<div class="main">
+		<div class="maintop">
+		</div>
+		<div class="invitetop">
+			请输入查询条件：
+			姓名：<input type="text" name="peopleName" style="width: 100px">
+			身份证号：<input type="text" name="idCard" style="width: 150px"> 
+			部门名：<input type="text" name="departmentName" style="width: 100px" readOnly="true"> 
+			<input type="hidden" name="departmentUrl" style="width: 100px"> 
+			<input type="button" class="button departmentChooseObj" value="选择"  style="width: 55px"/> 
+			岗位名：<input type="text" name="postName" style="width: 100px"> 
+			<input type="hidden" name="postId" style="width: 100px"> 
+			<input type="button" class="button postChooseObj" value="选择"  style="width: 55px"/> 
+			<a class="easyui-linkbutton query" iconCls="icon-search" style="line-height:16px;">查询</a>
+			<input type="button" class="button" value="清空"  style="width: 55px;"/> 
+		</div>
+		<div>
+			<table id="resetUserPassworddg"></table>
+		</div>
+	</div>
+</div>

@@ -1,0 +1,6 @@
+#goodsVariationForm .queryForm .jqdate{
+	width:150px;
+}
+#goodsVariationForm .queryForm input[type="text"]{
+	width:120px;
+}

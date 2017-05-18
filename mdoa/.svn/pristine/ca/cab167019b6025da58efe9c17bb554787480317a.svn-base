@@ -1,0 +1,60 @@
+.details{
+	padding:2.2% 2.6%;
+}
+.details .detailstab{
+	border:7px solid #b7cace;
+	border-radius: 10px;
+	behavior: url(../../css/plug/ie-css3.htc);
+}
+.detailstab h2{
+	border-bottom:1px solid #a7caf0;
+	height:39px;
+	line-height:39px;
+	fot-size:20px;
+	color:#466689;
+	font-weight:800;
+	text-align:center;
+}
+.detailstab .detailsshow{
+	padding:0 9.25% 0 8.3%;	
+	font-size:14px;
+}
+.detailstab .detailsshow p{
+	height:38px;
+	line-height:38px;
+}
+.detailstab .detailsshow span{
+	display:inline-block;
+}
+.detailstab .detailsshow .detailstit{
+	width:72px;
+}
+.detailstab .detailsshow .detailstxt{
+	width:15.5%;
+}
+.detailstab .detailsshow .reasonbox{
+	overflow:hidden;
+}
+.detailsshow .reasonbox .detailstit{
+	float:left;
+}
+.detailsshow .reasonbox .reasonarea{
+	float:left;
+	padding-left:6px;
+}
+.detailstab .buttonarea{
+	text-align:center;
+	margin-top:50px;
+	margin-bottom:6px;
+}
+.detailstab .buttonarea span{
+	display:inline-block;
+	width:72px;
+	height:28px;
+	line-height:28px;
+	border:1px solid #76a6ce;
+	border-radius: 4px;
+	behavior: url(../../css/plug/ie-css3.htc);
+	background:url(../../img/personnel/attendanceManage/outBtbg.png);
+	margin:0 4px;
+}

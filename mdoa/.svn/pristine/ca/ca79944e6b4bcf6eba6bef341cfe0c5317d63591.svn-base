@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mdoa.system.dao.MessageDao">
+	<!-- 增加一条系统消息 -->
+	<insert id="addSystemMessage" parameterType="com.mdoa.system.model.UserSystemMessage">
+		INSERT INTO user_system_message(
+			message_id,
+			user_id,
+			message,
+			url,
+			send_user_id,
+			send_user_name,
+			send_time,
+			read_flag,
+			alive_flag
+		)VALUE(
+			UUID(),
+			#{userId},
+			#{message},
+			#{url},
+			#{sendUserId},
+			#{sendUserName},
+			NOW(),
+			'0',
+			'1'
+		)	
+	</insert>
+	<!-- 更改消息为已读 -->
+	<update id="updateMessageRead" parameterType="com.mdoa.system.model.UserSystemMessage">
+		UPDATE user_system_message
+		SET
+			read_time = NOW(),
+			read_flag = '1'
+		WHERE	
+			message_id = #{messageId}
+	</update>
+	<!-- 查询消息 -->
+	<select id="selectMessageByUser" parameterType="com.mdoa.system.model.UserSystemMessage" resultType="com.mdoa.system.model.UserSystemMessage">
+		SELECT 
+			message_id AS messageId,
+			user_id AS userId,
+			message AS message,
+			url AS url,
+			send_user_id AS sendUserId,
+			send_user_name AS senduserName,
+			DATE_FORMAT(read_time,'%Y-%m-%d') AS readTime,
+			DATE_FORMAT(send_time,'%Y-%m-%d') AS sendTime,
+			read_flag AS readFlag
+		FROM
+			user_system_message
+		<where>
+			alive_flag = '1'
+			<if test="userId != null and userId != '' ">
+			AND user_id = #{userId}</if>
+			<if test="sendUserName != null and sendUserName != ''">
+			AND send_user_name LIKE (${sendUserName})</if>
+			<if test="readFlag != null and readFlag != ''">
+			AND read_flag = #{readFlag}</if>
+			<if test="messageId != null and messageId != ''">
+			AND message_id = #{messageId}</if>
+		</where>		
+	</select>
+	<!-- 查询有权限的人员 -->
+	<select id="selectpermissionUser" parameterType="java.lang.String" resultType="com.mdoa.system.model.UserSystemMessage">
+		SELECT
+				a.user_id AS userId
+		FROM
+			framework_user_role a,
+		(
+			SELECT
+			 role_id
+			FROM
+			framework_role_power
+			WHERE
+			SUBSTRING(#{power},1,CHAR_LENGTH(power)) = power
+			GROUP BY
+			role_id
+		) b
+		WHERE
+			a.role_id = b.role_id
+			AND a.alive_flag = '1'
+	</select>
+	
+	
+</mapper>

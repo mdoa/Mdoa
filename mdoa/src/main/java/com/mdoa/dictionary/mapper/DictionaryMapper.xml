@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mdoa.dictionary.dao.DictionaryDao">
+	
+	
+	<!--查询数据字典分放到单例中  -->
+<!-- 	<select id="queryDictionaryToSingle" resultType="com.mdoa.dictionary.model.Dictionary">
+		SELECT
+			dictionary_id AS dictionaryId,
+			select_key AS selectKey,
+			select_name AS selectName,
+			option_key AS optionKey,
+			option_value AS optionValue,
+			order_code AS orderCode,
+			is_default AS isDefault,
+			create_user_id AS createUserId,
+			create_user_name AS createUserName,
+			create_time AS createTime,
+			update_user_id AS updateUserId,
+			update_user_name AS updateUserName,
+			update_time AS updateTime,
+			alive_flag AS aliveFlag
+		FROM
+			dictionary
+		WHERE
+			alive_flag ='1'
+	</select> -->
+	<!-- 查询信息（数据类型） -->
+	<select id="queryDictionaryType" parameterType="com.mdoa.dictionary.model.Dictionary" resultType="com.mdoa.dictionary.model.Dictionary">
+		SELECT
+			dictionary_id AS dictionaryId,
+			select_key AS selectKey,
+			select_name AS selectName,
+			option_key AS optionKey,
+			option_value AS optionValue,
+			order_code AS orderCode,
+			is_default AS isDefault,
+			create_user_id AS createUserId,
+			create_user_name AS createUserName,
+			create_time AS createTime,
+			update_user_id AS updateUserId,
+			update_user_name AS updateUserName,
+			update_time AS updateTime,
+			alive_flag AS aliveFlag
+		FROM
+			dictionary
+		WHERE
+				alive_flag ='1'
+		GROUP BY
+			select_key
+		ORDER BY
+			create_time
+		DESC
+	</select>
+	
+	<!-- 查询信息(option) -->
+	<select id="queryDictionary" parameterType="com.mdoa.dictionary.model.Dictionary" resultType="com.mdoa.dictionary.model.Dictionary">
+		SELECT
+			dictionary_id AS dictionaryId,
+			select_key AS selectKey,
+			select_name AS selectName,
+			option_key AS optionKey,
+			option_value AS optionValue,
+			order_code AS orderCode,
+			is_default AS isDefault,
+			create_user_id AS createUserId,
+			create_user_name AS createUserName,
+			create_time AS createTime,
+			update_user_id AS updateUserId,
+			update_user_name AS updateUserName,
+			update_time AS updateTime,
+			alive_flag AS aliveFlag
+		FROM
+			dictionary
+		<where>
+				alive_flag ='1'
+			<if test="selectKey != null and selectKey != ''">
+				AND	select_key = #{selectKey}
+			</if>
+			<if test="selectName != null and selectName != ''">
+				AND	select_name = #{selectName}
+			</if>
+		</where>
+		ORDER BY
+			order_code
+		
+	</select>
+	
+	<!-- 删除信息 -->
+	<update id="deleteDictionary" parameterType="com.mdoa.dictionary.model.Dictionary">
+		UPDATE dictionary
+		SET
+			update_time = NOW(),
+			update_user_id = #{updateUserId},
+			update_user_name = #{updateUserName},
+			alive_flag = '0'
+		WHERE
+			dictionary_id = #{dictionaryId}
+	</update>
+	
+	<!-- 修改信息 -->
+	<update id="updateDictionary" parameterType="com.mdoa.dictionary.model.Dictionary">
+		UPDATE dictionary
+		SET
+			update_time = NOW(),
+			update_user_id = #{updateUserId},
+			update_user_name = #{updateUserName}
+			<if test="optionKey != null and optionKey !=''">
+				,option_key = #{optionKey}
+			</if>
+			<if test="optionValue != null and optionValue !=''">
+				,option_value = #{optionValue}
+			</if>
+			<if test="isDefault != null and isDefault != ''">
+				,is_default =#{isDefault}
+			</if>
+			<if test="orderCode != null and orderCode != ''">
+				,order_code =#{orderCode}
+			</if>	
+		WHERE
+			dictionary_id = #{dictionaryId}
+	</update>
+	
+	<!-- 添加信息 -->
+	<insert id="addDictionary" parameterType="com.mdoa.dictionary.model.Dictionary">
+		INSERT INTO dictionary(
+			dictionary_id,
+			select_key,
+			select_name,
+			option_key,
+			option_value,
+			order_code,
+			is_default,
+			create_user_id,
+			create_user_name,
+			create_time,
+			alive_flag
+		)VALUE(
+			UUID(),
+			#{selectKey},
+			#{selectName},
+			#{optionKey},
+			#{optionValue},
+			#{orderCode},
+			#{isDefault},
+			#{createUserId},
+			#{createUserName},
+			NOW(),
+			'1'
+		)
+	</insert>
+	
+	<!-- 查询数据字典某项的当前最大order_code -->
+	<select id="findLastOrderCodeBySelectKey" parameterType="java.lang.String" resultType="java.lang.Integer">
+		SELECT
+			order_code
+		FROM
+			dictionary
+		WHERE
+			select_key = #{selectKey}
+		ORDER BY
+			order_code DESC
+		LIMIT 1
+	</select>
+</mapper>

@@ -1,0 +1,21 @@
+#KPIgrade .KPIarea{
+	margin-top:20px;
+}
+#KPIgrade .grade{
+	text-align:center;
+	padding-right:0px;
+	margin:10px 0;
+}
+.grade span{
+	display:inline-block;
+	width:60px;
+}
+.score label{
+	margin-left:72px;
+}
+.staffName,.department,.KPIgroupName,.fullmark,.condition{
+	border:none;
+}
+#KPIgrade .editarea textarea{
+	width:240px;
+}

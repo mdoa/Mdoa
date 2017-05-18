@@ -1,0 +1,67 @@
+<div id="framework-dept" title="部门管理">
+	<div class="maintop">
+	</div>
+	<div>
+		<div style="float:left;width: 17.5%;height: 100%;border: 1px #95B8E7 solid" class="departmentLeft">
+			<div style="background-color: #F4F4F4;height: 30px;border-bottom: 1px #DDDDDD solid;
+				padding:6px 0px 0px 14px;font-size: 15px;font-weight: 500">
+				部门树结构
+			</div>
+			<div class="departmentTree"></div>
+		</div>
+		<div style="float: right;width: 82%">
+			<div class="invitetop">
+				部门名称：
+				<input type="text" name="departmentName"> 
+				上级部门名称：
+				<input type="text" name="superDepartmentName"> 
+				<a class="easyui-linkbutton select" iconCls="icon-search" style="line-height:16px;">查询</a>
+				<input type="button" class="clean" value="清空">
+			</div>
+			<div>
+				<table class="departmentList"></table>
+			</div>
+		</div>
+	</div>
+	
+	<div id="rightDeptPopupWindow" class="easyui-menu" style="width:80px;">
+		<div class="addChildDept">添加子部门</div>
+		<div class="updateDept">修改部门</div>
+		<div class="deleteDept">删除部门</div>
+		<input name="url" style="display: none"/>
+	</div>
+	
+	<div class="popups" style="text-align: left">
+		<!-- 修改部门名称 -->
+		<div class="popup updateDept" style="height: 130px;width: 270px;">
+			<h3>修改部门名</h3>
+			<span class="turnoff"></span>
+			<div class="popuparea">
+				<div style="width: 252px; height: 65px;padding-left: 15px;padding-top: 15px;">
+					新部门名称：<input name="departmentName"/>
+					<input name="departmentUrl" style="display: none"/>
+				</div>
+			</div>
+			<div class="btnarea" style="text-align: center">
+				<input type="button" class="button confirm" value="确定"/>
+				<input type="button" class="button cannel" value="关闭"/>
+			</div>
+		</div>
+
+		<!-- 添加部门 -->
+		<div class="popup addDept" style="height: 130px;width: 270px;">
+			<h3>添加部门</h3>
+			<span class="turnoff"></span>
+			<div class="popuparea">
+				<div style="width: 252px; height: 65px;padding-left: 15px;padding-top: 15px;">
+					新部门名称：<input name="departmentName"/>
+					<input name="superDepartmentUrl" style="display: none"/>
+				</div>
+			</div>
+			<div class="btnarea" style="text-align: center">
+				<input type="button" class="button confirm" value="确定"/>
+				<input type="button" class="button cannel" value="关闭"/>
+			</div>
+		</div>
+	</div>
+</div>

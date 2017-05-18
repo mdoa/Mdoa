@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mdoa.personnel.dao.PersonAwardPunishTypeDao" >
+  
+ <!-- 奖惩类别 -->	
+
+  <!-- 根据建立的时间来查询所有的奖惩类型 -->
+  <select id="selectAwardPunishTypeByTime"  resultType="com.mdoa.personnel.model.PersonAwardPunishType" parameterType="com.mdoa.personnel.model.PersonAwardPunishType">
+		    SELECT 
+				award_punish_type_id AS awardPunishTypeId,
+				type_name AS typeName,
+				solution AS solution,
+				create_time AS createTime,
+				update_time AS updateTime
+			FROM
+				personnel_award_punish_type
+			<where>
+				alive_flag = '1'
+				<if test="awardPunishTypeId != null and awardPunishTypeId != ''">
+				AND award_punish_type_id = #{awardPunishTypeId}</if>
+				<if test="typeName != null and typeName != ''">
+				AND type_name LIKE ('${typeName}')</if>
+			</where>
+			ORDER BY
+				create_time
+			DESC
+  </select>
+  <!-- 删除奖惩类型 -->
+  <update id="deleteAwardPunishType" parameterType="java.lang.String" >
+		    UPDATE personnel_award_punish_type
+		    SET
+		    	update_user_id = #{updateUserId},
+		    	update_time = now(),
+		    	alive_flag = '0'
+			WHERE
+				award_punish_type_id = #{award_punish_type_id,jdbcType=CHAR}
+  </update>
+  <!-- 插入一条奖惩类型 -->
+  <insert id="insertAwardPunishType" parameterType="com.mdoa.personnel.model.PersonAwardPunishType" >
+		    INSERT INTO 
+		    	personnel_award_punish_type 
+		    	(
+				award_punish_type_id,
+				type_name,
+				create_user_id,
+				create_time,
+				alive_flag,
+				solution
+			)VALUES(
+				UUID(), 
+				#{typeName,jdbcType=VARCHAR}, 
+				#{createUserId,jdbcType=CHAR}, 
+				NOW(), 
+				'1', 
+				#{solution,jdbcType=LONGVARCHAR})
+  </insert>
+<!-- 修改奖惩类型 -->
+  <update id="updateAwardPunishType" parameterType="com.mdoa.personnel.model.PersonAwardPunishType" >
+			UPDATE 
+				personnel_award_punish_type
+			SET 
+				type_name = #{typeName,jdbcType=VARCHAR},
+				update_user_id = #{updateUserId,jdbcType=CHAR},
+				update_time = NOW(),
+				solution = #{solution,jdbcType=LONGVARCHAR}
+			WHERE
+				award_punish_type_id = #{awardPunishTypeId,jdbcType=CHAR}
+  </update>
+<!--奖惩信息 ============================================================================== -->
+	<!-- 条件查询奖惩信息 -->
+	<select id="selectAwardPunishByTime" resultType="com.mdoa.personnel.bo.AwardPunishForm" parameterType="com.mdoa.personnel.bo.AwardPunishForm">
+		SELECT 
+			a.user_id AS userId,
+			a.award_punish_id AS awardPunishId,
+			a.award_punish_type_id AS awardPunishTypeId,
+			a.solution AS solution,
+			a.user_name AS userName,
+			a.perform_user_id AS performUserId,
+			a.perform_user_name AS performUserName,
+			a.perform_state AS performState,
+			a.create_user_id AS createUserId,
+			a.creat_time AS creatTime,
+			a.award_punish_reason AS awardPunishReason,
+			b.type_name AS typeName	
+			FROM
+				personnel_award_punish a,
+				personnel_award_punish_type b
+			WHERE 
+				a.alive_flag = '1'
+				AND b.alive_flag = '1'
+				AND a.award_punish_type_id = b.award_punish_type_id
+				<if test = "userName !=null and userName != ''">
+				AND a.user_name LIKE ('${userName}') </if>
+				<if test = "performUserName != null and performUserName != '' ">
+				AND a.perform_user_name LIKE ('${performUserName}') </if> 
+				<if test="awardPunishId != null and awardPunishId != ''">
+				AND a.award_punish_id = #{awardPunishId}</if>
+			ORDER BY
+				a.creat_time
+			DESC
+	</select>
+  <update id="deleteAwardPunish" parameterType="java.lang.String" >
+	    UPDATE  
+	    	personnel_award_punish
+	    SET
+	    	update_user_id = #{updateUserId},
+			update_time = NOW(),
+			alive_flag = '0'
+	    WHERE 
+	    	award_punish_id = #{awardPunishId,jdbcType=CHAR}
+  </update>
+  <!-- 新建一条奖惩记录 -->
+  <insert id="insertAwardPunish" parameterType="com.mdoa.personnel.model.PersonAwardPunish" >
+		INSERT INTO personnel_award_punish (
+			award_punish_id,
+			user_id,
+			award_punish_type_id,
+			user_name,
+			perform_state,
+			perform_user_name,
+			create_user_id,
+			creat_time,
+			alive_flag,
+			award_punish_reason,
+			solution
+		)VALUES(
+			UUID(), 
+			#{userId,jdbcType=CHAR}, 
+			#{awardPunishTypeId,jdbcType=CHAR}, 
+			#{userName,jdbcType=VARCHAR}, 
+			'0', 
+			#{performUserName},
+			#{createUserId,jdbcType=CHAR}, 
+			NOW(), 
+			'1', 
+			#{awardPunishReason,jdbcType=LONGVARCHAR}, 
+			#{solution,jdbcType=LONGVARCHAR}
+			)
+  </insert> 
+  <!-- 普通修改奖惩信息 -->
+  <update id="updateAwardPunish" parameterType="com.mdoa.personnel.model.PersonAwardPunish" >
+   	UPDATE 
+   		personnel_award_punish
+	SET 
+		award_punish_type_id = #{awardPunishTypeId},
+		user_name = #{userName,jdbcType=VARCHAR},
+		solution = #{solution},
+		perform_user_name = #{performUserName},
+		update_user_id = #{updateUserId,jdbcType=CHAR},
+		update_time = now()
+	WHERE
+		award_punish_id = #{awardPunishId,jdbcType=CHAR}
+  </update>
+	<!-- 更改奖惩信息为已执行 -->
+	<update id="updateAwardPunishPerform" parameterType="com.mdoa.personnel.model.PersonAwardPunish" >
+   	UPDATE 
+   		personnel_award_punish
+	SET 
+		perform_state = '1',
+		update_user_id = #{updateUserId},
+		update_time = NOW()
+	WHERE
+		award_punish_id = #{awardPunishId,jdbcType=CHAR}
+  </update>
+
+</mapper>

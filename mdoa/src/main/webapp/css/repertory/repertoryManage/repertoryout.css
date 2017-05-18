@@ -1,0 +1,12 @@
+#repertoryout .popups .popup table{
+	padding:20px 30px;
+}
+#repertoryout .popups .popup table textarea{
+	width:144px;
+}
+#repertoryout .update .confirm{
+	margin-left:94px;
+}
+#repertoryout .update .cannel{
+	margin-left:8px;
+}

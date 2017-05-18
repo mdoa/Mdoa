@@ -1,0 +1,9 @@
+#depreciationManage .popup .popuparea{
+	padding:10px 20px;
+}
+#depreciationManage .popup .popuparea select{
+	width:148px;
+}
+#depreciationManage .popup .popuparea textarea{
+	width:142px;
+}

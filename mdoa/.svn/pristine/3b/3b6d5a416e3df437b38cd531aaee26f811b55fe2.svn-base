@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mdoa.work.dao.DocumentDao" >
+
+	<!-- UUID -->
+	<select id="getUuid" resultType="java.lang.String">
+		SELECT UUID() AS uuid
+	</select>
+	<!-- 根据父Id查询下一级类 -->
+	<select id="list" parameterType="java.lang.String" resultType="com.mdoa.work.model.DTreeModel">
+		SELECT
+			catalog_id AS thisId,
+			catalog_name AS text,
+			url AS id,
+			doc_flag AS attributes
+		FROM
+			work_office_doc_catalog
+		WHERE
+			alive_flag = '1'
+			AND super_catalog_id = #{pid}
+	</select>
+	<!-- 根据父Id添加下一级文件或目录 -->
+	<insert id="addDocument" parameterType="com.mdoa.work.bo.WorkOfficeDocForm">
+		INSERT INTO work_office_doc_catalog(
+			catalog_id,
+			catalog_name,
+			super_catalog_id,
+			url,
+			text,
+			doc_flag,
+			create_user_id,
+			create_user_name,
+			create_time,
+			alive_flag
+		)VALUE(
+			#{catalogId},
+			#{catalogName},
+			#{superCatalogId},
+			#{url},
+			#{text},
+			#{docFlag},
+			#{createUserId},
+			#{createUserName},
+			NOW(),
+			'1'
+		)
+	</insert>
+	<!-- 添加文档 -->
+	<insert id="addDocumentDoc" parameterType="com.mdoa.work.bo.WorkOfficeDocForm">
+		INSERT INTO work_office_doc(
+			doc_id,
+			text,
+			doc_name,
+			create_user_id,
+			create_user_name,
+			create_time,
+			alive_flag
+		)VALUE(
+			#{catalogId},
+			#{text},
+			#{catalogName},
+			#{createUserId},
+			#{createUserName},
+			NOW(),
+			'1'
+		)
+	</insert>
+	<!-- 删除目录或文件 -->
+	<update id="removeDocument" parameterType="com.mdoa.work.bo.WorkOfficeDocForm">
+		UPDATE
+			work_office_doc_catalog
+		SET
+			update_user_id = #{updateUserId},
+			update_user_name = #{updateUserName},
+			update_time = NOW(),
+			alive_flag = '0'
+		WHERE
+			url LIKE (${url})
+			AND alive_flag = '1'
+			
+	</update>
+	<!-- 删除文档 -->
+	<update id="removeDocumentDoc" parameterType="com.mdoa.work.bo.WorkOfficeDocForm">
+		UPDATE 
+			work_office_doc_catalog a,
+			work_office_doc b
+		SET
+			b.update_time = NOW(),
+			b.alive_flag = '0'
+		WHERE
+			b.alive_flag = '1'
+			AND a.url LIKE (${url})
+			AND a.catalog_id = b.doc_id
+			AND a.doc_flag = '1'
+	</update>
+	<!-- 修改文件或目录名 -->
+	<update id="updateDocument" parameterType="com.mdoa.work.bo.WorkOfficeDocForm">
+		UPDATE
+			work_office_doc_catalog
+		SET
+			catalog_name = #{catalogName}
+		WHERE
+			alive_flag = '1'
+			AND catalog_id = #{catalogId}
+	</update>
+	<!-- 根据ID修改Url(append) -->
+	<update id="updateDragSourceGoodsUrl" parameterType="com.mdoa.work.bo.WorkOfficeDocForm">
+		UPDATE
+			work_office_doc_catalog
+		SET
+			super_catalog_id = #{targetId},
+			url = #{sourceUrlo},
+			update_time = NOW(),
+	 		update_user_id = #{updateUserId},
+	 		update_user_name = #{updateUserName}
+		WHERE
+			catalog_id = #{sourceId}
+	</update>
+	<!-- 拖动的时候下面的物品类url全部更改 -->
+	<update id="updateDragLaterUrl" parameterType="com.mdoa.work.bo.WorkOfficeDocForm">
+		UPDATE 
+			work_office_doc_catalog
+	 	SET
+	 		url = REPLACE(url,${previousUrl},${replaceUrl}),
+	 		update_time = NOW(),
+	 		update_user_id = #{updateUserId},
+		 	update_user_name = #{updateUserName}
+	 	WHERE
+	 		url LIKE (${queryUrl})
+	</update>
+	<!-- 拖动插入后修改source的下属物品类的url(bottom,top) -->
+	<update id="updateDragSourceGoodsUrlBt" parameterType="com.mdoa.work.bo.WorkOfficeDocForm">
+		UPDATE 
+			work_office_doc_catalog
+	 	SET
+	 		url = #{sourceUrlo},
+	 		super_catalog_id = #{targetParentId},
+	 		update_time = NOW(),
+	 		update_user_id = #{updateUserId},
+	 		update_user_name = #{updateUserName}
+	 	WHERE
+	 		catalog_id = #{sourceId}
+	</update>
+	<!-- 保存编辑内容 -->
+	<update id="updateText" parameterType="com.mdoa.work.bo.WorkOfficeDocForm">
+		UPDATE 
+			work_office_doc_catalog
+		SET
+			text = #{text},
+			update_user_id = #{updateUserId},
+			update_user_name = #{updateUserName},
+			update_time = NOW()
+		WHERE
+			catalog_id = #{catalogId}
+	</update>
+	<!-- 查询信息 -->
+	<select id="selectDocumentText" parameterType="com.mdoa.work.bo.WorkOfficeDocForm" resultType="com.mdoa.work.bo.WorkOfficeDocForm">
+		SELECT
+			text
+		FROM
+			work_office_doc_catalog
+		WHERE
+			alive_flag = '1'
+			<if test="url != null and url != ''">
+				AND catalog_id = #{catalogId}
+			</if>
+	</select>
+</mapper>

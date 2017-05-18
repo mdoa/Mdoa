@@ -1,0 +1,18 @@
+#documentManage{
+	overflow:hidden;
+}
+#documentManage	.listForm{
+	border:1px solide #95B8E7;
+}
+#documentManage .popup{
+	z-index:1000;
+}
+#documentManage .popup .popuparea{
+	padding:10px 20px;
+}
+#documentManage .popup .popuparea select{
+	width:148px;
+}
+#documentManage .popup .popuparea textarea{
+	width:142px;
+}

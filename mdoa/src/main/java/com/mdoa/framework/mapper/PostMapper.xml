@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mdoa.framework.dao.PostDao">
+	<!-- 根据Id删除角色 -->
+	<update id="deletePost" parameterType="java.util.HashMap">
+		UPDATE
+			framework_post
+		SET
+			alive_flag = '0',
+			update_time = now(),
+			update_user_id = #{userId},
+			update_user_name = #{userName}
+		where
+			post_id = #{postId}
+	</update>
+	
+	<!-- 修改岗位信息 -->
+	<update id="updatePost" parameterType="com.mdoa.framework.model.Post">
+		UPDATE
+			framework_post
+		SET
+			<if test="remark != null and remark != ''">
+				remark = #{remark},
+			</if>
+			<if test="roleId != null and roleId != ''">
+				role_id = #{roleId},
+			</if>
+			<if test="roleName != null and roleName != ''">
+				role_name = #{roleName},
+			</if>
+			<if test="postName != null and postName != ''">
+				post_name = #{postName},
+			</if>
+			update_user_id = #{updateUserId},
+			update_user_name = #{updateUserName}
+		WHERE
+			post_id = #{postId}
+			AND alive_flag = '1'
+	</update>
+	<!-- 修改岗位信息，userInfo表中的岗位也要删除 -->
+	<update id="updateUserPost" parameterType="com.mdoa.framework.model.Post">
+		UPDATE
+			user_info a INNER JOIN framework_post b
+		ON
+			a.post_id = #{postId}
+		AND b.post_id = #{postId}
+		SET
+			a.post_name = #{postName}
+	</update>
+	<!-- 添加角色信息方法 -->
+	<insert id="insertPost" parameterType="com.mdoa.framework.model.Post">
+		INSERT INTO framework_post (
+			post_id,
+			post_name,
+			role_id,
+			role_name,
+			create_user_id,
+			create_user_name,
+			create_time,
+			remark,
+			alive_flag
+		)VALUES(
+				UUID(),
+				#{postName},
+				#{roleName},
+				#{roleId},
+				#{createUserId},
+				#{createUserName},
+				NOW(),
+				#{remark},
+				'1'
+			)
+	</insert>
+	
+	<!-- 根据创建时间和岗位或角色名称查询岗位 -->
+	<select id="selectPostList" parameterType="com.mdoa.framework.bo.PostForm" resultType="com.mdoa.framework.model.Post">
+		SELECT
+			post_id AS postId,
+			post_name AS postName,
+			role_id AS roleId,
+			role_name AS roleName,
+			create_user_name AS createUserName,
+			create_time AS createTime,
+			update_user_name AS updateUserName,
+			update_time AS updateTime,
+			remark AS remark
+		FROM
+			framework_post
+		WHERE
+			alive_flag = '1'
+			<if test="postName != null and postName != ''">
+				AND post_name LIKE (${postName})
+			</if>
+			<if test="roleName != null and roleName != ''">
+				AND role_name LIKE (${roleName})
+			</if>
+			<if test="createTimeEndStr != null and createTimeEndStr != ''">
+				AND create_time &lt; str_to_date(#{createTimeStartStr}, '%Y-%m-%d %H')
+			</if>
+			<if test="createTimeStartStr != null and createTimeStartStr != ''">
+				AND create_time &gt; str_to_date(#{createTimeEndStr}, '%Y-%m-%d %H')
+			</if>
+		ORDER BY 
+			create_time DESC
+	</select>
+	
+	<!-- 根据岗位Id查询岗位详细信息 -->
+	<select id="selectPostInfo" parameterType="com.mdoa.framework.bo.PostForm" resultType="com.mdoa.framework.model.Post">
+		SELECT
+			post_id AS postId,
+			post_name AS postName,
+			role_id AS roleId,
+			role_name AS roleName,
+			create_user_id AS createUserId,
+			create_user_name AS createUserName,
+			create_time AS createTime,
+			update_user_name AS updateUserName,
+			update_time AS updateTime,
+			remark AS remark
+		FROM
+			framework_post
+		WHERE
+			post_id = #{postId}
+			AND alive_flag = '1'
+	</select>
+	
+	<!-- 添加用户与岗位之间的关系  已废弃-->
+	<insert id="addUserPost" parameterType="com.mdoa.framework.bo.UserPostForm">
+		INSERT INTO framework_user_post(
+			user_post_id,
+			user_id,
+			post_id,
+			create_user_id,
+			create_user_name,
+			create_time,
+			alive_flag
+		)VALUES(
+			UUID(),
+			#{userId},
+			#{postId},
+			#{createUserId},
+			#{createUserName},
+			NOW(),
+			'1'
+		)
+	</insert>
+	
+	<!-- 删除用户与岗位之间的关系 (已废弃)-->
+	<update id="deleteUserPost" parameterType="com.mdoa.framework.bo.UserPostForm">
+		update
+			framework_user_post
+		set
+			alive_flag = '0',
+			update_user_id = #{updateUserId},
+			update_user_name = #{updateUserName},
+			update_time = now()
+		where
+			user_post_id = #{userPostId}
+	</update>
+	
+	<!-- 根据用户的岗位来查询用户信息 -->
+	<select id="selectUserByPost" parameterType="com.mdoa.framework.bo.PostForm" 
+		resultType="com.mdoa.user.model.UserInfo">
+		SELECT	
+			user_id AS userId,
+			user_name AS userName,
+			id_card AS idCard
+		from 
+			user_info 
+		WHERE
+			alive_flag = '1'
+		<if test="postId != null and postId != ''">
+			AND post_id = #{postId}
+		</if>
+	</select>
+	
+	<!-- <select id="selectUserByPost" parameterType="com.mdoa.framework.bo.PostForm" 
+		resultType="com.mdoa.user.model.UserInfo">
+		SELECT	
+			b.user_id AS userId,
+			b.user_name AS userName,
+			b.id_card AS idCard
+		from 
+			framework_user_post a
+			LEFT JOIN 
+				user_info b
+			ON (b.user_id = a.user_id)
+		WHERE
+			a.alive_flag = '1'
+			AND b.alive_flag = '1'
+		<if test="postId != null and postId != ''">
+			AND a.post_id = #{postId}
+		</if>
+	</select> -->
+</mapper>

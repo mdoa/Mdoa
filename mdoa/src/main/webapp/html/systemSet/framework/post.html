@@ -1,0 +1,63 @@
+<div id="framework-post" title="岗位管理">
+	<div class="maintop">
+	</div>
+	<div class="invitetop">
+		岗位名称：
+		<input type="text" name="postName"> 
+		<a class="easyui-linkbutton select" iconCls="icon-search" style="line-height:16px;">查询</a>
+		<input type="button" class="clean" value="清空">
+	</div>
+	<div>
+		<table class="postList"></table>
+	</div>
+	
+	<div class="popups" style="text-align: left">
+		<div class="popup updatePost">
+			<h3>修改岗位名</h3>
+			<span class="turnoff"></span>
+			<div class="popuparea">
+				<table style="padding:10px 20px;">
+					<tr>
+						<td>原岗位名称：</td>
+						<td><input name="originalPostName" style="width: 142px" type="text"/></td>
+					</tr>
+					<tr>
+						<td>新岗位名称：</td>
+						<td><input name="postName" style="width: 142px" type="text"/></td>
+					</tr>
+					<tr>
+						<td style="padding-bottom: 45px">备注：</td>
+						<td><textarea style="width: 140px;height: 50px;" name="remark"></textarea></td>
+					</tr>
+				</table>
+			</div>
+			<div class="btnarea" style="text-align: center">
+				<input type="button" class="button confirm" value="确定"/>
+				<input type="button" class="button cannel" value="关闭"/>
+			</div>
+		</div>
+	</div>
+	<!-- 添加岗位名弹窗 -->
+	<div class="popups" style="text-align: left">
+		<div class="popup addPost" style="height: 190px;width: 270px;">
+			<h3>添加岗位名</h3>
+			<span class="turnoff"></span>
+			<div class="popuparea" style="width: 245px">
+				<table style="width: 240px; height: 120px;padding:8px;text-align: right">
+					<tr>
+						<td width="100px">岗位名称：</td>
+						<td width="150px"><input name="postName" style="width: 142px" type="text"/></td>
+					</tr>
+					<tr>
+						<td style="padding-bottom: 45px">备注：</td>
+						<td><textarea style="width: 140px;height: 50px;" name="remark"></textarea></td>
+					</tr>
+				</table>
+			</div>
+			<div class="btnarea" style="text-align: center">
+				<input type="button" class="button confirm" name="confirm" value="确定"/>
+				<input type="button" class="button cannel" value="关闭"/>
+			</div>
+		</div>
+	</div>
+</div>

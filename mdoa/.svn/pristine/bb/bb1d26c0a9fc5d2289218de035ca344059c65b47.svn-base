@@ -1,0 +1,30 @@
+package com.mdoa.personnel.service;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.mdoa.base.service.BaseService;
+import com.mdoa.personnel.dao.ClockDao;
+import com.mdoa.user.model.UserInfo;
+
+@Service
+@Transactional
+public class ClockService extends BaseService{
+	
+	@Autowired
+	private ClockDao clockDao;
+	
+	/**
+	 * 定时任务 处理前一天打卡记录 并插入新的预备记录
+	 */
+	public void autoDeal() {
+		//将前一天打卡记录转存入记录表
+		
+	}
+
+	
+	
+}

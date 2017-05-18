@@ -1,0 +1,82 @@
+<div id="depreciationManage">
+	<div class="maintop">
+		<div class="add">
+			<span class="maintopicon mainicon2"></span>
+			<span>添加折旧类型</span>
+		</div>
+	</div>
+	<div class="invitetop">
+		请输入查询条件: 类型名称:<input type="text" class="depreTypeName"/>
+		折算类型<select class="calMethod"></select>
+		<a class="easyui-linkbutton query" iconCls="icon-search" style="line-height:16px;">查询</a>
+			<input type="button" class="button" value="清空"/> 
+	</div>
+	<div>
+		<table id="depreciationManagedg"></table>
+	</div>
+	<div class="popups">
+	<!-- 添加折旧类型 -->
+		<div class="popup addDepreciation">
+			<h3>折旧类型详细信息</h3>
+			<span class="turnoff"></span>
+			<div class="popuparea">
+				<table>
+					<tr>
+						<td>分类名称:</td>
+						<td><input type="text" class="depreTypeName"/></td>
+					</tr>
+					<tr>
+						<td>折旧周期(月):</td>
+						<td><input type="text" class="deprePeriod"/></td>
+					</tr>
+					<tr>
+						<td>折旧计算方法:</td>
+						<td>
+							<select class="calMethod"></select>
+						</td>
+					</tr>
+					<tr>
+						<td style="padding-bottom: 18px;">类型说明:</td>
+						<td><textarea class="typeDesc"></textarea></td>
+					</tr>
+				</table>
+			</div>
+			<div class="btnarea" style="text-align: center">
+				<input type="button" class="button confirm" value="确定">
+				<input type="button" class="button cannel" value="取消" style="margin-left: 8px;">
+			</div>
+		</div>
+	<!-- 编辑折旧类型 -->
+		<div class="popup editDepreciation">
+			<h3>修改折旧类型详细信息</h3>
+			<span class="turnoff"></span>
+			<div class="popuparea">
+				<table>
+					<tr>
+						<td>分类名称:</td>
+						<td><input type="text" class="depreTypeName"/></td>
+					</tr>
+					<tr>
+						<td>折旧周期(月):</td>
+						<td><input type="text" class="deprePeriod"/></td>
+					</tr>
+					<tr>
+						<td>折旧计算方法:</td>
+						<td>
+							<select class="calMethod">
+							</select>
+						</td>
+					</tr>
+					<tr>
+						<td style="padding-bottom: 18px;">类型说明:</td>
+						<td><textarea class="typeDesc"></textarea></td>
+					</tr>
+				</table>
+			</div>
+			<div class="btnarea" style="text-align: center">
+				<input type="button" class="button confirm" value="确定">
+				<input type="button" class="button cannel" value="取消" style="margin-left: 8px;">
+			</div>
+		</div>
+	</div>
+</div>

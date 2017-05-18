@@ -1,0 +1,708 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mdoa.repertory.dao.RepertoryInOutRecordDao">
+	<select id="getuuid" resultType="java.lang.String">
+		select uuid() as uuid
+	</select>
+	
+	<!-- 查询出库总计 -->
+	<select id="findSumOutRecord" parameterType="com.mdoa.repertory.bo.GoodsForm" resultType="com.mdoa.repertory.bo.GoodsForm">
+		 SELECT
+		 	SUM(c.out_number) AS outTotalNumber,
+		 	SUM(c.tax_amount) AS outTotalTaxAmount
+		 FROM
+		 	repertory_goods a,
+		 	repertory_out_record c
+		 WHERE
+		 	c.alive_flag = '1'
+			AND a.goods_id = c.goods_id
+			<if test="goodsTypeUrl != null and goodsTypeUrl != ''">
+  				AND a.goods_type_url LIKE ('${goodsTypeUrl}')
+  			</if>
+  			<if test="beginNumber != null and beginNumber != '' ">
+  				AND a.total_number &gt;= ${beginNumber}
+  			</if>
+  			<if test="endNumber != null and endNumber != ''">
+  				AND a.total_number &lt;= ${endNumber}
+  			</if>
+			<if test="goodsName != null and goodsName != '' ">
+				AND a.goods_name LIKE ('${goodsName}')
+			</if>
+			<if test="goodsSize != null and goodsSize !=''">
+  				AND a.goods_size LIKE ('${goodsSize}')
+  			</if>
+  			<if test="goodsPositionId != null and goodsPositionId != '' ">
+  				AND c.goods_position_id = #{goodsPositionId}
+  			</if>
+  			<if test="goodsPositionName != null and goodsPositionName != '' ">
+	  			AND c.goods_position_name = #{goodsPositionName}
+	  		</if>
+  			<if test="repertoryId != null and repertoryId != ''">
+  				AND c.repertory_id = #{repertoryId}
+  			</if>
+	  		<if test="getUserName != null and getUserName != ''">
+	  			AND c.get_user_name LIKE ('${getUserName}')
+	  		</if>
+	  		<if test="operateUserName != null and operateUserName != ''">
+	  			AND c.operate_user_name LIKE ('${operateUserName}')
+	  		</if>
+	  		<if test="getDepartmentId != null and getDepartmentId != ''">
+	  			AND c.getdepartment_id = #{getDepartmentId}
+	  		</if>
+  			<if test="beginTime !=null and beginTime != '' and endTime !=null and endTime != '' ">
+  				AND c.out_time &gt;= STR_TO_DATE(#{beginTime},'%Y-%m-%d %H')
+  				AND c.out_time &lt;= STR_TO_DATE(#{endTime},'%Y-%m-%d %H')
+  			</if>
+	</select>
+	
+	<!-- 查询入库总计 -->
+	<select id="findSumInRecord" parameterType="com.mdoa.repertory.bo.GoodsForm" resultType="com.mdoa.repertory.bo.GoodsForm">
+		 SELECT
+		 	SUM(b.in_number) AS inTotalNumber,
+		 	SUM(b.pretax_amount) AS inTotalPretaxAmount,
+		 	SUM(b.tax_amount) AS inTotalTaxAmount
+		 FROM
+		 	repertory_goods a,
+		 	repertory_in_record b
+		 WHERE
+		 	b.alive_flag = '1'
+			AND a.goods_id = b.goods_id
+			<if test="goodsTypeUrl != null and goodsTypeUrl != ''">
+  				AND a.goods_type_url LIKE ('${goodsTypeUrl}')
+  			</if>
+  			<if test="beginNumber != null and beginNumber != '' ">
+  				AND a.total_number &gt;= ${beginNumber}
+  			</if>
+  			<if test="endNumber != null and endNumber != ''">
+  				AND a.total_number &lt;= ${endNumber}
+  			</if>
+			<if test="goodsName != null and goodsName != '' ">
+				AND a.goods_name LIKE ('${goodsName}')
+			</if>
+			<if test="goodsSize != null and goodsSize !=''">
+  				AND a.goods_size LIKE ('${goodsSize}')
+  			</if>
+  			<if test="goodsPositionId != null and goodsPositionId != '' ">
+  				AND b.goods_position_id = #{goodsPositionId}
+  			</if>
+  			<if test="goodsPositionName != null and goodsPositionName != '' ">
+	  			AND b.goods_position_name LIKE ('${goodsPositionName}')
+	  		</if>
+  			<if test="repertoryId != null and repertoryId != ''">
+  				AND b.repertory_id = #{repertoryId}
+  			</if>
+  			<if test="putUserName != null and putUserName != ''">
+	  			AND b.put_user_name LIKE ('${putUserName}')
+	  		</if>
+	  		<if test="operateUserName != null and operateUserName != ''">
+	  			AND b.operate_user_name LIKE ('${operateUserName}')
+	  		</if>
+  			<if test="beginTime !=null and beginTime != '' and endTime !=null and endTime != '' ">
+  				AND b.in_time &gt;= STR_TO_DATE(#{beginTime},'%Y-%m-%d %H')
+  				AND b.in_time &lt;= STR_TO_DATE(#{endTime},'%Y-%m-%d %H')
+  			</if>
+	</select>
+	
+	<!-- 查询出入库总计 -->
+	<select id="findSumInOutRecord" parameterType="com.mdoa.repertory.bo.GoodsForm" resultType="com.mdoa.repertory.bo.GoodsForm">
+		 SELECT
+		 	SUM(b.in_number) AS inTotalNumber,
+		 	SUM(b.pretax_amount) AS inTotalPretaxAmount,
+		 	SUM(b.tax_amount) AS inTotalTaxAmount,
+		 	SUM(c.out_number) AS outTotalNumber,
+		 	SUM(c.tax_amount) AS outTotalTaxAmount
+		 FROM
+		 	repertory_goods a,
+		 	repertory_in_record b,
+		 	repertory_out_record c
+		 WHERE
+		 	b.alive_flag = '1'
+		 	AND c.alive_flag = '1'
+			AND a.goods_id = b.goods_id
+			AND a.goods_id = c.goods_id
+			<if test="goodsTypeUrl != null and goodsTypeUrl != ''">
+  				AND a.goods_type_url LIKE ('${goodsTypeUrl}')
+  			</if>
+  			<if test="beginNumber != null and beginNumber != '' ">
+  				AND a.total_number &gt;= ${beginNumber}
+  			</if>
+  			<if test="endNumber != null and endNumber != ''">
+  				AND a.total_number &lt;= ${endNumber}
+  			</if>
+			<if test="goodsName != null and goodsName != '' ">
+				AND a.goods_name LIKE ('${goodsName}')
+			</if>
+			<if test="goodsSize != null and goodsSize !=''">
+  				AND a.goods_size LIKE ('${goodsSize}')
+  			</if>
+  			<if test="goodsPositionId != null and goodsPositionId != '' ">
+  				AND b.goods_position_id = #{goodsPositionId}
+  				AND c.goods_position_id = #{goodsPositionId}
+  			</if>
+  			<if test="goodsPositionName != null and goodsPositionName != '' ">
+	  			AND b.goods_position_name LIKE ('${goodsPositionName}')
+	  			AND c.goods_position_name = #{goodsPositionName}
+	  		</if>
+  			<if test="repertoryId != null and repertoryId != ''">
+  				AND b.repertory_id = #{repertoryId}
+  				AND c.repertory_id = #{repertoryId}
+  			</if>
+  			<if test="putUserName != null and putUserName != ''">
+	  			AND b.put_user_name LIKE ('${putUserName}')
+	  		</if>
+	  		<if test="getUserName != null and getUserName != ''">
+	  			AND c.get_user_name LIKE ('${getUserName}')
+	  		</if>
+	  		<if test="operateUserName != null and operateUserName != ''">
+	  			AND b.operate_user_name LIKE ('${operateUserName}')
+	  			AND c.operate_user_name LIKE ('${operateUserName}')
+	  		</if>
+	  		<if test="getDepartmentId != null and getDepartmentId != ''">
+	  			AND c.getdepartment_id = #{getDepartmentId}
+	  		</if>
+  			<if test="beginTime !=null and beginTime != '' and endTime !=null and endTime != '' ">
+  				AND b.in_time &gt;= STR_TO_DATE(#{beginTime},'%Y-%m-%d %H')
+  				AND b.in_time &lt;= STR_TO_DATE(#{endTime},'%Y-%m-%d %H')
+  				AND c.out_time &gt;= STR_TO_DATE(#{beginTime},'%Y-%m-%d %H')
+  				AND c.out_time &lt;= STR_TO_DATE(#{endTime},'%Y-%m-%d %H')
+  			</if>
+	</select>
+	
+	<!-- 插入入库记录 -->
+	<insert id="insertInRecord" parameterType="com.mdoa.repertory.model.RepertoryInRecord">
+		INSERT INTO repertory_in_record(
+			in_record_id,goods_id,repertory_id,repertory_name,
+			goods_position_id,goods_position_name,in_number,record,pretax_amount,
+			pretax_aver_price,tax_rate,tax_amount,tax_aver_price,provider,
+			operate_user_id,operate_user_name,in_time,put_user_id,put_user_name,
+			create_time,create_user_id,create_user_name,alive_flag			
+		)VALUE(
+			UUID(),#{goodsId},#{repertoryId},#{repertoryName},
+			#{goodsPositionId},#{goodsPositionName},#{inNumber},#{record},
+			#{pretaxAmount},#{pretaxAverPrice},#{taxRate},
+			#{taxAmount},#{taxAverPrice},#{provider},#{operateUserId},#{operateUserName},#{inTimeStr},
+			#{putUserId},#{putUserName},
+			NOW(),#{createUserId},#{createUserName},'1'
+		)
+	</insert>
+	<!-- 增加出库记录 -->
+	<insert id="insertOutRecord" parameterType="com.mdoa.repertory.model.RepertoryOutRecord">
+		INSERT INTO repertory_out_record(
+			out_record_id,goods_id,repertory_id,
+			repertory_name,goods_position_id,goods_position_name,record,
+			out_number,pretax_amount,tax_amount,operate_user_id,
+			operate_user_name,out_time,get_user_id,
+			get_user_name,get_department_id,get_department_name,create_time,create_user_id,
+			create_user_name,use_type,alive_flag
+		)VALUE(
+			UUID(),#{goodsId},#{repertoryId},
+			#{repertoryName},#{goodsPositionId},#{goodsPositionName},#{record},
+			#{outNumber},#{pretaxAmount},#{taxAmount},
+			#{operateUserId},#{operateUserName},#{outTimeStr},
+			#{getUserId},#{getUserName},#{getDepartmentId},#{getDepartmentName},NOW(),
+			#{createUserId},#{createUserName},#{useType},'1'
+		)	
+	</insert>
+	<!-- 查询所有物品的入库流水列表 以及各种查询 -->
+	<select id="selectGoodsInRecord" parameterType="com.mdoa.repertory.bo.GoodsForm" resultType="com.mdoa.repertory.bo.GoodsForm">
+		SELECT
+			a.goods_id AS goodsId,
+			a.goods_name AS goodsName,
+			a.total_number AS totalNumber,
+			a.goods_type_url AS goodsTypeUrl,
+			a.goods_size AS goodsSize,
+			a.unit AS unit,
+			a.warn_number AS warnNumber,
+			a.latest_unit_price AS latestUnitPrice,
+			a.moving_aver_price AS movingAverPrice,
+			a.weighted_aver_price AS weightedAverPrice,
+			a.create_time AS createTime,
+			a.create_user_id AS createUserId,
+			a.create_user_name AS createUserName,
+			a.update_time AS updateTime,
+			a.update_user_id AS updateUserId,
+			a.update_user_name AS updateUserName,
+			b.in_record_id AS inRecordId,
+			b.repertory_id AS repertoryId,
+			b.repertory_name AS repertoryName,
+			b.goods_position_id AS goodsPositionId,
+			b.goods_position_name AS goodsPositionName,
+			b.in_number AS inNumber,
+			b.pretax_amount AS pretaxAmount,
+			b.pretax_aver_price AS pretaxAverPrice,
+			b.tax_rate AS taxRate,
+			b.tax_amount AS taxAmount,
+			b.tax_aver_price AS taxAverPrice,
+			b.operate_user_id AS operateUserId,
+			b.operate_user_name AS operateUserName,
+			b.in_time AS inTime,
+			b.put_user_id AS putUserId,
+			b.put_user_name AS putUserName,
+			b.record AS record,
+			b.create_time AS createTime,
+			b.create_user_id AS createUserId,
+			b.create_user_name AS createUserName,
+			b.update_time AS updateTime,
+			b.update_user_id AS updateUserId,
+			b.update_user_name AS updateUserName,
+			b.provider AS provider
+		FROM
+			repertory_goods a,
+			repertory_in_record b
+		<where>
+			a.alive_flag = '1'
+			AND b.alive_flag = '1'
+			AND a.goods_id = b.goods_id
+			<if test="inRecordId != null and inRecordId != ''">
+			AND b.in_record_id = #{inRecordId}</if>
+  			<if test="goodsName !=null and goodsName != ''">
+  			AND a.goods_name LIKE ('${goodsName}')</if>
+  			<if test="goodsSize !=null and goodsSize != ''">
+  			AND a.goods_size LIKE ('${goodsSize}')</if>
+  			<if test="goodsTypeUrl != null and goodsTypeUrl != ''">
+  			AND a.goods_type_url LIKE ('${goodsTypeUrl}')</if>
+  			<if test="beginNumber != null and beginNumber != '' ">
+  			AND b.in_number &gt;= ${beginNumber}</if>
+  			<if test="endNumber != null and endNumber != ''">
+  			AND b.in_number &lt;= ${endNumber}</if>
+  			<if test="operateUserName !=null and operateUserName != '' ">
+  			AND b.operate_user_name LIKE ('${operateUserName}')</if>
+  			<if test="putUserName !=null and putUserName != '' ">
+  			AND b.put_user_name LIKE ('${putUserName}')</if>
+  			<if test="beginTime !=null and beginTime != '' and endTime !=null and endTime != '' ">
+  			AND b.in_time &gt;= STR_TO_DATE(#{beginTime},'%Y-%m-%d %H')
+  			AND b.in_time &lt;= STR_TO_DATE(#{endTime},'%Y-%m-%d %H')
+  			</if>
+			<if test="repertoryId != null and repertoryId != '' ">
+  			AND b.repertory_id = ${repertoryId}</if>
+  			<if test="goodsPositionName != null and goodsPositionName != '' ">
+	  		AND b.goods_position_name LIKE ('${goodsPositionName}')</if>
+	  		<if test="provider != null and provider != ''">
+			AND b.provider = #{provider}</if>
+		</where>
+		ORDER BY
+				b.create_time
+		DESC
+	</select>
+	<!-- 查询所有物品的出库明细列表 以及各种查询-->
+	<select id="selectGoodsOutRecord" parameterType="com.mdoa.repertory.bo.GoodsForm" resultType="com.mdoa.repertory.bo.GoodsForm">
+			SELECT
+			a.goods_id AS goodsId,
+			a.goods_type_id AS goodsTypeId,
+			a.goods_name AS goodsName,
+			a.total_number AS totalNumber,
+			a.goods_type_url AS goodsTypeUrl,
+			a.goods_size AS goodsSize,
+			a.unit AS unit,
+			a.warn_number AS warnNumber,
+			a.latest_unit_price AS latestUnitPrice,
+			a.moving_aver_price AS movingAverPrice,
+			a.weighted_aver_price AS weightedAverPrice,
+			a.create_time AS createTime,
+			a.create_user_id AS createUserId,
+			a.create_user_name AS createUserName,
+			a.update_time AS updateTime,
+			a.update_user_id AS updateUserId,
+			a.update_user_name AS updateUserName,
+			b.use_type AS useType,
+			b.out_record_id AS outRecordId,
+			b.repertory_id AS repertoryId,
+			b.repertory_name AS repertoryName,
+			b.goods_position_id AS goodsPositionId,
+			b.goods_position_name AS goodsPositionName,
+			b.out_number AS outNumber,
+			b.pretax_amount AS pretaxAmount,
+			b.tax_amount AS taxAmount,
+			b.operate_user_id AS operateUserId,
+			b.operate_user_name AS operateUserName,
+			b.out_time AS outTime,
+			b.get_user_id AS getUserId,
+			b.get_user_name AS getUserName,
+			b.get_department_id AS getDepartmentId,
+			b.get_department_name AS getDepartmentName,
+			b.record AS record,
+			b.create_time AS createTime,
+			b.create_user_id AS createUserId,
+			b.create_user_name AS createUserName,
+			b.update_time AS updateTime,
+			b.update_user_id AS updateUserId,
+			b.update_user_name AS updateUserName,
+			b.use_type AS useType
+		FROM
+			repertory_goods a,
+			repertory_out_record b
+			<where>
+			a.alive_flag = '1'
+			AND b.alive_flag = '1'
+			AND a.goods_id = b.goods_id
+	  			<if test="goodsName != null and goodsName != ''">
+	  			AND a.goods_name LIKE ('${goodsName}')</if>
+	  			<if test="goodsSize !=null and goodsSize != ''">
+  				AND a.goods_size LIKE ('${goodsSize}')</if>
+	  			<if test="goodsTypeUrl != null and goodsTypeUrl != ''">
+  			 	AND a.goods_type_url LIKE ('${goodsTypeUrl}')</if>
+		  		<if test="beginNumber != null and beginNumber != '' ">
+	  			AND b.in_number &gt;= ${beginNumber}</if>
+	  			<if test="endNumber != null and endNumber != ''">
+	  			AND b.in_number &lt;= ${endNumber}</if>
+	  			<if test="updateUserName !=null and updateUserName != '' ">
+	  			AND b.update_user_name LIKE ('${updateUserName}')</if>
+	  			<if test="operateUserName !=null and operateUserName != '' ">
+	  			AND b.operate_user_name LIKE ('${operateUserName}')</if>
+	  			<if test="getDepartmentId != null and getDepartmentId != ''">
+	  			AND b.get_department_id = #{getDepartmentId}</if>
+	  			<if test="getUserName !=null and getUserName != '' ">
+	  			AND b.get_user_name LIKE ('${getUserName}')</if>
+	  			<if test="beginTime !=null and beginTime != '' and endTime !=null and endTime != '' ">
+	  			AND b.out_time &gt;= STR_TO_DATE(#{beginTime},'%Y-%m-%d %H')
+	  			AND b.out_time &lt;= STR_TO_DATE(#{endTime},'%Y-%m-%d %H')
+	  			</if>
+				<if test="repertoryId != null and repertoryId != '' ">
+	  			 AND b.repertory_id = ${repertoryId}</if>
+	  			 <if test="goodsPositionName != null and goodsPositionName != '' ">
+	  			 AND b.goods_position_name LIKE ('${goodsPositionName}')</if>
+	  			<if test="useType != null and useType != '' ">
+	  			 AND b.use_type = ${useType}</if> 
+			</where>
+		ORDER BY
+				b.create_time
+		DESC	
+	</select>
+	<!-- 根据入库记录id查询入库记录 -->
+	<select id="selectGoodsInRecordById" parameterType="java.lang.String" resultType="com.mdoa.repertory.model.RepertoryInRecord">
+		SELECT
+			in_record_id AS inRecordId,
+			goods_id AS goodsId,
+			repertory_id AS repertoryId,
+			repertory_name AS repertoryName,
+			goods_position_id AS goodsPositionId,
+			goods_position_name AS goodsPositionName,
+			in_number AS inNumber,
+			pretax_amount AS pretaxAmount,
+			pretax_aver_price AS pretaxAverPrice,
+			tax_rate AS taxRate,
+			tax_amount AS taxAmount,
+			tax_aver_price AS taxAverPrice,
+			operate_user_id AS operateUserId,
+			operate_user_name AS operateUserName,
+			in_time AS inTime,
+			put_user_id AS putUserId,
+			put_user_name AS putUserName,
+			record AS record,
+			create_time AS createTime,
+			create_user_id AS createUserId,
+			create_user_name AS createUserName,
+			update_time AS updateTime,
+			update_user_id AS updateUserId,
+			update_user_name AS updateUserName
+		FROM
+			repertory_in_record
+		WHERE
+			in_record_id = #{inRecordId}
+	</select>
+	<!-- 根据出库记录id查询出库记录 -->
+	<select id="selectGoodsOutRecordById" parameterType="java.lang.String" resultType="com.mdoa.repertory.model.RepertoryOutRecord">
+		SELECT
+			out_record_id AS outRecordId,
+			goods_id AS goodsId,
+			repertory_id AS repertoryId,
+			repertory_name AS repertoryName,
+			goods_position_id AS goodsPositionId,
+			goods_position_name AS goodsPositionName,
+			out_number AS outNumber,
+			pretax_amount AS pretaxAmount,
+			tax_amount AS taxAmount,
+			operate_user_id AS operateUserId,
+			operate_user_name AS operateUserName,
+			out_time AS outTime,
+			get_user_id AS getUserId,
+			get_user_name AS getUserName,
+			get_department_id AS getDepartmentId,
+			get_department_name AS getDepartmentName,
+			record AS record,
+			create_time AS createTime,
+			create_user_id AS createUserId,
+			create_user_name AS createUserName,
+			update_time AS updateTime,
+			update_user_id AS updateUserId,
+			update_user_name AS updateUserName
+			
+		FROM
+			repertory_out_record
+		WHERE
+			out_record_id = #{outRecordId}
+	</select>
+	<!-- 查询全部的出库入库记录  以及各种条件查询-->
+	<select id="selectAllInOutRecord" parameterType="com.mdoa.repertory.bo.GoodsForm" resultType="com.mdoa.repertory.bo.GoodsForm">
+		SELECT
+			a.goods_id AS goodsId,
+			a.goods_type_id AS goodsTypeId,
+			a.goods_name AS goodsName,
+			'inRecord' AS operation,
+			a.total_number AS totalNumber,
+			a.goods_type_url AS goodsTypeUrl,
+			a.goods_size AS goodsSize,
+			a.unit AS unit,
+			a.warn_number AS warnNumber,
+			a.latest_unit_price AS latestUnitPrice,
+			a.moving_aver_price AS movingAverPrice,
+			a.weighted_aver_price AS weightedAverPrice,
+			b.in_record_id AS inRecordId,
+			b.repertory_id AS repertoryId,
+			b.repertory_name AS repertoryName,
+			b.goods_position_id AS goodsPositionId,
+			b.goods_position_name AS goodsPositionName,
+			b.in_number AS inNumber,
+			b.pretax_amount AS pretaxAmount,
+			b.tax_amount AS taxAmount,
+			b.in_time AS inTime,
+			b.operate_user_name AS operateUserName,
+			b.put_user_name AS putUserName,
+			b.record AS record,
+			b.create_time AS createTime,
+			b.create_user_id AS createUserId,
+			b.create_user_name AS createUserName,
+			b.update_time AS updateTime,
+			b.update_user_id AS updateUserId,
+			b.update_user_name AS updateUserName	
+		FROM
+			repertory_goods a,
+			repertory_in_record b
+		WHERE
+			b.alive_flag = '1'
+			AND a.goods_id = b.goods_id
+			<if test="goodsTypeUrl != null and goodsTypeUrl != ''">
+  			AND a.goods_type_url LIKE ('${goodsTypeUrl}')</if>
+  			<if test="beginNumber != null and beginNumber != '' ">
+  			AND a.total_number &gt;= ${beginNumber}</if>
+  			<if test="endNumber != null and endNumber != ''">
+  			AND a.total_number &lt;= ${endNumber}</if>
+			<if test="goodsName != null and goodsName != '' ">
+			AND a.goods_name LIKE ('${goodsName}')</if>
+			<if test="goodsSize != null and goodsSize !=''">
+  			AND a.goods_size LIKE ('${goodsSize}')</if>
+  			<if test="goodsPositionId != null and goodsPositionId != '' ">
+  			AND b.goods_position_id = #{goodsPositionId}</if>
+  			<if test="goodsPositionName != null and goodsPositionName != '' ">
+	  		AND b.goods_position_name LIKE ('${goodsPositionName}')</if>
+  			<if test="repertoryId != null and repertoryId != ''">
+  			AND b.repertory_id = #{repertoryId}</if>
+  			<if test="putUserName != null and putUserName != ''">
+	  		AND b.put_user_name LIKE ('${putUserName}')</if>
+	  		<if test="operateUserName != null and operateUserName != ''">
+	  		AND b.operate_user_name LIKE ('${operateUserName}')</if>
+	  		<if test="getDepartmentId != null and getDepartmentId != ''">
+	  		AND b.repertory_id = '0'</if>
+  			<if test="beginTime !=null and beginTime != '' and endTime !=null and endTime != '' ">
+  			AND b.in_time &gt;= STR_TO_DATE(#{beginTime},'%Y-%m-%d %H')
+  			AND b.in_time &lt;= STR_TO_DATE(#{endTime},'%Y-%m-%d %H')
+  			</if>
+		UNION
+		SELECT
+			a.goods_id AS goodsId,
+			a.goods_type_id AS goodsTypeId,
+			a.goods_name AS goodsName,
+			'outRecord' AS operation,
+			a.total_number AS totalNumber,
+			a.goods_type_url AS goodsTypeUrl,
+			a.goods_size AS goodsSize,
+			a.unit AS unit,
+			a.warn_number AS warnNumber,
+			a.latest_unit_price AS latestUnitPrice,
+			a.moving_aver_price AS movingAverPrice,
+			a.weighted_aver_price AS weightedAverPrice,	
+			b.out_record_id AS outRecordId,
+			b.repertory_id AS repertoryId,
+			b.repertory_name AS repertoryName,
+			b.goods_position_id AS goodsPositionId,
+			b.goods_position_name AS goodsPositionName,
+			b.out_number AS outNumber,
+			b.pretax_amount AS pretaxAmount,
+			b.tax_amount AS taxAmount,
+			b.out_time AS outTime,
+			b.get_department_name AS getDepartmentName,
+			b.get_user_name AS getUserName,
+			b.record AS record,
+			b.create_time AS createTime,
+			b.create_user_id AS createUserId,
+			b.create_user_name AS createUserName,
+			b.update_time AS updateTime,
+			b.update_user_id AS updateUserId,
+			b.update_user_name AS updateUserName
+		FROM
+			repertory_goods a,
+			repertory_out_record b
+		WHERE
+			b.alive_flag = '1'
+			AND a.goods_id = b.goods_id
+			<if test="goodsTypeUrl != null and goodsTypeUrl != ''">
+  			AND a.goods_type_url LIKE ('${goodsTypeUrl}')</if>
+			<if test="beginNumber != null and beginNumber != '' and endNumber != null and endNumber != '' ">
+  			AND total_number &gt;= ${beginNumber}
+  			AND total_number &lt;= ${endNumber}</if>
+			<if test="goodsName != null and goodsName != '' ">
+			AND a.goods_name LIKE ('${goodsName}')</if>
+			<if test="goodsSize != null and goodsSize !=''">
+  			AND a.goods_size LIKE ('${goodsSize}')</if>
+  			<if test="goodsPositionId != null and goodsPositionId != '' ">
+  			AND b.goods_position_id = #{goodsPositionId}</if>
+  			<if test="goodsPositionName != null and goodsPositionName != '' ">
+	  		AND b.goods_position_name LIKE ('${goodsPositionName}')</if>
+  			<if test="repertoryId != null and repertoryId != ''">
+  			AND b.repertory_id = #{repertoryId}</if>
+  			<if test="getDepartmentId != null and getDepartmentId != ''">
+	  		AND b.get_department_id = #{getDepartmentId}</if>
+	  		<if test="putUserName != null and putUserName != ''">
+	  		AND b.get_department_id = '0'</if>
+  			<if test="beginTime !=null and beginTime != '' and endTime !=null and endTime != '' ">
+  			AND b.out_time &gt;= STR_TO_DATE(#{beginTime},'%Y-%m-%d %H')
+  			AND b.out_time &lt;= STR_TO_DATE(#{endTime},'%Y-%m-%d %H')
+	  		</if>
+	</select>
+	<!-- 删除一条入库记录 -->
+	<update id="deleteGoodsInRecord" parameterType="java.lang.String">
+		UPDATE
+			repertory_in_record
+		SET
+			update_time = NOW(),
+			alive_flag = '0'
+		WHERE
+			in_record_id = #{inRecordId}
+	</update>
+	<!-- 删除一条出库记录 -->
+	<update id="deleteGoodsOutRecord" parameterType="java.lang.String">
+		UPDATE
+			repertory_out_record
+		SET
+			update_time = NOW(),
+			alive_flag = '0'
+		WHERE
+			out_record_id = #{outRecordId}
+	</update>
+	<!-- 修改一条入库记录 -->
+	<update id="updateGoodsInRecord" parameterType="com.mdoa.repertory.bo.GoodsForm">
+		UPDATE
+			repertory_in_record
+		SET
+			<if test="inNumber != null and inNumber != '' ">
+			in_number = #{inNumber},</if>
+			<if test="pretaxAmount != null and pretaxAmount != '' ">
+			pretax_amount = #{pretaxAmount},</if>
+			<if test="pretaxAverPrice != null and pretaxAverPrice != '' ">
+			pretax_aver_price = #{pretaxAverPrice},</if>
+			<if test="taxRate != null and taxRate != '' ">
+			tax_rate = #{taxRate},</if>
+			<if test="taxAmount != null and taxAmount != '' ">
+			tax_amount = #{taxAmount},</if>
+			<if test="taxAverPrice != null and taxAverPrice != '' ">
+			tax_aver_price = #{taxAverPrice},</if>
+			<if test="operateUserId != null and operateUserId != '' ">
+			operate_user_id = #{operateUserId},</if>
+			<if test="operateUserName != null and operateUserName != '' ">
+			operate_user_name = #{operateUserName},</if>
+			<if test="putUserId != null and putUserId != '' ">
+			put_user_id = #{putUserId},</if>
+			<if test="putUserName != null and putUserName != '' ">
+			put_user_name = #{putUserName},</if>
+			<if test="record != null and record != '' ">
+			record = #{record},</if>
+			<if test="inTime != null and inTime != '' ">
+			in_time = #{inTime},</if>
+			<if test="updateUserId != null and updateUserId != ''">
+			update_user_id = #{updateUserId},</if>
+			<if test="updateUserName != null and updateUserName != '' ">
+			update_user_name = #{updateUserName},</if>
+			<if test="provider != null and provider != ''">
+			provider = #{provider},</if>
+			update_time = NOW()	
+		WHERE
+			in_record_id = #{inRecordId}
+	</update>
+	<!-- 修改一条出库记录 -->
+	<update id="updateGoodsOutRecord" parameterType="com.mdoa.repertory.bo.GoodsForm">
+		UPDATE
+			repertory_out_record
+		SET
+			<if test="outNumber != null and outNumber != '' ">
+			out_number = #{outNumber},</if>
+			<if test="pretaxAmount != null and pretaxAmount != '' ">
+			pretax_amount = #{pretaxAmount},</if>
+			<if test="taxAmount != null and taxAmount != '' ">
+			tax_amount = #{taxAmount},</if>
+			<if test="operateUserId != null and operateUserId != '' ">
+			operate_user_id = #{operateUserId},</if>
+			<if test="operateUserName != null and operateUserName != '' ">
+			operate_user_name = #{operateUserName},</if>
+			<if test="outTime != null and outTime != '' ">
+			out_time = #{outTime},</if>
+			<if test="getUserId != null and getUserId != '' ">
+			get_user_id = #{getUserId},</if>
+			<if test="getDepartmentId != null and getDepartmentId != '' ">
+			get_department_id = #{getDepartmentId},</if>
+			<if test="getDepartmentName != null and getDepartmentName != '' ">
+			get_department_name = #{getDepartmentName},</if>
+			<if test="record != null and record != '' ">
+			record = #{record},</if>
+			<if test="updateUserId != null and updateUserId != ''">
+			update_user_id = #{updateUserId},</if>
+			<if test="updateUserName != null and updateUserName != '' ">
+			update_user_name = #{updateUserName},</if>
+			<if test="useType != null and useType != ''">
+			use_type = #{useType},</if>
+			update_time = NOW()	
+		WHERE
+			out_record_id = #{outRecordId}
+	</update>
+	<!-- 插入出库记录时的领用部门 -->
+	<insert id="insertGetDepartment" parameterType="com.mdoa.repertory.model.RepertoryDepartment">
+		INSERT INTO repertory_department(
+			department_id,
+			department_name,
+			create_time,
+			create_user_id,
+			create_user_name,
+			alive_flag		
+		)VALUE(
+			UUID(),
+			#{departmentName},
+			NOW(),
+			#{createUserId},
+			#{createUserName},
+			'1'
+		)	
+	</insert>
+	<!-- 删除一个部门 -->
+	<update id="deleteGetDepartment" parameterType="java.lang.String">
+		UPDATE
+			repertory_department
+		SET
+			update_time = NOW(),
+			update_user_id = #{updateUserId},
+			alive_flag = '0'
+		WHERE
+			department_id = #{departmentId}
+	</update>
+	<!-- 修改部门的信息 -->
+	<update id="updateGetDepartment" parameterType="com.mdoa.repertory.model.RepertoryDepartment">
+		UPDATE
+			repertory_department
+		SET
+			department_name = #{departmentName},
+			update_time = NOW(),
+			update_user_id = #{updateUserId},
+			update_user_name = #{updateUserName}
+		WHERE
+			department_id = #{departmentId}
+	</update>
+	<!-- 查询所有部门信息 -->
+	<select id="selectGetDepartment" resultType="com.mdoa.repertory.model.RepertoryDepartment">
+		SELECT
+			department_id AS departmentId,
+			department_name AS departmentName
+		FROM
+			repertory_department
+		ORDER BY
+			create_time
+		DESC
+	</select>
+</mapper>

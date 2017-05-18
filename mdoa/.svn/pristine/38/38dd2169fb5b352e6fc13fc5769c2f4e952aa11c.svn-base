@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mdoa.repertory.dao.RepertoryDao">
+	
+	<!-- 获取UUID -->
+	<select id="getuuid" resultType="java.lang.String">
+		select uuid() as uuid
+	</select>
+	
+	<!-- 添加仓库类型 -->
+	<insert id="insertRepertoryType" parameterType="com.mdoa.repertory.model.RepertoryType">
+		INSERT INTO repertory_type(
+			repertory_id,
+			repertory_name,
+			text,
+			area,
+			create_time,
+			create_user_id,
+			create_user_name,
+			alive_flag
+		)VALUE(
+			UUID(),
+			#{repertoryName},
+			#{text},
+			#{area},
+			NOW(),
+			#{createUserId},
+			#{createUserName},
+			'1'	
+		)			
+	</insert>
+	<!-- 添加仓位 -->
+	<insert id="insertRepertoryPosition" parameterType="com.mdoa.repertory.bo.GoodsForm">
+		INSERT INTO repertory_goods_position(
+			goods_position_id,
+			goods_position_name,
+			goods_id,
+			goods_number,
+			repertory_id,
+			record,
+			create_time,
+			create_user_id,
+			create_user_name,
+			alive_flag	
+		)VALUE(
+			#{goodsPositionId},
+			#{goodsPositionName},
+			#{goodsId},
+			#{goodsNumber},
+			#{repertoryId},
+			#{record},
+			NOW(),
+			#{createUserId},
+			#{createUserName},
+			'1'	
+		)
+	</insert>
+	<!-- 删除仓位信息 -->
+	<update id="deleteRepertoryPosition" parameterType="java.lang.String">
+		UPDATE
+			repertory_goods_position
+		SET
+			update_time = NOW(),
+			alive_flag = '0'
+		WHERE
+			goods_position_id = #{goodsPositionId}
+	</update>
+	<!-- 删除仓库信息 -->
+	<update id="deleteRepertory" parameterType="java.lang.String">
+		UPDATE 
+			repertory_type
+		SET
+			update_time = NOW(),
+			alive_flag = '0'
+		WHERE
+			repertory_id = #{repertoryId}	
+	</update>
+	<!-- 修改仓库信息 -->
+	<update id="updateRepertory" parameterType="com.mdoa.repertory.model.RepertoryType">
+		UPDATE
+			repertory_type
+		SET
+			repertory_id = #{repertoryId},
+			repertory_name = #{repertoryName},
+			text = #{text},
+			area = #{area},
+			update_time = NOW(),
+			update_user_id = #{updateUserId},
+			update_user_name = #{updateUserName}
+		WHERE
+			repertory_id = #{repertoryId}
+	</update>
+	<!-- 修改仓位信息 -->
+	<update id="updateRepertoryPosition" parameterType="com.mdoa.repertory.bo.GoodsForm">
+		UPDATE
+			repertory_goods_position
+		<set>
+			<if test="goodsPositionName != null and goodsPositionName != '' ">
+			goods_position_name = #{goodsPositionName},</if>
+			<if test="goodsId != null and goodsId != ''">
+		    goods_id = #{goodsId},</if>
+		    <if test="goodsNumber != null and goodsNumber != ''">
+		    goods_number = #{goodsNumber},</if>
+			<if test="repertoryId != null and repertoryId != '' ">
+		    repertory_id = #{repertoryId},</if>
+			<if test="record != null and record != '' ">
+			record = #{record},</if>
+			<if test="updateUserId != null and updateUserId != ''">
+			update_user_id = #{updateUserId},</if>
+			<if test="updateUserName != null and updateUserName != '' ">
+			update_user_name = #{updateUserName},</if>
+			update_time = NOW()
+		</set>	
+		WHERE
+			goods_position_id = #{goodsPositionId}
+	</update>
+	<!-- 根据仓位id去查询物品的信息,用于删除仓位 -->
+	<select id="selectGoodsNumberByPosition" parameterType="java.lang.String" resultType="com.mdoa.repertory.model.RepertoryGoodsPosition">
+		SELECT
+			goods_position_id AS goodsPositionId,
+			goods_position_name AS goodsPositionName,
+			goods_id AS goodsId,
+			goods_number AS goodsNumber,
+			repertory_id AS repertoryId,
+			record AS record,
+			create_time AS createTime,
+			create_user_id AS createUserId,
+			create_user_name AS createUserName
+		FROM
+			repertory_goods_position
+		WHERE
+			goods_position_id = #{goodsPositionId}		
+	</select>
+	<!-- 查询仓位仓库和物品的信息 -->
+	<select id="selectRepertoryPosition" parameterType="com.mdoa.repertory.bo.GoodsForm" resultType="com.mdoa.repertory.bo.GoodsForm">
+			SELECT
+				a.goods_id AS goodsId,
+				a.goods_type_id AS goodsTypeId,
+				a.goods_name AS goodsName,
+				a.total_number AS totalNumber,
+				a.goods_type_url AS goodsTypeUrl,
+				a.goods_size AS goodsSize,
+				a.unit AS unit,
+				a.warn_number AS warnNumber,
+				a.latest_unit_price AS latestUnitPrice,
+				a.moving_aver_price AS movingAverPrice,
+				a.weighted_aver_price AS weightedAverPrice,
+				b.repertory_id AS repertoryId,
+				b.repertory_name AS repertoryName,
+				c.goods_position_id AS goodsPositionId,
+				c.goods_position_name AS goodsPositionName,
+				c.goods_number AS goodsNumber
+			FROM
+				repertory_goods a,
+				repertory_type b,
+				repertory_goods_position c
+			<where>
+				a.goods_id = c.goods_id
+				AND b.repertory_id = c.repertory_id
+				AND a.alive_flag = '1'
+				AND b.alive_flag = '1'
+				AND c.alive_flag = '1'
+				<if test="beginNumber != null and beginNumber != '' ">
+  				AND a.total_number &gt;= ${beginNumber}</if>
+  				<if test="endNumber != null and endNumber != ''">
+  				AND a.total_number &lt;= ${endNumber}</if>
+				<if test="goodsName != null and goodsName != '' ">
+				AND a.goods_name LIKE ('${goodsName}')</if>
+				<if test="goodsSize != null and goodsSize != '' ">
+				AND a.goods_size LIKE ('${goodsSize}')</if>
+				<if test="goodsTypeUrl != null and goodsTypeUrl != '' ">
+				AND a.goods_type_url LIKE ('${goodsTypeUrl}')</if>
+				<if test="repertoryName != null and repertoryName != '' ">
+				AND b.repertory_name LIKE ('${repertoryName}')</if>
+				<if test="repertoryId != null and repertoryId != '' ">
+				AND b.repertory_id LIKE ('${repertoryId}')</if>
+				<if test="goodsPositionName != null and goodsPositionName != ''">
+				AND c.goods_position_name LIKE ('${goodsPositionName}')</if>
+			</where>
+				ORDER BY
+					a.create_time
+				DESC	
+	</select>
+	<!-- 查询仓位信息 -->
+	<select id="selectGoodsPosition" resultType="com.mdoa.repertory.model.RepertoryGoodsPosition" parameterType="com.mdoa.repertory.model.RepertoryGoodsPosition">
+			SELECT
+				goods_position_id AS goodsPositionId,
+				goods_position_name AS goodsPositionName,
+				goods_id AS goodsId,
+				goods_number AS goodsNumber,
+				repertory_id AS repertoryId,
+				record AS record,
+				create_time AS createTime,
+				create_user_id AS createUserId,
+				create_user_name AS createUserName
+			FROM
+				repertory_goods_position
+			<where>
+				alive_flag = '1'
+			<if test="goodsId != null and goodsId != '' ">
+				AND goods_id = #{goodsId}</if>
+			</where>
+	</select>
+	<!-- 查询仓库信息 -->
+	<select id="selectRepertoryType" resultType="com.mdoa.repertory.model.RepertoryType">
+			SELECT
+				repertory_id AS repertoryId,
+				repertory_name AS repertoryName,
+				text AS text,
+				area AS area,
+				create_time AS createTime,
+				create_user_id AS createUserId,
+				create_user_name AS createUserName
+			FROM
+				repertory_type
+			WHERE
+				alive_flag = '1'
+	</select>
+	<!-- 入库的时候修改仓位的物品数量 -->
+	<update id="updatePositionGoodsByIn" parameterType="com.mdoa.repertory.bo.GoodsForm">
+		UPDATE
+			repertory_goods_position
+		SET
+			goods_number = goods_number + ${inNumber}
+		WHERE
+			goods_id = #{goodsId}
+			AND goods_position_id = #{goodsPositionId} 	
+	</update>
+	<!-- 出库的时候修改仓位的物品数量 -->
+	<update id="updatePositionGoodsByOut" parameterType="com.mdoa.repertory.bo.GoodsForm">
+		UPDATE
+			repertory_goods_position
+		SET
+			goods_number = goods_number - ${outNumber}
+		WHERE
+			goods_id = #{goodsId}
+			AND goods_position_id = #{goodsPositionId} 	
+	</update>
+</mapper>
+
+

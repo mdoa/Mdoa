@@ -1,0 +1,54 @@
+<div id="checkGroupManage">
+	<div class="maintop">
+		<div style="margin-right:6px;">
+			<input type="button" value="添加" class="button addCheckGroup" />
+		</div>
+	</div>
+	<div class="invitetop">
+		请输入查询条件：
+		考勤组名称：
+			<input type="text" name="groupName" style="width: 100px" /> 	
+		
+		<input class="selectGroup" type="button" value="查询" /> 
+		<!-- <input class="advancedQueryBtn" type="button" value="高级查询" />
+		<input type="button" class="clean-query" value="清空" /> -->
+	</div>
+	<div>
+		<table id="checkGroupManagedg"></table>
+	</div>
+
+	<div class="popups" style="text-align:left;">
+		<!-- 添加考勤组 -->
+		<div class="popup addGroup" style="height:230px;width:320px;">
+			<h3>添加考勤组</h3>
+			<span class="turnoff"></span>
+			<div class="popuparea" style="width:280px;height:160px;margin:0 auto;">
+				<table style="height: 150px;padding: 8px;text-align: right;">
+					<tr>
+						<td>考勤组名称:</td>
+						<td>
+							<input name="groupName" style="width:100%" type="text"/>
+						</td>
+					</tr>
+					<tr>
+						<td>上班时间:</td>
+						<td>
+							<input name="defaultOnTime" style="width:100%" type="text"/>
+						</td>
+					</tr>
+					<tr>
+						<td>下班时间:</td>
+						<td>
+							<input name="defaultOffTime" style="width:100%" type="text"/>
+						</td>
+					</tr>
+				</table>
+			</div>
+			<div class="btnarea" style="text-align: center">
+				<input type="button" class="button comfirm" value="确定">
+				<input type="button" class="button cannel" value="取消">
+			</div>
+		</div>
+	</div>
+	
+</div>

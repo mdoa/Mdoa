@@ -1,0 +1,121 @@
+/*------------------------------reset--------------------------------*/
+html,body,ul,ol,li,dl,dt,dd,p,h1,h2,h3,h4,h5,h6,form,fieldset,legend,img,i,em,b,strong{margin:0;padding:0;}
+h1,h2,h3,h4,h5,h6,b,strong{font-weight:normal;}
+ul,li{list-style:none;}
+i,em{font-style:normal;}
+a{text-decoration:none;}
+body{font:12px "宋体"}
+img{border:none;}
+html,body{
+	width:100%;
+	height: 100%;
+	text-align: center;
+	overflow: hidden;
+}
+div{box-sizing: border-box;}
+input{outline: 0;}
+input[type = "text"]{
+	padding:1px 0;
+	height:15px;
+	border:1px solid #a9a9a9;
+}
+textarea{
+	font:12px "宋体";
+}
+.button{
+	cursor:pointer;
+	border-radius: 4px;
+	behavior: url(../../css/plug/ie-css3.htc);
+	background:url(../img/index/btnbg1.jpg) repeat-x;
+	border:1px solid #ababab;
+	outline:0;
+}
+/* input[type="button"]:hover{
+	background:url(../img/index/btnbg2.jpg) repeat-x;
+} */
+.button:active{
+	background:url(../img/index/btnbg2.jpg) repeat-x;
+}
+textarea{resize:none;}
+select{outline: 0;}
+.jqdate{background:url(../img/index/jedetabg.png) no-repeat right center;border:1px solid #aaa;height:16px;}
+.small-button{
+	background-size: 16px 16px;
+	width: 16px;
+	height: 16px;
+	cursor: pointer;
+	display:inline-block;
+	margin:0 2px;
+}
+
+.delete{
+	background-image: url(../img/index/delete.png);
+}
+.edit{
+	background-image: url(../img/index/edit.png);
+}
+.look{
+	background-image: url(../img/index/look.png);
+}
+.recall{
+	background-image: url(../img/index/recall.png);
+}
+.lookflow{
+	background-image: url(../img/index/flowlook.png);
+}
+.resetPW{
+	background-image: url(../img/index/resetPW.png);
+}
+.rejectbtn{
+	background-image: url(../img/index/reject.png);
+}
+.retire{
+	background-image: url(../img/index/retire.png);
+}
+.layoff{
+	background-image: url(../img/index/layoff.png);
+}
+.hire{
+	background-image: url(../img/index/hire.png);
+}
+.injury{
+	background-image: url(../img/index/injury.png);
+}
+.dimission{
+	background-image: url(../img/index/dimission.png);
+}
+.cannelDM{
+	background-image: url(../img/index/cannelDM.png);
+}
+.re_employ{
+	background-image: url(../img/index/re_employ.png);
+}
+.ag_employ{
+	background-image: url(../img/index/ag_employ.png);
+}
+.govern{
+	background-image: url(../img/index/govern.png);
+}
+.addbtn{
+	background-image: url(../img/index/addbtn.png);
+}
+.finish{
+	background-image: url(../img/index/finish.png);
+}
+.initiate{
+	background-image: url(../img/index/initiatebtn.png);
+}
+.upset{
+	width: 16px;
+	height: 16px;
+	cursor: pointer;
+	display:inline-block;
+	background-image: url(../img/index/up.png);
+}
+.downset{
+	width: 16px;
+	height: 16px;
+	cursor: pointer;
+	display:inline-block;
+	background-image: url(../img/index/down.png);
+}

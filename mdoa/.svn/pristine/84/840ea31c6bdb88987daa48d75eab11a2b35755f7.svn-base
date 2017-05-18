@@ -1,0 +1,48 @@
+<div id="repertoryForm">
+	<input class="goodsTypeUrl" type="hidden" style="display:none;">
+	<div class="treearea">
+		<h3>选择物品类别</h3>
+		<ul id="repertoryFormtg" data-options="region:'center',border: true"  
+         class="easyui-tree">  
+     	</ul>
+	</div>
+	<div class="listForm">
+		<div class="toolbar">
+			<input type="button" class="button batchRemove" value="批量删除"/>
+			<input type="button" class="button" value="导出到Excel" />
+		</div>
+		<div class="queryForm">
+			物品名称：<input type="text"/>
+			物品规格：<input type="text" />
+			库存数量：<input type="text" />
+			加权平均价：<input type="text" />
+			部门：<select>
+					<option>全部</option>
+					<option>研发部</option>
+					<option>行政部</option>
+					<option>后勤部</option>
+				</select>
+			仓库：<select>
+					<option>全部</option>
+					<option>1仓库</option>
+					<option>2仓库</option>
+					<option>3仓库</option>
+				</select>	
+			时间：<input type="text" class="time jqdate" readonly="readonly" onclick="YMD(this)"/> ~ 
+			<input type="text" class="time jqdate" readonly="readonly" onclick="YMD(this)"/>
+			<a class="easyui-linkbutton query" iconCls="icon-search" style="line-height:16px;">查询</a>
+			<input type="button" value="清空">
+		</div>
+		<div>
+			<table id="repertoryFormdg">
+			</table>
+		</div>
+		<div class="other" style="display: none">
+			<div class="toolbar" >
+				<input type="button" class="button goback" value="返回" />
+			</div>
+			<div id="repertoryChart">
+			</div>
+		</div>
+	</div>
+</div>	

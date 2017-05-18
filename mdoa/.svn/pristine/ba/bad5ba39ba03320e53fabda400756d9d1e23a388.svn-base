@@ -1,0 +1,357 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mdoa.personnel.dao.LeaveDao">
+	<!-- 获取UUID -->
+	<select id="getuuid" resultType="java.lang.String">
+		select uuid() as uuid
+	</select>
+	
+	<!-- 插入请假申请信息 -->
+	<insert id="insertLeaveApply" parameterType="com.mdoa.personnel.bo.LeaveApplyForm">
+		INSERT INTO personnel_ask_for_leave_apply (
+			leave_apply_id,
+			user_id,
+			user_name,
+			apply_time,
+			leave_type,
+			start_time,
+			over_time,
+			examine_status,
+			create_time,
+			reason,
+			alive_flag
+		)
+		VALUES
+			(
+				#{leaveApplyId},
+				#{userId},
+				#{userName},
+				NOW(),
+				#{leaveType},
+				#{startTime},
+				#{overTime},
+				'1',
+				NOW(),
+				#{reason},
+				'1'
+			)
+	</insert>
+	
+	<!-- 插入请假审核流程信息 -->
+	<insert id="insertLeaveStream" parameterType="com.mdoa.personnel.bo.LeaveApplyForm">
+		INSERT INTO personnel_ask_for_leave_stream (
+			leave_stream_id,
+			leave_apply_id,
+			leave_type,
+			examine_user_id,
+			examine_user_name,
+			examine_status,
+			create_time,
+			stream_type,
+			alive_flag
+		)
+		VALUES
+			(
+				UUID(),
+				#{leaveApplyId},
+				#{leaveType},
+				#{examineUserId},
+				#{examineUserName},
+				'1',
+				NOW(),
+				'1',
+				'1'
+			)
+	</insert>
+	
+	<!-- 条件查询请假申请信息 -->
+	<select id="findApplyByCondition" parameterType="com.mdoa.personnel.bo.LeaveApplyForm" resultType="com.mdoa.personnel.model.LeaveApply">
+		SELECT
+			leave_apply_id AS leaveApplyId,
+			user_id AS userId,
+			user_name AS userName,
+			apply_time AS applyTime,
+			leave_type AS leaveType,
+			start_time AS startTime,
+			over_time AS overTime,
+			reason AS reason,
+			record_user_name AS recordUserName,
+			record_user_id AS recordUserId,
+			record_note AS recordNote,
+			record_time AS recordTime,
+			examine_status AS examineStatus,
+			create_time AS createTime,
+			update_time AS updateTime,
+			update_user_id AS updateUserId,
+			update_user_name AS updateUserName,
+			alive_flag AS aliveFlag
+		FROM
+			personnel_ask_for_leave_apply
+		WHERE
+			alive_flag = '1'
+			<if test="leaveApplyId != null and leaveApplyId != ''">
+				AND leave_apply_id = '${leaveApplyId}'
+			</if>
+			<if test="userId != null and userId != ''">
+				AND user_id = '${userId}'
+			</if>
+			<if test="userName != null and userName != ''">
+				AND user_name LIKE (${userName})
+			</if>
+			<if test="examineStatus != null and examineStatus != ''">
+				AND examine_status = '${examineStatus}'
+			</if>
+			<if test="leaveType != null and leaveType != ''">
+				AND leave_type = '${leaveType}'
+			</if>
+			<if test="examineUserId !=null and examineUserId != ''">
+				AND leave_apply_id IN (
+				SELECT
+					leave_apply_id
+				FROM
+					personnel_ask_for_leave_stream
+				WHERE
+					examine_user_id = '${examineUserId}'
+			)
+			</if>
+			<if test="examineUserName !=null and examineUserName != ''">
+				AND leave_apply_id IN (
+				SELECT
+					leave_apply_id
+				FROM
+					personnel_ask_for_leave_stream
+				WHERE
+					examine_user_name LIKE (${examineUserName})
+			)
+			</if>
+	</select>
+	
+	<!-- 审核人id查询请假申请信息 -->
+	<select id="findApplyByExamineUserId" parameterType="java.lang.String" resultType="com.mdoa.personnel.model.LeaveApply">
+		SELECT
+			leave_apply_id AS leaveApplyId,
+			user_id AS userId,
+			user_name AS userName,
+			apply_time AS applyTime,
+			start_time AS startTime,
+			over_time AS overTime,
+			reason AS reason,
+			record_user_name AS recordUserName,
+			record_user_id AS recordUserId,
+			record_note AS recordNot,
+			record_time AS recordTime,
+			examine_status AS examineStatus,
+			create_time AS createTime,
+			update_time AS updateTime,
+			update_user_id AS updateUserId,
+			update_user_name AS updateUserName,
+			alive_flag AS aliveFlag
+		FROM
+			personnel_ask_for_leave_apply
+		WHERE
+			alive_flag = '1'
+			AND leave_apply_id IN (
+				SELECT
+					leave_apply_id
+				FROM
+					personnel_ask_for_leave_stream
+				WHERE
+					examine_user_id = #{examineUserId}
+			)
+	</select>
+	
+	<!-- 条件查询请假审核流程信息 -->
+	<select id="findStreamByCondition" parameterType="com.mdoa.personnel.bo.LeaveApplyForm" resultType="com.mdoa.personnel.bo.LeaveStreamForm">
+		SELECT
+			a.leave_stream_id AS leaveStreamId,
+			a.leave_apply_id AS leaveApplyId,
+			a.examine_user_id AS examineUserId,
+			a.examine_user_name AS examineName,
+			a.examine_idea AS examineIdea,
+			a.examine_status AS examineStatus,
+			a.next_examine_user_name AS nextExamineUserName,
+			a.examine_time AS examineTime,
+			a.create_time AS createTime,
+			a.update_time AS updateTime,
+			a.stream_type AS streamType,
+			a.examine_user_name AS examineUserName,
+			a.examine_user_id AS examineUserId,
+			b.apply_time AS applyTime,
+			b.leave_type AS leaveType,
+			b.start_time AS startTime,
+			b.over_time AS overTime,
+			b.reason AS reason,
+			b.user_name AS userName,
+			b.user_id AS userId
+		FROM
+			personnel_ask_for_leave_stream a,
+			personnel_ask_for_leave_apply b
+		WHERE
+			a.alive_flag = '1'
+		AND
+			b.alive_flag = '1'
+			and a.leave_apply_id = b.leave_apply_id
+			<if test="userName != null and userName != ''">
+				AND user_name LIKE (${userName})
+			</if>
+			<if test="leaveStreamId != null and leaveStreamId != ''">
+				AND a.leave_stream_id = '${leaveStreamId}'
+			</if>
+			<if test="leaveApplyId != null and leaveApplyId != ''">
+				AND a.leave_apply_id = '${leaveApplyId}'
+			</if>
+			<if test="examineUserId != null and examineUserId != ''">
+				AND a.examine_user_id = '${examineUserId}'
+			</if>
+			<if test="examineUserName != null and examineUserName != ''">
+				AND a.examine_user_name LIKE (${examineUserName})
+			</if>
+			<if test="examineStatus != null and examineStatus != ''">
+				AND a.examine_status = '${examineStatus}'
+			</if>
+			<if test="streamType != null and streamType != ''">
+				AND a.stream_type = '${streamType}'
+			</if>
+			<if test="leaveType != null and leaveType != ''">
+				AND b.leave_type = '${leaveType}'
+			</if>
+			<if test="userId != null and userId != ''">
+				AND a.leave_apply_id
+				IN(
+					SELECT
+						leave_apply_id
+					FROM
+						personnel_ask_for_leave_apply
+					WHERE
+						user_id = '${userId}'
+				)				
+			</if>
+	</select>
+	
+	<!-- 更新请假流程信息 -->
+	<update id="updateLeaveStream" parameterType="com.mdoa.personnel.bo.LeaveExamineForm">
+		UPDATE personnel_ask_for_leave_stream
+		<set>
+			<if test="examineIdea != null and examineIdea != ''">
+			 examine_idea = '${examineIdea}',</if>
+			<if test="examineStatus != null and examineStatus != ''">
+			 examine_status = '${examineStatus}',</if>
+			<if test="nextExamineUserId != null and nextExamineUserId != ''">
+			 next_examine_user_id = '${nextExamineUserId}',</if>
+			<if test="nextExamineUserName != null and nextExamineUserName != ''">
+			 next_examine_user_name = '${nextExamineUserName}',</if>
+			 <if test="userId != null and userId != ''">
+			 examine_user_id = '${userId}',</if>
+			 <if test="userName != null and userName != ''">
+			 examine_user_name = '${userName}',</if>
+			 examine_time = NOW(),
+			 update_time = NOW()
+		 </set>
+		WHERE
+			leave_stream_id = '${leaveStreamId}'
+	</update>
+	
+	<!-- 插入请假流程备案信息 -->
+	<insert id="insertRecordLeaveStream" parameterType="com.mdoa.personnel.bo.LeaveExamineForm">
+		INSERT INTO personnel_ask_for_leave_stream (
+			leave_stream_id,
+			leave_apply_id,
+			leave_type,
+			examine_status,
+			create_time,
+			stream_type,
+			alive_flag
+		)
+		VALUES
+			(
+				UUID(),
+				#{leaveApplyId},
+				#{leaveType},
+				'1',
+				NOW(),
+				'2',
+				'1'
+			)
+	</insert>
+	
+	<!-- 更新请假申请信息 -->
+	<update id="updateLeaveApply" parameterType="com.mdoa.personnel.bo.LeaveExamineForm">
+		UPDATE personnel_ask_for_leave_apply
+		<set>
+		<if test="examineStatus != null and examineStatus != ''">
+		 examine_status = '${examineStatus}',		
+		</if>
+		<if test="userId != null and userId != ''">
+		 update_user_id = '${userId}',
+		</if>
+		<if test="userName != null and userName != ''">
+		 update_user_name = '${userName}',
+		</if>
+		 update_time = NOW(),
+		 </set>
+		WHERE
+			leave_apply_id = '${leaveApplyId}'
+	</update>
+	
+	<!-- 备案请假流程信息 -->
+	<update id="recordLeaveStream" parameterType="com.mdoa.personnel.bo.LeaveExamineForm">
+		UPDATE personnel_ask_for_leave_stream
+		<set>
+			<if test="examineIdea != null and examineIdea != ''">
+			 examine_idea = '${examineIdea}',
+			</if>
+			 examine_status = '3',
+			 examine_time = NOW(),
+			 examine_user_name = '${userName}',
+			 examine_user_id = '${userId}',
+			 update_time = NOW()
+		 </set>
+		WHERE
+			leave_stream_id = '${leaveStreamId}'
+	</update>
+	
+	<!-- 备案请假申请信息 -->
+	<update id="recordLeaveApply" parameterType="com.mdoa.personnel.bo.LeaveExamineForm">
+		UPDATE personnel_ask_for_leave_apply
+		<set>
+		<if test="userId != null and userId != ''">
+		 record_user_id = '${userId}',
+		</if>
+		<if test="userName != null and userName != ''">
+		 record_user_name = '${userName}',
+		</if>
+		<if test="recordNote != null and recordNote != ''">
+		 record_note = '${recordNote}',
+		</if>
+		 record_time = NOW(),
+		 examine_status = '3',
+		 update_time = NOW(),
+		 update_user_id = '${userId}',
+		 update_user_name = '${userName}'
+		 </set>
+		WHERE
+			leave_apply_id = '${leaveApplyId}'
+	</update>
+	
+	<!-- 撤回请假流程 -->
+	<update id="withdrawLeaveStream" parameterType="com.mdoa.personnel.bo.LeaveExamineForm">
+		UPDATE personnel_ask_for_leave_stream
+		SET
+		 examine_status = '2',
+		 update_time = NOW()
+		WHERE
+			leave_stream_id = '${leaveStreamId}'
+	</update>
+	
+	<!-- 撤回请假申请 -->
+	<update id="withdrawLeaveApply" parameterType="com.mdoa.personnel.bo.LeaveExamineForm">
+		UPDATE personnel_ask_for_leave_apply
+		SET
+		 examine_status = '2',
+		 update_time = NOW(),
+		 update_user_id = '${userId}',
+		 update_user_name = '${userName}'
+		WHERE
+			leave_apply_id = '${leaveApplyId}'
+	</update>
+</mapper>

@@ -1,0 +1,349 @@
+<div id="inviterecords" title="基本信息">
+	<div class="main">
+		<div class="maintop">
+			
+		</div>
+		<div class="invitetop">
+			请输入查询条件：
+			姓名：<input type="text" name="peopleName" style="width:100px">
+			身份证号：<input type="text" name="idCard"> 
+			<input class="selectUserInfo" type="button" value="查询"> 
+			<input type="button" class="clean-query" value="清空">
+		</div>
+		<div>
+			<table id="inviterecordsdg"></table>
+		</div>
+	</div>
+	<!-- 修改用户信息页面 -->
+	<div class="staffRecord" title="员工信息表" style="display: none">
+		<input style="display: none" name="userId"/>
+		<div class="basicInformation">
+			<input type="button" value="返回" class="back"/>
+			<hr/>
+			<div class="expsame">
+				<div class="expleft name">基本信息：</div>
+				<!-- 保存基本工作信息 -->
+				<div class="expright basic">
+					<table style="text-align: right;height: 300px;width:100%;" class="user-message">
+						<tr>
+							<td width="9.3%"><span>*</span>员工姓名：</td>
+							<td width="26.2%"><input type="text" name="peopleName" placeholder="员工姓名（必填）"></td>
+							<td width="15%"><span>*</span>身份证号：</td>
+							<td width="26.2%"><input type="text" name="idCard" placeholder="请输入18位身份证号（必填）"></td>
+							<td width="23%" rowspan="9" style="text-align: right;">
+								<img alt="照片" src="" width="71px" height="100px" style="margin-right: 43px"/>
+								<img alt="身份证正面" src="" width="158px" height="100px"/>
+								<img alt="身份证反面" src="" width="158px" height="100px"/>
+								<a class="photo "><input class="image1"  name="pic1"  style="display: none"/></a>
+								<a class="photo1"><input class="image2"  name="pic2"  style="display: none"/></a>
+								<a class="photo2"><input class="image3"  name="pic3"  style="display: none"/></a>
+							</td>
+						</tr>
+						<tr>
+							<td><span>*</span>性别：</td>
+							<td>
+								<select name="sex">
+									<option value="1" selected="selected">男</option>
+									<option value="2">女</option>
+								</select>
+							</td>
+							<td><span>*</span>民族：</td>
+							<td>
+								<select name="volk">
+									<option value="1" selected="selected">汉族</option>
+									<option value="2">其他</option>
+								</select>
+							</td>
+						</tr>
+						<tr>
+							<td><span>*</span>出生日期：</td>
+							<td><input class="jqdate" type="text" name="birthday" readonly="readonly" onclick="YMD(this);" placeholder="请输入生日日期（必填）"/></td>
+							<td><span>*</span>学历：</td>
+							<td>
+								<select name="education">
+									<option value="" selected="selected">未选择</option>
+									<option value="1">小学</option>
+									<option value="2">初中</option>
+									<option value="3">高中</option>
+									<option value="4">中专</option>
+									<option value="5">专科</option>
+									<option value="6">本科</option>
+									<option value="7">硕士</option>
+									<option value="8">博士</option>
+								</select>
+							</td>
+						</tr>
+						<tr>
+							<td><span>*</span>家庭住址：</td>
+							<td><input type="text" name="address" placeholder="请输入员工家庭住址：（必填）"></td>
+							<td>婚姻状态：</td>
+							<td>
+								<select name="marriageFlag">
+									<option value="" selected="selected">未选择</option>
+									<option value="01">已婚</option>
+									<option value="01">未婚</option>
+								</select>
+							</td>
+						</tr>
+						<tr>
+							<td><span>*</span>籍贯：</td>
+							<td><input type="text" name="nativePlace" placeholder="请输入员工出生地址：（必填）"></td>
+							<td><span>*</span>政治面貌：</td>
+							<td>
+								<select name="politicalStatus">
+									<option value="1">党员</option>
+									<option value="2">团员</option>
+									<option value="3" selected="selected">群众</option>
+									<option value="4">民主党派</option>
+								</select>
+							</td>
+						</tr>
+						<tr>
+							<td><span>*</span>联系方式：</td>
+							<td><input type="text" name="phoneNum" placeholder="请输入员工联系方式（必填）"></td>
+							<td><span>*</span>紧急联系方式：</td>
+							<td><input type="text" name="accidentPhoneNum" placeholder="请输入员工紧急联系方式（必填）"></td>
+						</tr>
+						<tr>
+							<td><span>*</span>员工编号：</td>
+							<td><input type="text" name="userAccount" placeholder="请设置员工账号（必填）"></td>
+							<td><span>*</span>入职时间：</td>
+							<td><input  class="jqdate" type="text" name="workTime" onblur="testDate(this)" onclick="testShow(this);" placeholder="请输入入职时间（必填）"></td>
+						</tr>
+						<tr>
+							<td><span>*</span>所属部门：</td>
+							<td>
+								<div style="float: left;width: 75%">
+									<input type="text" name="departmentName" readonly="readonly" placeholder="请选择所属部门（必填）"/>
+									<input type="text" name="departmentUrl" style="display: none"/>
+								</div>
+								<div style="float: right;width: 25%;">
+									<input type="button" class="button chooseDept" value="必选" style="width: 80%;height: 19px" />
+								</div>
+							</td>
+							<td><span>*</span>所属岗位：</td>
+							<td>
+								<div style="float: left;width: 75%">
+									<input type="text" name="postName" readonly="readonly" placeholder="请选择所属岗位（必填）"/>
+									<input type="text" name="postId" style="display: none"/>
+								</div>
+								<div style="float: right;width: 25%;">
+									<input type="button" class="button choosePost" value="必选" style="width: 80%;height: 19px" />
+								</div>
+							</td>
+						</tr>
+						<tr>
+							<td>上级领导：</td>
+							<td>
+								<div style="float: left;width: 75%">
+									<input type="text" name="leadName" readonly="readonly" placeholder="员工上级（选填）"/>
+									<input type="text" name="leadId" style="display: none"/>
+								</div>
+								<div style="float: right;width: 25%;">
+									<input type="button" class="button chooseUser" value="选择" style="width: 80%;height: 19px"/>
+								</div>
+							</td>
+							<td><span>*</span>员工类型：</td>
+							<td>
+								<select name="leaderFlag">
+									<option value="1" selected="selected">干部</option>
+									<option value="0">普通</option>
+								</select>
+							</td>
+						</tr>
+					</table>
+					<div style="text-align: center;">
+						<input type="button" value="修改基本信息" class="doc-button updateMessage addexp" />
+					</div>
+				</div>
+			</div>
+		</div>
+		<hr/>
+		
+		<!-- 添加工作经历 -->
+		<div class="work expsame">
+			<div class="expleft name">工作经历：</div>
+			<div class="expright basic">
+				<div class="display-work"></div>
+				<div class="work-table">
+					<table style="text-align: right;height: 225px;">
+						<tr height="0px">
+							<td width="240px"><input name="workId" type="text" style="display:none"/></td>
+							<td width="800px"></td>
+							<td width="800px"></td>
+							<td width="800px"></td>
+						</tr>
+						<tr>
+							<td>公司名称：</td>
+							<td colspan="3"><input name="componyName" type="text" ></td>
+						</tr>
+						<tr>
+							<td>入职时间：</td>
+							<td><input name="startTime" class="jqdate" type="text" onblur="testDate(this)" onclick="testShow(this);"></td>
+							<td>离职时间：</td>
+							<td><input name="endTime" class="jqdate" type="text" onblur="testDate(this)" onclick="testShow(this);"></td>
+						</tr>
+						<tr>
+							<td>岗位名称：</td>
+							<td colspan="3"><input type="text" name="postName" ></td>
+						</tr>
+						<tr>
+							<td style="padding-bottom: 50px;">岗位描述：</td>
+							<td colspan="3"><textarea name="workDescribe" rows="4"></textarea></td>
+						</tr>
+					</table>
+				</div>
+				<div style="text-align: center">
+					<input type="button" value="添加" class="doc-button addexp" />
+				</div>
+				<div style="text-align: center ;display:none">
+					<input type="button" value="修改"class="doc-button updateexp"/>
+				</div>
+			</div>
+		</div>
+		<hr>
+		<!-- 添加培训经历 -->
+		<div class="train expsame">
+			<div class="expleft name">培训经历：</div>
+			<div class="expright basic">
+				<div class="display-train"></div>
+				<div class="train-table">
+					<table style="text-align: right;height: 225px;">
+						<tr height="0px">
+							<td width="240px"><input name="trainId" type="text" style="display:none"/></td>
+							<td width="800px"></td>
+							<td width="800px"></td>
+							<td width="800px"></td>
+						</tr>
+						<tr>
+							<td>培训名称：</td>
+							<td colspan="3"><input type="text" name="trainName"></td>
+						</tr>
+						<tr>
+							<td>培训公司：</td>
+							<td colspan="3"><input name="trainCompany" type="text"></td>
+						</tr>
+						<tr>
+							<td>开始时间：</td>
+							<td><input name="startTime" class="jqdate" type="text" onblur="testDate(this)" onclick="testShow(this);"></td>
+							<td>结束时间：</td>
+							<td><input name="endTime" class="jqdate" type="text" onblur="testDate(this)" onclick="testShow(this);"></td>
+						</tr>
+						<tr>
+							<td style="padding-bottom: 50px;">培训描述：</td>
+							<td colspan="3"><textarea name="trainDescribe" rows="4"></textarea></td>
+						</tr>
+					</table>
+				</div>
+				<div style="text-align: center">
+					<input type="button" value="添加" class="doc-button addexp" />
+				</div>
+				<div style="text-align: center ;display:none">
+					<input type="button" value="修改"class="doc-button updateexp"/>
+				</div>
+			</div>
+		</div>
+		<hr/>
+		
+		<!-- 添加教育经历 -->
+		<div class="edu expsame">
+			<div class="expleft name">教育经历：</div>
+			<div class="expright basic">
+				<div class="display-edu"></div>
+				<div class="edu-table">
+					<table style="text-align: right;height: 135px;">
+						<tr height="0px">
+							<td width="240px"><input name="eduId" type="text" style="display:none"/></td>
+							<td width="800px"></td>
+							<td width="800px"></td>
+							<td width="800px"></td>
+						</tr>
+						<tr>
+							<td>学校名称：</td>
+							<td colspan="3"><input name="schoolName" type="text" ></td>
+						</tr>
+						<tr>
+							<td>入学时间：</td>
+							<td><input name="startTime" class="jqdate" type="text" onblur="testDate(this)" onclick="testShow(this);"></td>
+							<td>毕业时间：</td>
+							<td><input name="endTime" class="jqdate" type="text" onblur="testDate(this)" onclick="testShow(this);"></td>
+						</tr>
+						<tr>
+							<td>专业名称：</td>
+							<td colspan="3"><input type="text" name="specialty" ></td>
+						</tr>
+					</table>
+				</div>
+				<div style="text-align: center">
+					<input type="button" value="添加" class="doc-button addexp" />
+				</div>
+				<div style="text-align: center ;display:none">
+					<input type="button" value="修改"class="doc-button updateexp"/>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="popups">
+		<!-- 录用员工弹窗 -->
+		<div class="popup inviterecordsOffer" style="width:335px;height:238px;">
+			<h3>
+				<span>员工录用</span>
+			</h3>
+			<span class="turnoff"></span>
+			<div class="popuparea" style="height: 170px">
+				<table style="text-align: right;width: 310px;height:170px;float: left;padding: 8px 8px 8px 0px;">
+					<tr>
+						<td style="width: 85px">员工姓名：</td>
+						<td style="width: 200px;">
+							<input type="text" readonly="readonly" style="width:192px;" name="peopleName"/>
+							<input style="display: none" name="userId" />
+						</td>
+					</tr>
+					<tr>
+						<td style="width: 85px">员工编号：</td>
+						<td style="width: 200px;">
+							<input type="text" style="width:192px;" name="userAccount"/>
+						</td>
+					</tr>
+					<tr>
+						<td>员工上级：</td>
+						<td>
+							<input type="text" style="width:142px;" name="leadName" readonly="readonly"/>
+							<input type="button" class="button chooseUser" value="选择"  style="width: 46px"/>
+							<input style="display: none" name="leadId"/>
+						</td>
+					</tr>
+					<tr>
+						<td>是否住宿舍：</td>
+						<td>
+							<select name="dormFlag" style="width:193px;">
+								<option value="1">是</option>
+								<option value="0" selected="selected">否</option>
+							</select>
+						</td>
+					</tr>
+					<tr>
+						<td>宿舍号：</td>
+						<td>
+							<input name="dorm" type="text" style="width:191px;"/>
+						</td>
+					</tr>
+					<tr>
+						<td style="text-align:left">是否有试用期：</td>
+						<td>
+							<select name="testFlag" style="width:193px;">
+								<option value="1">是</option>
+								<option value="0" selected="selected">否</option>
+							</select>
+						</td>
+					</tr>
+				</table>
+			</div>
+			<div class="btnarea" style="text-align: center">
+				<input type="button" class="button save" value="保存"/>
+				<input type="button" class="button cannel" value="取消" style="margin-left: 20px;"/>
+			</div>
+		</div>
+	</div>
+</div>

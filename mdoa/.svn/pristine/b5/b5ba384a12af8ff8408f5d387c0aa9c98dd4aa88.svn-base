@@ -1,0 +1,37 @@
+package com.mdoa.system.dao;
+/**
+ * 系统信息
+ */
+import java.util.List;
+
+import org.apache.catalina.User;
+
+import com.mdoa.system.model.UserSystemMessage;
+
+public interface MessageDao {
+
+	/**
+	 * 增加一条系统信息
+	 * @param userSystemMessage
+	 * @return
+	 */
+	boolean addSystemMessage(UserSystemMessage userSystemMessage);
+	/**
+	 * 更改消息为已读
+	 * @param userSystemMessage
+	 * @return
+	 */
+	boolean updateMessageRead(UserSystemMessage userSystemMessage);
+	/**
+	 * 查询消息
+	 * @param userSystemMessage
+	 * @return
+	 */
+	List<UserSystemMessage> selectMessageByUser(UserSystemMessage userSystemMessage);
+	/**
+	 * 查询有权限的人员
+	 * @param userSystemMessage
+	 * @return
+	 */
+	List<UserSystemMessage> selectpermissionUser(String permission);	
+}

@@ -1,0 +1,8 @@
+MysqlDriverClass=com.mysql.jdbc.Driver
+MySqlJdbcUrl=jdbc:mysql\://192.168.0.161\:3306/oabase2?useUnicode=true&characterEncoding=utf-8
+MySqlUser=root
+MySqlPassword=root
+initialSize=10
+maxActive=100
+maxIdle=50
+minIdle=0

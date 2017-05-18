@@ -1,0 +1,123 @@
+
+
+
+/************时间控件样式start************/
+#myCheckInfo .Calendar{
+	float:left;
+	width:60%;
+	height:100%;
+	display: block;
+}
+#myCheckInfo .Calendar .calendarTitle{
+	position: relative;
+	width: 100%;
+	height:50px;
+	line-height:50px;
+	border-bottom: 1px solid #95B8E7;
+}
+#myCheckInfo .Calendar .calendarTitle .yearsSelect{
+	float:left;
+	width:80px;
+	height:23px;
+	margin:10px 10px 0 15px;
+	border:1px solid #999;
+}
+#myCheckInfo .Calendar .calendarTitle .monthsSelect{
+	float:left;
+  	width:60px;
+	height:23px;
+	margin-top:10px;
+	border:1px solid #999;
+}
+/**
+ * 设置按钮图标
+ */
+#myCheckInfo .Calendar .prevMonth,#myCheckInfo .Calendar .nextMonth{
+	float:left;
+	width:15px;
+	height:21px;
+	line-height:21px;
+	border:1px solid #999;
+	font-size:16px;
+	cursor: pointer;
+	margin-top:10px;
+	text-align:center;
+}
+#myCheckInfo .Calendar .prevMonth{
+	border-right:0px;
+}
+#myCheckInfo .Calendar .nextMonth{
+	border-left:0px;
+}
+/* 设置日历表格样式 */
+#myCheckInfo .calendarTable{
+	width: 100%;
+	border-collapse: collapse;
+	text-align:center;
+}
+/* 表格行高 */
+#myCheckInfo .calendarTable tr{
+	font-size:14px;
+	height:50px;
+	line-height:50px;
+}
+#myCheckInfo .calendarTable tr th{
+	height:50px;
+	line-height:50px;
+}
+#myCheckInfo .calendarTable tr td{
+	border:1px solid #ccc;
+}
+/* 当前天 颜色特殊显示 */
+#myCheckInfo .calendarTable .currentDay {
+	background-color:#eee;
+	font-weight:bold;
+}
+#myCheckInfo .calendarTable .dateNember{
+	display:inline-block;
+	width:30px;
+	height:30px;
+	line-height:30px;
+	margin-top:5px;
+	overflow:hidden;	
+}
+#myCheckInfo .calendarTable .prevDateNember{
+	color:#fff;	
+	background:#7edafc;
+}
+/* 本月 文字颜色 */
+#myCheckInfo .calendarTable .currentMonth {
+	color:#666;
+	font-weight:bold;
+}
+#myCheckInfo .calendarTable td ul li{
+	font-size:12px;
+	line-height:25px;
+	font-weight:normal;
+}
+/* 其他月颜色 */
+#myCheckInfo .calendarTable .otherMonth{
+	color: #ccc;
+	visibility:hidden;
+}
+#myCheckInfo .calendarTable td{
+	cursor:pointer;
+}
+/***************时间控件样式end*********************/
+
+
+#myCheckInfo .myCheckInfoDetail{
+	float:left;
+	width:40%;
+	height:100%;	
+}
+#myCheckInfo .myCheckInfoDetail .title{
+	width:100%;
+	height:50px;
+	line-height:50px;
+	font-size:18px;
+	padding-left:20px;
+}
+
+
+

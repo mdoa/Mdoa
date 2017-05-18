@@ -1,0 +1,120 @@
+@CHARSET "UTF-8";
+
+#goodsDeptGetForm div{
+	box-sizing:content-box;
+}
+
+/****表报样式*****/
+#goodsDeptGetForm{
+	width:100%;
+	height:100%;
+	font-size: 12px;
+	color: #000;
+	font-family:"Microsoft YaHei";
+}
+#goodsDeptGetForm .outPut{
+	width:100%;
+	height:30px;
+	background-color:#66CCCC;
+	overflow:hidden;
+}
+#goodsDeptGetForm .listBody{
+	width:100%;
+	border:1px solid #95B8E7;
+	overflow:hidden;
+	box-sizing:border-box;
+	-webkit-box-sizing:border-box;
+}
+#goodsDeptGetForm .listBody .filtCondition{
+	height:34px;
+	background-color:#f4f4f4;
+	border-bottom:1px solid #ddd;
+}
+#goodsDeptGetForm .filtCondition ul,
+#goodsDeptGetForm .filtCondition ul li,
+#goodsDeptGetForm .filtCondition button{
+	float:left;
+}
+#goodsDeptGetForm .filtCondition ul{
+	height:25px;
+	margin:5px 0 5px 10px;
+}
+#goodsDeptGetForm .filtCondition ul li span{
+	float:left;
+	line-height:25px;
+	margin:0 5px 0 8px;
+}
+#goodsDeptGetForm .filtCondition ul li input[type=text]{
+	float:left;
+	width: 100px;
+	height:18px;
+	padding-left:10px;
+	margin-top:2px;
+	border:1px solid #a9a9a9;
+}
+#goodsDeptGetForm .filtCondition ul li select{
+	float:left;
+	height:20px;
+	margin-top:2px;
+}
+#goodsDeptGetForm .filtCondition input[type=button]{
+	line-height:20px;
+	height:23px;
+	padding:0 5px;
+	cursor:pointer;
+	margin:5px 0 0 10px;
+    border-radius: 4px;
+    behavior:url(css/plug/ie-css3.htc);
+    background:url(../../../img/index/btnbg1.jpg) repeat-x;
+    border:1px solid #ababab;
+    outline:0;
+}
+#goodsDeptGetForm .filtCondition input[type=button]:active{
+	background:url(../../../img/index/btnbg2.jpg) repeat-x;
+}
+#goodsDeptGetForm .listBody .list{
+	float:left;
+	width:70%;
+	text-align:center;
+}
+#goodsDeptGetForm .listBody .list th,
+#goodsDeptGetForm .listBody .list td{
+	line-height:28px;
+	height:28px;
+	border-bottom:1px dotted #bbb;
+	border-left:1px dotted #bbb;
+	cursor:default;
+}
+#goodsDeptGetForm .listBody .list td{
+	font-weight:bold;
+}
+#goodsDeptGetForm .listBody .list th{
+	font-weight:normal;
+	border-bottom:1px solid #ddd;
+	background-color:#f4f4f4;
+}
+#goodsDeptGetForm .listBody .list th:first-child,
+#goodsDeptGetForm .listBody .list td:first-child{
+	border-left:0px;
+}
+#goodsDeptGetForm .listBody .list th:last-child,
+#goodsDeptGetForm .listBody .list td:last-child{
+	border-right:1px dotted #bbb;
+}
+
+#goodsDeptGetForm .listBody .list th:hover,
+#goodsDeptGetForm .listBody .list tbody tr:hover{
+	background-color:#eaf2ff;
+}
+#goodsDeptGetForm .listBody .rigthH{
+	display:none;
+	float:left;
+	width:30%;
+	height:28px;
+	border-bottom:1px solid #ddd;
+	background-color:#f4f4f4;
+}
+#goodsDeptGetForm .fwnormal{
+	font-weight:normal!important;
+}
+

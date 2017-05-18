@@ -1,0 +1,1021 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mdoa.user.dao.UserInfoDao" >
+	<!-- 获取唯一标识符UUId -->
+	<select id="getuuid" resultType="java.lang.String">
+		select uuid() as uuid
+	</select>
+	<!-- 删除调动记录 -->
+	<update id="deleteUserTransfer" parameterType="com.mdoa.user.model.UserTransfer">
+		UPDATE 
+			user_transfer_info
+		SET
+			alive_flag = '0',
+			update_user_id = #{updateUserId},
+			update_user_name = #{updateUserName},
+			update_time = now()
+		WHERE
+			alive_flag = '1'
+		<if test="userId != null and userId !=''">
+	 		AND user_id = #{userId}
+		</if>
+		<if test="userTransferInfoId != null and userTransferInfoId !=''">
+	 		AND user_transfer_info_id = #{userTransferInfoId}
+		</if>
+	</update>
+	
+	<!-- 修改调动记录表 -->
+	<update id="updateUserTransfer" parameterType="com.mdoa.user.model.UserTransfer">
+		UPDATE 
+			user_transfer_info
+		SET
+			<if test="newPostId != null and newPostId !=''">
+		 		 new_post_id = #{newPostId},
+			</if>
+			<if test="newDepartmentUrl != null and newDepartmentUrl !=''">
+		 		 new_department_url = #{newDepartmentUrl},
+			</if>
+			<if test="remark != null and remark !=''">
+		 		 remark = #{remark},
+			</if>
+			<if test="transferTimeStr != null and transferTimeStr != ''">
+				transfer_time = str_to_date(#{transferTimeStr}, '%Y-%m-%d'),
+			</if>
+			update_time = now(),
+			update_user_id = #{updateUserId},
+			update_user_name = #{updateUserName}
+		WHERE
+			alive_flag = '1'
+		<if test="userId != null and userId !=''">
+	 		AND user_id = #{userId}
+		</if>
+		<if test="userTransferInfoId != null and userTransferInfoId !=''">
+	 		AND user_transfer_info_id = #{userTransferInfoId}
+		</if>
+	</update>
+	
+	<update id="updateUserTransferInfo" parameterType="com.mdoa.user.model.UserTransfer">
+		UPDATE
+			user_info
+		SET
+		<if test="newPostId != null and newPostId !=''">
+	 		 post_id = #{newPostId},
+		</if>
+		<if test="newPostName != null and newPostName !=''">
+	 		 post_name = #{newPostName},
+		</if>
+		<if test="newDepartmentName != null and newDepartmentName !=''">
+	 		 department_name = #{newDepartmentName},
+		</if>
+		<if test="newDepartmentUrl != null and newDepartmentUrl !=''">
+	 		 department_url = #{newDepartmentUrl},
+		</if>
+			update_user_name = #{updateUserName},
+			update_user_id = #{updateUserId},
+			update_time = now()
+		WHERE
+			alive_flag = '1'
+		<if test="userId != null and userId !=''">
+	 		AND user_id = #{userId}
+		</if>
+	</update>
+	<!-- 批量修改用户信息 -->
+	<update id="updateUserInfos" parameterType="com.mdoa.user.model.UserTransfer">
+		UPDATE
+			user_info
+		SET
+			<if test="newPostId != null and newPostId !=''">
+	 		 	post_id = #{newPostId},
+			</if>
+			<if test="newPostName != null and newPostName !=''">
+		 		 post_name = #{newPostName},
+			</if>
+			<if test="newDepartmentName != null and newDepartmentName !=''">
+		 		 department_name = #{newDepartmentName},
+			</if>
+			<if test="newDepartmentUrl != null and newDepartmentUrl !=''">
+		 		 department_url = #{newDepartmentUrl},
+			</if>
+				update_user_name = #{updateUserName},
+				update_user_id = #{updateUserId},
+				update_time = now()
+		WHERE
+			user_id IN
+		<foreach collection="userIds" item="userIds" separator="," open="(" close=")">
+			#{userIds}
+		</foreach>
+	</update>
+	<!-- 添加用户基本信息到数据库 -->
+	<insert id="saveUserInfo" parameterType="com.mdoa.user.model.UserInfo">
+		INSERT INTO user_info(
+			user_id,
+			user_account,
+			password,
+			user_name,
+			department_name,
+			department_url,
+			post_name,
+			post_id,
+			phone_num,
+			accident_phone_num,
+			birthday,
+			id_card,
+			id_card_up_img,
+			id_card_down_img,
+			<if test="idCardValid != null and idCardValid != ''">
+				id_card_valid,
+			</if>
+			<if test="idCardIssued != null and idCardIssued != ''">
+				id_card_issued,
+			</if>
+			photo,			
+			sex,
+			work_time,
+			address,
+			leader_flag,
+			create_user_id,
+			create_user_name,
+			create_time,
+			alive_flag,
+			education,
+			volk,
+			invite_flag,
+			retire_flag,
+			marriage_flag,
+			native_place,
+			political_status,
+			dorm_flag,
+			dorm,
+			wage_account,
+			english_level,
+			disease_history,
+			disease_history_flag
+		)
+		VALUES
+			(
+				#{userId},
+				<if test="userAccount != null and userAccount != ''">
+					#{userAccount},
+				</if>
+				<if test="userAccount == null or userAccount == ''">
+					uuid(),
+				</if>
+				#{password},
+				#{userName},
+				#{departmentName},
+				#{departmentUrl},
+				#{postName},
+				#{postId},
+				#{phoneNum},
+				#{accidentPhoneNum},
+				str_to_date(#{birthdayStr}, '%Y-%m-%d %H:%i:%s'),
+				#{idCard},
+				#{idCardUpImg},
+				#{idCardDownImg},
+				<if test="idCardValid != null and idCardValid != ''">
+					#{idCardValid},
+				</if>
+				<if test="idCardIssued != null and idCardIssued != ''">
+					#{idCardIssued},
+				</if>
+				#{photo},			
+				#{sex},
+				str_to_date(#{workTimeStr}, '%Y-%m-%d %H:%i:%s'),
+				#{address},
+				#{leaderFlag},
+				#{createUserId},
+				#{createUserName},
+				now(),
+				'1',
+				#{education},
+				#{volk},
+				#{inviteFlag},
+				#{retireFlag},
+				#{marriageFlag},
+				#{nativePlace},
+				#{politicalStatus},
+				#{dormFlag},
+				#{dorm},
+				#{wageAccount},
+				#{englishLevel},
+				#{diseaseHistory},
+				#{diseaseHistoryFlag}
+			)
+	</insert>
+	
+	<!-- 添加员工的工作信息到数据库中 -->
+	<insert id="saveWork">
+		INSERT INTO personnel_doc_work(
+			work_id,
+			user_id,
+			post_name,
+			compony_name,
+			start_time,
+			end_time,
+			work_describe,
+			create_user_id,
+			create_user_name,
+			create_time,
+			alive_flag
+		)VALUES(
+			#{workId},
+			#{userId},
+			#{postName},
+			#{componyName},
+			str_to_date(#{startTimeStr}, '%Y-%m-%d %H:%i:%s'),
+			str_to_date(#{endTimeStr}, '%Y-%m-%d %H:%i:%s'),
+			#{workDescribe},
+			#{createUserId},
+			#{createUserName},
+			NOW(),
+			'1'
+		)
+	</insert>
+	
+	<!-- 添加员工培训信息到数据库中 -->
+	<insert id="saveTrain">
+		INSERT INTO personnel_doc_train
+		(
+			train_doc_id,
+			train_name,
+			train_id,
+			user_id,
+			user_name,
+			start_time,
+			end_time,
+			train_describe,
+			train_company,
+			create_user_id,
+			create_user_name,
+			create_time,
+			join_flag,
+			alive_flag
+		)VALUES(
+			#{trainDocId},
+			#{trainName},
+			#{trainId},
+			#{userId},
+			#{userName},
+			str_to_date(#{startTimeStr}, '%Y-%m-%d %H:%i:%s'),
+			str_to_date(#{endTimeStr}, '%Y-%m-%d %H:%i:%s'),
+			#{trainDescribe},
+			#{trainCompany},
+			#{createUserId},
+			#{createUserName},
+			NOW(),
+			#{joinFlag},
+			'1'
+		)
+	</insert>
+	
+	<!-- 添加员工教育信息到数据库中 -->
+	<insert id="saveEdu">
+		INSERT INTO personnel_doc_education(
+			education_id,
+			user_id,
+			school_name,
+			specialty,
+			star_time,
+			end_time,
+			create_user_id,
+			create_user_name,
+			create_time,
+			alive_flag
+		)VALUES(
+			#{educationId},
+			#{userId},
+			#{schoolName},
+			#{specialty},
+			str_to_date(#{startTimeStr}, '%Y-%m-%d %H:%i:%s'),
+			str_to_date(#{endTimeStr}, '%Y-%m-%d %H:%i:%s'),
+			#{createUserId},
+			#{createUserName},
+			NOW(),
+			'1'
+		)
+	</insert>
+	
+	<!-- 修改用户信息 -->
+	<update id="updateUserInfo" parameterType="com.mdoa.user.model.UserInfo">
+		UPDATE 
+			user_info
+		SET
+			<if test="userAccount != null and userAccount !=''">
+				user_account = #{userAccount},
+			</if>
+			<if test="password != null and password !=''">
+				password = #{password},
+			</if>
+			<if test="userName != null and userName !=''">
+				user_name = #{userName},
+			</if>
+			<if test="departmentName != null and departmentName !=''">
+				department_name = #{departmentName},
+			</if>
+			<if test="departmentUrl != null and departmentUrl !=''">
+				department_url = #{departmentUrl},
+			</if>
+			<if test="postName != null and postName !=''">
+				post_name = #{postName},
+			</if>
+			<if test="postId != null and postId !=''">
+				post_id = #{postId},
+			</if>
+			<if test="phoneNum != null and phoneNum !=''">
+				phone_num = #{phoneNum},
+			</if>
+			<if test="birthdayStr != null and birthdayStr !=''">
+				birthday = str_to_date(#{birthdayStr}, '%Y-%m-%d %H:%i:%s'),
+			</if>
+			<if test="idCard != null and idCard !=''">
+				id_card = #{idCard},
+			</if>
+			<if test="idCardUpImg != null and idCardUpImg !=''">
+				id_card_up_img = #{idCardUpImg},
+			</if>
+			<if test="idCardDownImg != null and idCardDownImg !=''">
+				id_card_down_img = #{idCardDownImg},
+			</if>
+			<if test="idCardValid != null and idCardValid !=''">
+				id_card_valid = #{idCardValid},
+			</if>
+			<if test="idCardIssued != null and idCardIssued !=''">
+				id_card_issued = #{idCardIssued},
+			</if>
+			<if test="photo != null and photo !=''">
+				photo = #{photo},
+			</if>
+			<if test="sex != null and sex !=''">
+				sex = #{sex},
+			</if>
+			<if test="workTimeStr != null and workTimeStr !=''">
+				work_time = str_to_date(#{workTimeStr}, '%Y-%m-%d %H:%i:%s'),
+			</if>
+			<if test="address != null and address !=''">
+				address = #{address},
+			</if>
+			<if test="leaderFlag != null and leaderFlag !=''">
+				leader_flag = #{leaderFlag},
+			</if>
+			<if test="aliveFlag != null and aliveFlag !=''">
+				alive_flag = #{aliveFlag},
+			</if>
+			<if test="education != null and education !=''">
+				education = #{education},
+			</if>
+			<if test="volk != null and volk !=''">
+				volk = #{volk},
+			</if>
+			<if test="inviteFlag != null and inviteFlag !=''">
+				invite_flag = #{inviteFlag},
+			</if>
+			<if test="retireFlag != null and retireFlag !=''">
+				retire_flag = #{retireFlag},
+			</if>
+			<if test="politicalStatus != null and politicalStatus !=''">
+				political_status = #{politicalStatus},
+			</if>
+			<if test="nativePlace != null and nativePlace !=''">
+				native_place = #{nativePlace},
+			</if>
+			<if test="marriageFlag != null and marriageFlag !=''">
+				marriage_flag = #{marriageFlag},
+			</if>
+			<if test="photo != null and photo != ''">
+				photo = #{photo},</if>
+			<if test="dormFlag != null and dormFlag != ''">
+				dorm_flag = #{dormFlag},
+			</if>
+			<if test="wageAccount != null and wageAccount != ''">
+				wage_account = #{wageAccount},
+			</if>
+			<if test="englishLevel != null and englishLevel !=''">
+				english_level = #{englishLevel},
+			</if>
+			<if test="diseaseHistoryFlag != null and diseaseHistoryFlag !=''">
+				disease_history_flag = #{diseaseHistoryFlag},
+			</if>
+			disease_history = #{diseaseHistory},
+			dorm = #{dorm},
+			update_user_id = #{updateUserId},
+			update_user_name = #{updateUserName},
+			update_time = now()
+		where
+			user_id = #{userId}
+	</update>
+	
+	<!-- 添加员工的工作信息到数据库中 -->
+	<update id="updateWork" parameterType="com.mdoa.personnel.model.PersonWork">
+		UPDATE 
+			personnel_doc_work 
+		SET 
+			<if test="userId != null and userId !=''">
+				user_id = #{userId},
+			</if>
+			<if test="postName != null and postName !=''">
+				post_name = #{postName},
+			</if>
+			<if test="componyName != null and componyName !=''">
+				compony_name = #{componyName},
+			</if>
+			<if test="startTimeStr != null and startTimeStr !=''">
+				start_time = str_to_date(#{startTimeStr}, '%Y-%m-%d %H:%i:%s'),
+			</if>
+			<if test="endTimeStr != null and endTimeStr !=''">
+				end_time = str_to_date(#{endTimeStr}, '%Y-%m-%d %H:%i:%s'),
+			</if>
+			<if test="workDescribe != null and workDescribe !=''">
+				work_describe = #{workDescribe},
+			</if>
+			<if test="aliveFlag != null and aliveFlag !=''">
+				alive_flag = #{aliveFlag},
+			</if>
+			update_user_id = #{updateUserId},
+			update_user_name = #{updateUserName},
+			update_time = NOW()
+		where
+			work_id = #{workId}
+	</update>
+	
+	<!-- 添加员工培训信息到数据库中 -->
+	<update id="updateTrain" parameterType="com.mdoa.personnel.model.PersonTrain">
+		UPDATE 
+			personnel_doc_train
+		SET
+			<if test="trainName != null and trainName !=''">
+				train_name = #{trainName},
+			</if>
+			<if test="trainId != null and trainId !=''">
+				train_id = #{trainId},
+			</if>
+			<if test="userId != null and userId !=''">
+				user_id = #{userId},
+			</if>
+			<if test="userName != null and userName !=''">
+				user_name = #{userName},
+			</if>
+			<if test="startTimeStr != null and startTimeStr !=''">
+				start_time = str_to_date(#{startTimeStr}, '%Y-%m-%d %H:%i:%s'),
+			</if>
+			<if test="endTimeStr != null and endTimeStr !=''">
+				end_time = str_to_date(#{endTimeStr}, '%Y-%m-%d %H:%i:%s'),
+			</if>
+			<if test="trainDescribe != null and trainDescribe !=''">
+				train_describe = #{trainDescribe},
+			</if>
+			<if test="trainCompany != null and trainCompany !=''">
+				train_company = #{trainCompany},
+			</if>
+			<if test="joinFlag != null and joinFlag !=''">
+				join_flag = #{joinFlag},
+			</if>
+			<if test="aliveFlag != null and aliveFlag !=''">
+				alive_flag = #{aliveFlag},
+			</if>
+			update_user_id = #{updateUserId},
+			update_user_name = #{updateUserName},
+			update_time = NOW()
+		where
+			train_doc_id = #{trainDocId}
+	</update>
+	
+	<!-- 添加员工教育信息到数据库中 -->
+	<update id="updateEdu" parameterType="com.mdoa.personnel.model.PersonEducation">
+		UPDATE 
+			personnel_doc_education
+		SET
+			<if test="userId != null and userId !=''">
+				user_id = #{userId},
+			</if>
+			<if test="schoolName != null and schoolName !=''">
+				school_name = #{schoolName},
+			</if>
+			<if test="specialty != null and specialty !=''">
+				specialty = #{specialty},
+			</if>
+			<if test="startTimeStr != null and startTimeStr !=''">
+				star_time = str_to_date(#{startTimeStr}, '%Y-%m-%d %H:%i:%s'),
+			</if>
+			<if test="endTimeStr != null and endTimeStr !=''">
+				end_time = str_to_date(#{endTimeStr}, '%Y-%m-%d %H:%i:%s'),
+			</if>
+			<if test="aliveFlag != null and aliveFlag !=''">
+				alive_flag = #{aliveFlag},
+			</if>
+			update_user_id = #{updateUserId},
+			update_user_name = #{updateUserName},
+			update_time = NOW()
+		where
+			education_id = #{educationId}
+	</update>
+		<select id="selectUserInfoById" parameterType="com.mdoa.user.model.UserInfo" resultType="com.mdoa.user.model.UserInfo">
+		SELECT
+			user_id AS userId,
+			user_name AS userName,
+			id_card AS idCard,
+			invite_flag AS inviteFlag
+		FROM
+			user_info
+		WHERE
+			alive_flag = '1'
+		<if test="userId != null and userId !=''">
+		 	AND user_id != #{userId}
+		</if>
+		<if test="idCard != null and idCard !=''">
+			AND id_card = #{idCard}
+		</if>
+	</select>
+	<select id="selectUserInfo" parameterType="com.mdoa.user.model.UserInfo" resultType="com.mdoa.user.model.UserInfo">
+		SELECT
+			user_id AS userId,
+			user_account AS userAccount,
+			password AS password,
+			user_name AS userName,
+			phone_num AS phoneNum,
+			accident_phone_num AS accidentPhoneNum,
+			birthday AS birthday,
+			DATE_FORMAT(birthday,'%Y-%m-%d') AS birthdayStr,
+			id_card AS idCard,
+			id_card_up_img AS idCardUpImg,
+			id_card_down_img AS idCardDownImg,
+			id_card_valid AS idCardValid,
+			id_card_issued AS idCardIssued,
+			photo AS photo,
+			sex AS sex,
+			work_time AS workTime,
+			DATE_FORMAT(work_time,'%Y-%m-%d') AS workTimeStr,
+			address AS address,
+			kpi_group_id AS kpiGroupId,
+			leader_flag AS leaderFlag,
+			create_user_id AS createUserId,
+			create_user_name AS createUserName,
+			create_time AS createTime,
+			update_user_id AS updateUserId,
+			update_user_name AS updateUserName,
+			update_time AS updateTime,
+			alive_flag AS aliveFlag,
+			education AS education,
+			volk AS volk,
+			department_url AS departmentUrl,
+			department_name AS departmentName,
+			post_id AS postId,
+			post_name AS postName,
+			invite_flag AS inviteFlag,
+			retire_flag AS retireFlag,
+			political_status AS politicalStatus,
+			native_place AS nativePlace,
+			marriage_flag AS marriageFlag,
+			dorm AS dorm,
+			dorm_flag AS dormFlag,
+			english_level AS englishLevel,
+			wage_account AS wageAccount,
+			disease_history_flag AS diseaseHistoryFlag,
+			disease_history AS diseaseHistory
+		FROM
+			user_info
+		WHERE
+			alive_flag = '1'
+		<if test="userId != null and userId !=''">
+		 	AND user_id = #{userId}
+		</if>
+		<if test="userAccount != null and userAccount !=''">
+		 	AND user_account = #{userAccount}
+		</if>
+		<if test="userName != null and userName !=''">
+			AND user_name LIKE (${userName})
+		</if>
+		<if test="postName != null and postName !=''">
+			AND post_name LIKE (${postName})
+		</if>
+		<if test="postId != null and postId !=''">
+			AND post_id = #{postId}
+		</if>
+		<if test="departmentName != null and departmentName !=''">
+			AND department_name LIKE (${departmentName})
+		</if>
+		<if test="departmentUrl != null and departmentUrl !=''">
+			AND department_url LIKE (${departmentUrl})
+		</if>
+		<if test="idCard != null and idCard !=''">
+			AND id_card = #{idCard}
+		</if>
+		<if test="sex != null and sex !=''">
+			AND sex = #{sex}
+		</if>
+		<if test="workTimeStartStr != null and workTimeStartStr !=''">
+			AND work_time &gt;= STR_TO_DATE(#{workTimeStartStr},'%Y-%m-%d')
+		</if>
+		<if test="workTimeEndStr != null and workTimeEndStr !=''">
+			AND work_time &lt;= STR_TO_DATE(#{workTimeEndStr},'%Y-%m-%d')		
+		</if>
+		<if test="queryFlag == null or queryFlag == ''">
+			<if test="inviteFlag != null and inviteFlag != ''">
+				<if test="inviteFlag == 1">
+					AND (invite_flag = '1' OR invite_flag = '4' OR invite_flag= '5')
+				</if>
+				<if test="inviteFlag != 1">
+					AND invite_flag = #{inviteFlag}
+				</if>
+			</if>
+			<if test="retireFlag != null and retireFlag !=''">
+				AND retire_flag = #{retireFlag}
+			</if>
+		</if>
+		<if test="queryFlag == 'alive'">
+			AND (invite_flag = '1' OR invite_flag = '4')
+			AND (retire_flag = '1' OR retire_flag = '3')
+		</if>
+		<if test="queryFlag == 'welfare'">
+			AND (invite_flag = '1' OR invite_flag = '4')
+		</if>
+		<if test="politicalStatus != null and politicalStatus !=''">
+			AND political_status = #{politicalStatus}
+		</if>
+		<if test="education != null and education !=''">
+			AND education = #{education}
+		</if>
+		<if test="marriageFlag != null and marriageFlag !=''">
+			AND marriage_flag = #{marriageFlag}
+		</if>
+		<if test="dormFlag != null and dormFlag != ''">
+			AND dorm_flag = #{dormFlag}
+		</if>
+		<if test="workTimeStr != null and workTimeStr !=''">
+			AND work_time = #{workTime}
+		</if>
+		<if test="englishLevel != null and englishLevel != ''">
+			AND english_level = #{englishLevel}
+		</if>
+		<if test="wageAccount != null and wageAccount != ''">
+			AND wage_account = #{wageAccount}
+		</if>
+		<if test="address != null and address != ''">
+			AND address LIKE(${address})
+		</if>
+		<if test="nativePlace != null and nativePlace != ''">
+			AND native_place LIKE(${nativePlace})
+		</if>
+		<if test="volk != null and volk != ''">
+			AND volk = #{volk}
+		</if>
+		<if test="dorm != null and dorm != ''">
+			AND dorm = #{dorm}
+		</if>
+		<if test="diseaseHistoryFlag != null and diseaseHistoryFlag != ''">
+			AND disease_history_flag = #{diseaseHistoryFlag}
+		</if>
+		<if test="readIdcardFlag != null and readIdcardFlag != ''">
+			<if test="readIdcardFlag == 1">
+				AND id_card_down_img IS NOT NULL
+			</if>
+			<if test="readIdcardFlag == 0">
+				AND id_card_down_img IS NULL
+			</if>
+		</if>
+		<if test="sort == null or sort == ''">
+			ORDER BY department_name, post_name
+		</if>
+		<if test="sort != null and sort != ''">
+			ORDER BY ${sort} ${order}
+		</if>
+	</select>
+	
+	<select id="findRetireUserInfo" resultType="com.mdoa.user.model.UserInfo">
+		SELECT
+			user_id AS userId,
+			user_account AS userAccount,
+			password AS password,
+			user_name AS userName,
+			phone_num AS phoneNum,
+			accident_phone_num AS accidentPhoneNum,
+			birthday AS birthday,
+			id_card AS idCard,
+			sex AS sex,
+			work_time AS workTime,
+			address AS address,
+			kpi_group_id AS kpiGroupId,
+			leader_flag AS leaderFlag,
+			create_user_id AS createUserId,
+			create_user_name AS createUserName,
+			create_time AS createTime,
+			update_user_id AS updateUserId,
+			update_user_name AS updateUserName,
+			update_time AS updateTime,
+			alive_flag AS aliveFlag,
+			education AS education,
+			volk AS volk,
+			department_name AS departmentName,
+			post_id AS postId,
+			post_name AS postName,
+			invite_flag AS inviteFlag,
+			retire_flag AS retireFlag
+		FROM
+			user_info
+		WHERE
+			alive_flag = '1'
+		AND(		
+			retire_flag = '2'
+			OR retire_flag = '3'
+		)
+	</select>
+	
+	<select id="selectWork" parameterType="com.mdoa.personnel.model.PersonWork" 
+		resultType="com.mdoa.personnel.model.PersonWork">
+		SELECT
+			work_id AS workId,
+			user_id AS userId,
+			post_name AS postName,
+			compony_name AS componyName,
+			start_time AS startTime,
+			end_time AS endTime,
+			work_describe AS workDescribe,
+			create_user_id AS createUserId,
+			create_user_name AS createUserName,
+			create_time AS createTime,
+			update_user_id AS updateUserId,
+			update_user_name AS updateUserName,
+			update_time AS updateTime,
+			alive_flag AS aliveFlag
+		FROM
+			personnel_doc_work
+		WHERE
+			alive_flag = '1'
+		<if test="workId != null and workId != null">
+			AND work_id = #{workId}
+		</if>
+		<if test="userId != null and userId != ''">
+			AND user_id = #{userId}
+		</if>
+	</select>
+	
+	<select id="selectTrain" parameterType="com.mdoa.personnel.model.PersonTrain" 
+
+resultType="com.mdoa.personnel.model.PersonTrain">
+		SELECT
+			train_doc_id AS trainDocId,
+			train_name AS trainName,
+			train_id AS trainId,
+			user_id AS userId,
+			user_name AS userName,
+			start_time AS startTime,
+			end_time AS endTime,
+			train_describe AS trainDescribe,
+			train_company AS trainCompany,
+			create_user_id AS createUserId,
+			create_user_name AS createUserName,
+			create_time AS createTime,
+			update_user_id AS updateUserId,
+			update_user_name AS updateUserName,
+			update_time AS updateTime,
+			join_flag AS joinFlag,
+			alive_flag AS aliveFlag
+		FROM
+			personnel_doc_train
+		WHERE
+			alive_flag = '1'
+		<if test="trainDocId != null and trainDocId != ''">
+			AND train_doc_id = #{trainDocId}
+		</if>
+		<if test="userId != null and userId != ''">
+			AND user_id = #{userId}
+		</if>
+	</select>
+	
+	<select id="selectEdu" parameterType="com.mdoa.personnel.model.PersonEducation" 
+		resultType="com.mdoa.personnel.model.PersonEducation">
+		SELECT
+			education_id AS educationId,
+			user_id AS userId,
+			school_name AS schoolName,
+			specialty AS specialty,
+			star_time AS startTime,
+			end_time AS endTime,
+			create_user_id AS createUserId,
+			create_time AS createTime,
+			update_user_id AS updateUserId,
+			update_time AS updateTime,
+			alive_flag AS aliveFlag,
+			create_user_name AS createUserName,
+			update_user_name AS updateUserName
+		FROM
+			personnel_doc_education
+		WHERE
+			alive_flag = '1'
+		<if test="userId != null and userId != ''">
+			AND user_id = #{userId}
+		</if>
+		<if test="educationId != null and educationId != ''">
+			AND education_id = #{educationId}
+		</if>
+	</select>
+	<!-- 重置密码 -->
+	<update id="resetPassword" parameterType="com.mdoa.user.model.UserInfo">
+		UPDATE user_info 
+		SET
+			update_user_id = #{updateUserId},
+			update_user_Name = #{updateUserName},
+			update_time = NOW(),
+			password = #{password}
+		WHERE
+			user_id = #{userId}
+	</update>
+	<!-- 添加员工档案信息 -->
+	<insert id="addUserTransferInfo" parameterType="com.mdoa.user.model.UserTransfer">
+		INSERT INTO
+			user_transfer_info
+		(
+			user_transfer_info_id,
+			id_card,
+			user_id,
+			old_post_id,
+			old_department_url,
+			new_post_id,
+			new_department_url,
+			create_time,
+			create_user_id,
+			create_user_name,
+			transfer_time,
+			remark,
+			alive_flag
+		)VALUE(
+			UUID(),
+			#{idCard},
+			#{userId},
+			#{oldPostId},
+			#{oldDepartmentUrl},
+			#{newPostId},
+			#{newDepartmentUrl},
+			NOW(),
+			#{createUserId},
+			#{createUserName},
+			str_to_date(#{transferTimeStr}, '%Y-%m-%d'),
+			#{remark},
+			'1'
+		)
+	</insert>	
+	<!-- 批量添加调动员工记录 -->
+	<insert id="addUserTransferInsfo" parameterType="java.util.List">
+		INSERT INTO 
+			user_transfer_info
+		(
+			user_transfer_info_id,
+			user_id,
+			old_post_id,
+			old_department_url,
+			new_post_id,
+			new_department_url,
+			create_time,
+			create_user_id,
+			create_user_name,
+			transfer_time,
+			remark,
+			alive_flag
+		)VALUES
+		<foreach collection="list" item="position" separator=",">
+		(
+			UUID(),
+			#{position.userId},
+			#{position.oldPostId},
+			#{position.oldDepartmentUrl},
+			#{position.newPostId},
+			#{position.newDepartmentUrl},
+			NOW(),
+			#{position.createUserId},
+			#{position.createUserName},
+			#{position.transferTime},
+			#{position.remark},
+			'1'
+		)
+	</foreach>
+	</insert>
+	<!-- 查询员工调动 -->
+	<select id="selectUserTransfer" parameterType="com.mdoa.user.model.UserTransfer" 
+		resultType="com.mdoa.user.model.UserTransfer">
+		SELECT
+			a.user_transfer_info_id AS userTransferInfoId,
+			a.transfer_time AS transferTime,
+			a.remark AS remark, 
+			f.user_name AS userName,
+			a.user_id AS userId,
+			a.old_post_id AS oldPostId,
+			b.post_name AS oldPostName,
+			a.new_post_id AS newPostId,
+			c.post_name AS newPostName,
+			a.old_department_url AS oldDepartmentUrl,
+			d.department_name AS oldDepartmentName,
+			a.new_department_url AS newDepartmentUrl,
+			e.department_name AS newDepartmentName,
+			a.create_time AS createTime,
+			a.create_user_id AS createUserId,
+			a.create_user_name AS createUserName
+		FROM
+			user_transfer_info a
+		LEFT JOIN
+			framework_post b
+		ON(a.old_post_id = b.post_id)
+		LEFT JOIN
+			framework_post c
+		ON(a.new_post_id = c.post_id)
+		LEFT JOIN
+			framework_department d
+		ON(a.old_department_url = d.url)
+		LEFT JOIN
+			framework_department e
+		ON(a.new_department_url = e.url)
+		LEFT JOIN
+			user_info f
+		ON(a.user_id = f.user_id)
+		WHERE
+			a.alive_flag = '1'
+			<if test="userName != null and userName != ''">
+				AND f.user_name LIKE(${userName})
+			</if>
+			<if test="oldPostName != null and oldPostName != ''">
+				AND b.post_name LIKE(${oldPostName})
+			</if>
+			<if test="newPostName != null and newPostName != ''">
+				AND c.post_name LIKE(${newPostName})
+			</if>
+			<if test="oldDepartmentName != null and oldDepartmentName != ''">
+				AND d.department_name LIKE(${oldDepartmentName})
+			</if>
+			<if test="newDepartmentName != null and newDepartmentName != ''">
+				AND e.department_name LIKE(${newDepartmentName})
+			</if>
+			<if test="startTimeStr != null and startTimeStr != ''">
+				AND a.transfer_time &gt;= str_to_date(#{startTimeStr}, '%Y-%m-%d')
+			</if>
+			<if test="endTimeStr != null and endTimeStr != ''">
+				AND a.transfer_time &lt;= str_to_date(#{endTimeStr}, '%Y-%m-%d')
+			</if>
+			<if test="userId != null and userId != ''">
+				AND a.user_id = #{userId}
+			</if>
+			<if test="idCard != null and idCard != ''">
+				AND a.id_card = #{idCard}
+			</if>
+		ORDER BY a.create_time desc
+	</select>
+	
+	<insert id="addOtherInfo" parameterType="com.mdoa.user.model.UserInfoOther">
+		INSERT INTO user_info_other (
+			user_info_other_id,
+			user_id,
+			type,
+			message,
+			create_user_id,
+			create_user_name,
+			create_time,
+			alive_flag
+		)
+		VALUE
+			(
+				#{userInfoOtherId},
+				#{userId},
+				#{type},
+				#{message},
+				#{createUserId},
+				#{createUserName},
+				NOW(),
+				'1'
+			);
+	</insert>
+	
+	<update id="updateOtherInfo" parameterType="com.mdoa.user.model.UserInfoOther">
+		UPDATE user_info_other
+		SET 
+			<if test="type != null and type != ''">
+				type = #{type},
+			</if>
+			<if test="message != null and message != ''">
+				message = #{message},
+			</if>
+			<if test="aliveFlag != null and aliveFlag != ''">
+				alive_flag = #{aliveFlag},
+			</if>
+			update_user_id = #{updateUserId},
+			update_user_name = #{updateUserName},
+			update_time = NOW()
+		WHERE
+			user_info_other_id = #{userInfoOtherId};
+	</update>
+
+	<select id="selectOtherInfo" parameterType="java.lang.String" resultType="com.mdoa.user.model.UserInfoOther">
+		SELECT
+			type,
+			message,
+			user_id AS userId,
+			user_info_other_id AS userInfoOtherId
+		FROM
+			user_info_other
+		WHERE
+			alive_flag = '1'
+			<if test="userId != null and userId != ''">
+				AND user_id = #{userId}
+			</if>
+			<if test="userInfoOtherId != null and userInfoOtherId != ''">
+				AND user_info_other_id = #{userInfoOtherId}
+			</if>
+	</select>
+	
+</mapper>

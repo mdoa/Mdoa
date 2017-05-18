@@ -1,0 +1,126 @@
+#userInviteManage .staffRecord {
+	padding-left: 2%;
+	padding-right: 5%;
+	padding-top: 25px;
+	overflow:auto;
+}
+#userInviteManage .staffRecord  table input{
+	border:1px #A9A9A9 solid;
+	width: 99.5%;
+}
+#userInviteManage .staffRecord  table textarea{
+	border:1px #A9A9A9 solid;
+	width: 99.5%;
+}
+#userInviteManage .staffRecord  table select{
+	border:1px #A9A9A9 solid;
+	width: 100%;
+}
+#userInviteManage .staffRecord  .expleft{
+	padding-top:10px;
+	float: left;
+	width: 12%;
+	font-size: 20px;
+	font-weight: 600;
+}
+#userInviteManage .staffRecord  .expright{
+	float: right;
+	width: 88%;
+}
+#userInviteManage .staffRecord  .doc-button{
+	width: 150px;
+	height: 30px;
+	background-color: #64D8EA;
+	border-color: #64D8EA;
+	border-radius:5%;
+	margin-bottom: 20px;
+}
+#userInviteManage .staffRecord  .expsame{
+	float: left;
+	overflow:hidden;
+}
+
+#userInviteManage .popups .writetoexcel table select{
+	border:1px #A9A9A9 solid;
+	width:138px;
+	text-align:center;
+}
+
+#userInviteManage .popups .writetoexcel table input[type="text"]{
+	border:1px #A9A9A9 solid;
+	width:144px;
+}
+#userInviteManage .popups .writetoexcel table input[type="checkbox"]{
+	width:13px;
+}
+#userInviteManage .popups .writetoexcel table input[type="button"]{
+	width:42px;
+	height:26px;
+	color:#444444;
+	background-color:#4DFFFF;
+	border-color:#4DFFFF;
+	border-radius:6px;
+	margin-top:5px;
+	margin-bottom:5px;
+	margin-left:15px;
+	margin-right:15px;
+	text-align:center;
+}
+#userInviteManage .popups .writetoexcel .hidden{
+	display:none;
+	width:0px;
+}
+#userInviteManage .popups .writetoexcel .btnarea .button{
+	margin-left:8px;
+}
+#userInviteManage .userInfo .basic table span{
+	color:red;
+}
+#userInviteManage .downset{
+	float:right;	
+}
+#userInviteManage .advancedQuery .popuparea table{
+	padding:10px 26px;
+}
+#userInviteManage .advancedQuery .popuparea select{
+	width:148px;
+}
+#userInviteManage .advancedQuery .popuparea .inputbox{
+	width:103px;
+}
+#userInviteManage .advancedQuery .popuparea .button{
+	width:40px;
+}
+#userInviteManage .imgBox{
+	width:80px;
+    margin:0 auto;
+}
+#userInviteManage .staffRecord .userInfo{
+	position:relative;
+}
+#userInviteManage .staffRecord .userInfo .cap{
+	position:absolute;
+	left:0;
+	top:0;
+	width:100%;
+	height:100%;
+	background-color:#000;
+	opacity:0;
+	filter:alpha(opacity=0);
+	display:none;
+}
+#userInviteManage .printIdCard{
+	width:398px;
+	height:480px;
+}
+#userInviteManage .printIdCard .popuparea{
+	padding:0 20px 8px;
+	width:372px;
+	height:418px;
+}
+#userInviteManage .printIdCard img{
+	width:330px;
+	height:200px;
+	display:block;
+	margin-top:8px;
+}

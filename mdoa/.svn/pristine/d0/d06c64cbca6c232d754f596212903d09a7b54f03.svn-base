@@ -1,0 +1,22 @@
+<div id="goodsDeptGetForm">
+	<div class="outPut"></div>
+	<div class="listBody">
+		<div class="filtCondition">
+			<ul>
+				<li>
+					<span>开始日期:</span>					
+					<input class="jqdate" type="text" name="startTime" readonly="readonly" onclick="YMD(this);">
+				</li>
+				<li>
+					<span>结束日期:</span>
+					<input class="jqdate" type="text" name="endTime" readonly="readonly" onclick="YMD(this);">
+				</li>				
+			</ul>
+			<input type="button" value="查询" />
+		</div>
+		<table border="0" cellspacing="0" cellpadding="0" class="list" id="goodsDeptGetFormList">
+			
+		</table>
+		<div class="rigthH"></div>
+	</div>
+</div>

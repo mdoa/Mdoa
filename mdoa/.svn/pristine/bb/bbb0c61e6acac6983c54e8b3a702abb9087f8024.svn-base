@@ -1,0 +1,369 @@
+<!DOCTYPE html> 
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+	<meta name="renderer" content="webkit">
+	<meta http-equiv="X-UA-Compatible"  content="IE=8,chrome=1" />
+	<title> oa协同办公</title>
+	<link rel="SHORTCUT ICON" href="../../img/index/Mender.ico"/>
+	<link rel="stylesheet" type="text/css" href="../../themes/default/easyui.css">
+	<link rel="stylesheet" type="text/css" href="../../themes/icon.css">
+	<link rel="stylesheet" type="text/css" href="../../css/reset.css">
+	<link rel="stylesheet" type="text/css" href="../../css/personnel/invite.css">
+	<link rel="stylesheet" type="text/css" href="../../css/personnel/inviteflow.css">
+	<link rel="stylesheet" type="text/css" href="../../css/plug/jedate.css">
+	<link rel="stylesheet" type="text/css" href="../../css/plug/yu.css">
+	<link rel="stylesheet" type="text/css" href="../../css/index/index.css">
+	<script type="text/javascript" src="../../js/jquery/jquery-1.8.0.min.js"></script>
+	<script type="text/javascript" src="../../js/easyui/jquery.easyui.min.js"></script>
+	<script type="text/javascript" src="../../js/jquery/jquery.jedate.min.js"></script>
+	<script type="text/javascript" src="../../js/index/index.js"></script>
+	<script type="text/javascript" src="../../js/plugin/upload.js"></script>
+	<script type="text/javascript" src="../../js/plugin/highcharts.js"></script>
+	<script type="text/javascript" src="../../js/plugin/jquery.jqprint-0.3.js"></script>
+	<script type="text/javascript" src="../../js/plugin/yu.js"></script>
+	<script type="text/javascript" src="../../js/plugin/excel-plugin.js"></script>
+	<script type="text/javascript" src="../../js/plugin/ueditor/ueditor.config.js"></script>
+    <script type="text/javascript" src="../../js/plugin/ueditor/ueditor.all.js"></script>
+    <script type="text/javascript" src="../../js/plugin/ueditor/lang/zh-cn/zh-cn.js"></script>
+</head>
+<body>
+<div id="box" style="position:relative;">
+	<input id="saveDictionaryData" type="hidden">
+	<div id="topbar">
+		<div id="logo">
+			<img src="../../img/index/Mender.png" style="width:35px;height:56px;" alt="梦"/>
+			<img src="../../img/index/Mendertext.png" alt="孟德软件" style="width:76px;height:40px;" id="Mendertext"/>
+		</div>
+		<ul class="topbarMenu">
+			<li class="now personnel">人事管理</li>
+			<li class="repertory">五金仓库</li>
+			<li class="workOfficeDoc">个人办公</li>
+			<li>组织管理</li>
+			<li>流程管理</li>
+			<li class="systemSet">系统管理</li>
+		</ul>
+		<div class="topbarRight">
+			<p id="time"></p>
+			<span style="margin-right:12px;">欢迎您,<span class="userAccount"></span></span>
+			<span id="updatePassword">[修改密码]</span>
+			<span id="out">[退出]</span>
+		</div>
+	</div>
+	<div id="cut"></div>	
+	<div id="leftbar" title="侧边栏">
+		<div class="show" style="height: 100%">
+			<h2 class="showtop">
+				<img class="img_nav" src="../../img/index/icon1.png" alt="图片一" />
+				<span>导航</span>
+			</h2>
+			<div class="navarea">
+			</div>
+		</div>
+	</div>
+	<div id="main" title="主体">
+		<div id="loadarea" class="easyui-tabs">
+		</div>
+	</div>
+	<div id="bottombar">
+		<div class="bottomleft">
+			<div id="indexMessage">
+				<img src="../../img/index/iconly.png"/>
+				<span>消息 |</span>
+			</div>
+			<img src="../../img/index/iconbq.png"/>
+			<span>便签</span>
+		</div>
+		<div style="float:right;">杭州梦德软件有限公司办公协同管理系统 |技术支持：<a href="javascript:;">技术支持杭州梦德软件有限公司</a></div>
+	</div>
+	<div id="w" class="easyui-window" data-options="title:'提示',inline:true" >
+	</div>
+	
+	<div class="popups" style="text-align: left;">
+		
+		
+		<!-- 部门人员选择器（单选） -->
+		<div class="popup" id="chooseUser" style="height: 410px;width: 400px;z-index: 1000">
+			<h3>请选择员工(单选)</h3>
+			<span class="turnoff"></span>
+			<div class="popuparea">
+				<div style="width: 374px; height: 340px;">
+					<div style="float: left;height: 338x;width: 182px;border: 1px #95B8E7 solid;overflow-y:auto;">
+						<div class="title">选择部门</div>
+						<div style="height: 311px;width:180px" class="dept"></div>
+					</div>
+					<div style="float: right;height: 340px;width: 182px;">
+						<div class="queryForm">
+							员工姓名：<input name="userName" style="width: 50px;"/>
+							<input type="button" class="button" style="width: 40px" value="查询" name="query"/>
+						</div>
+						<table style="height: 340px;width: 180px" class="user"></table>
+					</div>
+				</div>
+			</div>
+			<div class="btnarea" style="text-align: center">
+				<input type="button" class="button confirm" value="确定"/>
+				<input type="button" class="button cannel" value="取消" style="margin-left: 20px;"/>
+			</div>
+		</div>
+		
+		<!-- 部门人员选择器（多选） -->
+		<div class="popup" id="chooseUsers" style="height: 410px;width: 400px;z-index: 1000">
+			<h3>请选择员工(多选)</h3>
+			<span class="turnoff"></span>
+			<div class="popuparea">
+				<div style="width: 374px; height: 340px;">
+					<div style="float: left;height: 338x;width: 182px;border: 1px #95B8E7 solid;overflow-y:auto;">
+						<div class="title">选择部门</div>
+						<div style="height: 311px;width:180px" class="dept"></div>
+					</div>
+					<div style="float: right;height: 340px;width: 182px;">
+						<div class="queryForm">
+							员工姓名：<input name="userName" style="width: 50px;"/>
+							<input type="button" class="button" style="width: 40px" value="查询" name="query"/>
+						</div>
+						<table style="height: 340px;width: 180px" class="user"></table>
+					</div>
+				</div>
+			</div>
+			<div class="btnarea" style="text-align: center">
+				<input type="button" class="button confirm" value="确定"/>
+				<input type="button" class="button cannel" value="取消" style="margin-left: 20px;"/>
+			</div>
+		</div>
+		
+		<!-- 部门选择器（单选） -->
+		<div class="popup" id="chooseDept" style="height: 410px;width: 300px;z-index: 1000">
+			<h3>请选择部门(单选)</h3>
+			<span class="turnoff"></span>
+			<div class="popuparea">
+				<div style="width: 282px; height: 340px;">
+					<div style="float: left;height: 338x;width: 272px;border: 1px #95B8E7 solid;overflow-y:auto;">
+						<div class="title">选择部门</div>
+						<div style="height: 311px;width:270px" class="dept"></div>
+					</div>
+				</div>
+			</div>
+			<div class="btnarea" style="text-align: center">
+				<input type="button" class="button confirm" value="确定"/>
+				<input type="button" class="button cannel" value="取消" style="margin-left: 20px;"/>
+			</div>
+		</div>
+		
+		<!-- 部门选择器（多选） -->
+		<div class="popup" id="chooseDepts" style="height: 410px;width: 300px;z-index: 1000">
+			<h3>请选择部门(多选)</h3>
+			<span class="turnoff"></span>
+			<div class="popuparea">
+				<div style="width: 282px; height: 340px;">
+					<div style="float: left;height: 338x;width: 272px;border: 1px #95B8E7 solid;overflow-y:auto;">
+						<div class="title">选择部门</div>
+						<div style="height: 311px;width:270px" class="dept"></div>
+					</div>
+				</div>
+			</div>
+			<div class="btnarea" style="text-align: center">
+				<input type="button" class="button confirm" value="确定"/>
+				<input type="button" class="button cannel" value="取消" style="margin-left: 20px;"/>
+			</div>
+		</div>
+		
+		
+		<!-- 岗位选择器（单选） -->
+		<div class="popup" id="choosePost" style="height: 410px;width: 300px;z-index: 1000">
+			<h3>请选择岗位(单选)</h3>
+			<span class="turnoff"></span>
+			<div class="popuparea">
+				<div style="width: 282px; height: 340px;">
+					<div style="float: right;height: 340px;width: 282px;">
+						<div class="queryForm">
+							岗位名称：<input name="postName" style="width: 50px;"/>
+							<input type="button" class="button" style="width: 40px" value="查询" name="query"/>
+						</div>
+						<table style="height: 340px;width: 272px" class="post"></table>
+					</div>
+				</div>
+			</div>
+			<div class="btnarea" style="text-align: center">
+				<input type="button" class="button confirm" value="确定"/>
+				<input type="button" class="button cannel" value="取消" style="margin-left: 20px;"/>
+			</div>
+		</div>
+		
+		<!-- 岗位选择器（多选） -->
+		<div class="popup" id="choosePosts" style="height: 410px;width: 300px;z-index: 1000">
+			<h3>请选择岗位(多选)</h3>
+			<span class="turnoff"></span>
+			<div class="popuparea">
+				<div style="width: 282px; height: 340px;">
+					<div style="float: right;height: 340px;width: 282px;">
+						<div class="queryForm">
+							岗位名称：<input name="postName" style="width: 50px;"/>
+							<input type="button" class="button" style="width: 40px" value="查询" name="query"/>
+						</div>
+						<table style="height: 340px;width: 272px" class="post"></table>
+					</div>
+				</div>
+			</div>
+			<div class="btnarea" style="text-align: center">
+				<input type="button" class="button confirm" value="确定"/>
+				<input type="button" class="button cannel" value="取消" style="margin-left: 20px;"/>
+			</div>
+		</div>
+		
+		
+		<!-- 角色选择器（单选） -->
+		<div class="popup" id="chooseRole" style="height: 410px;width: 300px;z-index: 1000">
+			<h3>请选择角色(单选)</h3>
+			<span class="turnoff"></span>
+			<div class="popuparea">
+				<div style="width: 282px; height: 340px;">
+					<div style="float: right;height: 340px;width: 282px;">
+						<div class="queryForm">
+							员工姓名：<input name="roleName" style="width: 50px;"/>
+							<input type="button" class="button" style="width: 40px" value="查询" name="query"/>
+						</div>
+						<table style="height: 340px;width: 272px" class="role"></table>
+					</div>
+				</div>
+			</div>
+			<div class="btnarea" style="text-align: center">
+				<input type="button" class="button confirm" value="确定"/>
+				<input type="button" class="button cannel" value="取消" style="margin-left: 20px;"/>
+			</div>
+		</div>
+		
+		
+		<!-- 角色选择器（多选） -->
+		<div class="popup" id="chooseRoles" style="height: 410px;width: 300px;z-index: 1000">
+			<h3>请选择角色(单选)</h3>
+			<span class="turnoff"></span>
+			<div class="popuparea">
+				<div style="width: 282px; height: 340px;">
+					<div style="float: right;height: 340px;width: 282px;">
+						<div class="queryForm">
+							员工姓名：<input name="roleName" style="width: 50px;"/>
+							<input type="button" class="button" style="width: 40px" value="查询" name="query"/>
+						</div>
+						<table style="height: 340px;width: 272px" class="role"></table>
+					</div>
+				</div>
+			</div>
+			<div class="btnarea" style="text-align: center">
+				<input type="button" class="button confirm" value="确定"/>
+				<input type="button" class="button cannel" value="取消" style="margin-left: 20px;"/>
+			</div>
+		</div>
+		
+		
+		<!-- 权限选择器（多选） -->
+		<div class="popup" id="choosePowers" style="height: 410px;width: 300px;z-index: 1000">
+			<h3>请选择权限(多选)</h3>
+			<span class="turnoff"></span>
+			<div class="popuparea">
+				<div style="width: 282px; height: 340px;">
+					<div style="float: left;height: 338x;width: 272px;border: 1px #95B8E7 solid">
+						<div class="title">选择权限（多选）</div>
+						<div style="height: 311px;width:280px;overflow:auto" class="power"></div>
+					</div>
+				</div>
+			</div>
+			<div class="btnarea" style="text-align: center">
+				<input type="button" class="button confirm" value="确定"/>
+				<input type="button" class="button cannel" value="取消" style="margin-left: 20px;"/>
+			</div>
+		</div>
+		
+		<!-- 修改密码的弹窗 -->
+		<div class="popup updatePasswordWindow" style="height: 300px;width: 430px">
+			<h3>密码修改</h3>
+			<span class="turnoff"></span>
+			<div class="popuparea" style="overflow: hidden;padding:10px 36px;">
+					<table style="text-align: right;height:216px;">
+						<tr>
+							<td style="width: 108px">请输入原密码：</td>
+							<td style="width: 200px;"><input type="password" style="width:192px;" name="oldPassword"/></td>
+						</tr>
+						<tr>
+							<td>请输入新密码：</td>
+							<td>
+								<input type="password" style="width:192px;" name="newPassword"/>
+							</td>
+						</tr>
+						<tr>
+							<td>请再次输入新密码：</td>
+							<td>
+								<input type="password" style="width:192px;" name="newPasswordAgain"/>
+							</td>
+						</tr>
+					</table>
+				</div>
+			<div class="btnarea" style="text-align: center;">
+				<input type="button" class="button save" value="确定"/>
+				<input type="button" class="button cannel" value="关闭"/>
+			</div>
+		</div>
+		<!-- 打印信息弹窗 -->
+		<div class="popup" id="print-message" style="height: 500px;width: 900px">
+			<h3>打印信息</h3>
+			<span class="turnoff"></span>
+			<div class="popuparea" style="width: 872px;padding:10px 36px;height: 430px;overflow:auto;">
+				<div class="loading">打印信息加载中...</div>
+				<div class="print-col-box">
+					<div id="print-col">请选择要打印的列：
+						<input type="checkbox"/><span contentEditable="true">序号</span>
+						<input type="checkbox"/><span contentEditable="true">编号</span>
+						<input type="checkbox"/><span contentEditable="true">姓名</span>
+						<input type="checkbox"/><span contentEditable="true">性别</span>
+						<input type="checkbox"/><span contentEditable="true">部门</span>
+						<input type="checkbox"/><span contentEditable="true">岗位</span>
+						<input type="checkbox"/><span contentEditable="true">电话</span>
+						<input type="checkbox"/><span contentEditable="true">身份证号</span>
+						<input type="checkbox"/><span contentEditable="true">入职时间</span>
+					</div>
+				</div>
+				<table class="print-message" style="border: 1px black solid;border-collapse: collapse;">
+					<tbody>
+						
+					</tbody>
+				</table>
+			</div>
+			<div class="btnarea" style="text-align: center;">
+				<input type="button" class="button print" value="打印"/>
+				<input type="button" class="button cannel" value="关闭"/>
+			</div>
+			<ul>
+				<li>删除此列</li>
+			</ul>
+		</div>
+		<!-- 消息提示 -->
+		<div class="popup indexMessage">
+			<h3>消息提示</h3>
+			<span class="turnoff">
+			</span>
+			<div class="popuparea" style="width:500px;height:400px;">
+				<div class="invitetop">
+					状态：<select name="">
+						<option></option>
+						<option value="1">未读</option>
+						<option value="0">已读</option>
+					</select>
+					发送人：<input type="text" name="" style="width:100px;"/>
+					<input type="button" class="button" value="查询" style="width:40px;"/>
+				</div>
+				<div>
+					<table id="messagedg"></table>
+				</div>
+			</div>
+			<div class="btnarea" style="text-align: center;">
+				<input type="button" class="button confirm" value="确定"/>
+				<input type="button" class="button cannel" value="关闭" style="margin-left:8px;"/>
+			</div>
+		</div>
+	</div>
+</div>
+</body>
+<object classid="clsid:6D2088B7-1B97-4960-9535-5115614F29E0" id="WidControl"  codebase="WidControl.ocx" width="1" height="1">
+</object>
+</html>

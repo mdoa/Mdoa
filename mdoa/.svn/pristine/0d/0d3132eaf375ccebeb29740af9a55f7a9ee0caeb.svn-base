@@ -1,0 +1,22 @@
+$(function(){
+	//折旧记录数据网格加载
+	$('#depreciationRecorddg').datagrid({
+		   url:'../../personnel/selectDepreRcord.do?getMs='+getMS(),
+		   rownumbers:"true",
+		   singleSelect:true,
+		   pagination:true,
+		   toolbar:"#depreciationRecord .invitetop",
+		   method:"post",
+		   fit: true, 
+		   columns:[[
+		       {field:"planName",title:"资产名称",resizable:true,fitColumns:true,align:"center",sortable:true,width:100},
+		       {field:"text",title:"这算类型",resizable:true,fitColumns:true,align:"center",sortable:true,width:150},
+		       {field:"reason",title:"工作量",resizable:true,fitColumns:true,align:"center",sortable:true,width:150},
+		       {field:"planCount",title:"折旧值",resizable:true,fitColumns:true,align:"center",sortable:true,width:60},
+		       {field:"_op",title:"计算时间",width:100,resizable:true,align:"center",fitColumns:true,width:100,sortable:true,},
+		  ]],
+		  queryParam:{
+			  
+		  }
+	})
+});

@@ -1,0 +1,18 @@
+#welfareAdd .initiateWelfare .popuparea{
+	padding:10px 20px;
+}
+#welfareAdd .initiateWelfare .popuparea .examBtn{
+	width:40px;
+} 
+#welfareAdd .advancedQuery .popuparea table{
+	padding:10px 26px;
+}
+#welfareAdd .advancedQuery .popuparea select{
+	width:148px;
+}
+#welfareAdd .advancedQuery .popuparea .inputbox{
+	width:103px;
+}
+#welfareAdd .advancedQuery .popuparea .button{
+	width:40px;
+}

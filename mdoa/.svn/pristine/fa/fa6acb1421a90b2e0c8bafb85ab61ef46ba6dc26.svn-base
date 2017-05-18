@@ -1,0 +1,88 @@
+$(function(){
+	var leftCellWidth = $('#checkGroupAllot .checkGroupName').width()-3;
+	var rightCellWidth = $('#checkGroupAllot .checkGroupAllotDetail').width()-3;
+	$('#checkGroupAllot .checkGroupAllotMain #checkGroupNameDg').parent().css('height',$('#loadarea').height()-63+'px');
+	//左侧所有考勤组列表
+	$("#dictionaryTypeDg").datagrid({
+		url:'../../attendance/findGroupByCondition.do?getMs='+getMS(),
+		singleSelect:true,
+		method:"post",
+		onLoadSuccess:function(){
+			$('#dictionary .dictionaryType .datagrid-cell:eq(0)').css({'height':'32px','line-height':'32px','font-size':'14px'});
+			$('#dictionary .dictionaryMain #dictionaryDetailDg').parent().css('height',$('#loadarea').height()-63+'px');
+		},
+//		onDblClickRow:function(rowIndex, rowData){
+//			var selectedRow = $('#dictionaryTypeDg').datagrid('getSelected');
+//			var selectedKey = selectedRow.selectKey;
+//			$('#dictionaryDetailDg').datagrid({
+//				url:"../../dictionary/queryDictionary.do?getMs='+getMS()",
+//				queryParams:{
+//					selectKey:selectedKey
+//				},
+//				singleSelect:true,
+//				method:"post",
+//				fit: true,
+//				pagination:false,
+//				onLoadSuccess:function(data){
+//					$('#dictionary .dictionaryDetail .datagrid-cell:eq(0)').css({'height':'32px','line-height':'32px','font-size':'14px'});
+//					$('#dictionary .dictionaryDetail .downsetDictionary:last').remove();
+//					$('#dictionary .dictionaryDetail .upsetDictionary:last').before('<span class="last-button"></span>');
+//				},
+//				columns:[[
+//				    {field:"optionKey",title:"编号",fitColumns:true,resizable:true,align:"center",sortable:true,width:100},
+//				    {field:"optionValue",title:"名称",fitColumns:true,resizable:true,align:"center",sortable:true,width:100,formatter:function(value,row,index){
+//				    	if(row.isDefault == 1){
+//				    		return '<span style="color:green;">'+value+'</span>';
+//				    	}else{
+//				    		return '<span>'+value+'</span>';
+//				    	}
+//				    }},
+//				    {field:"createUserName",title:"创建人",fitColumns:true,resizable:true,align:"center",sortable:true,width:175},
+//				    {field:"createTimeStr",title:"创建时间",fitColumns:true,resizable:true,align:"center",sortable:true,width:175},
+//				    {field:"updateUserName",title:"修改人",fitColumns:true,resizable:true,align:"center",sortable:true,width:175},
+//				    {field:"updateTimeStr",title:"修改时间",fitColumns:true,resizable:true,align:"center",sortable:true,width:175},
+//				    {field:"aliveFlag",title:"是否有效",fitColumns:true,resizable:true,align:"center",sortable:true,width:100,formatter:function(value,row,index){
+//				    	if(row.aliveFlag == 1){
+//				    		return "有效";
+//				    	}else{
+//				    		return "无效";
+//				    	}
+//				    }},
+//				    {field:"_op",title:"管理",width:100,resizable:true,align:"center",sortable:true,formatter:function(value,row,index){
+//				    	   var id ="'"+row.dictionaryId+"'";
+//				    	   var selectKey = "'"+row.selectKey+"'";
+//				    	   var optionKey = "'"+row.optionKey+"'";
+//				    	   var optionValue = "'"+row.optionValue+"'";
+//				    	   var operation = '';
+//				    	   operation +='<span class="small-button edit" onclick="editDictionary('+id+','+selectKey+','+optionKey+','+optionValue+')" title="编辑"></span>';
+//				    	   operation +='<span class="small-button delete" onclick="deleteDictionary('+id+','+selectKey+','+optionKey+','+index+')" title="弃用"></span>';
+//				    	   //operation +='<span class="empty-button"></span>';
+//				    	   operation +='<span class="downset downsetDictionary" onclick="downsetDictionary('+index+')" title="下移"></span>';
+//				    	   if(row.isDefault == 1){
+//				    		   operation +='<span class="empty-button"></span>';
+//				    	   }else{
+//				    		   operation +='<span class="small-button defaultSet" onclick="setDefault('+id+')"></span>';
+//				    	   }
+//				    	   if(index != 0){
+//				    		   operation +='<span class="upset upsetDictionary" onclick="upsetDictionary('+index+')" title="上移"></span>';
+//				    	   }else{
+//				    		   operation +='<span class="empty-button"></span>';
+//				    	   }
+//				    	   return operation;
+//				     }},
+//				    {field:"dictionaryId",hidden:true},
+//				    {field:"orderCode",hidden:true},
+//				    {field:"isDefault",hidden:true}
+//				]]
+//			});
+//			$('#dictionary .maintop input[name=addDictionary]').css('display','inline');
+//		},
+		columns:[[
+		     {field:"selectName",title:"考情组",fitColumns:true,resizable:true,align:"center",sortable:true,width:leftCellWidth},
+		]]
+	});
+	
+	
+	
+	
+})

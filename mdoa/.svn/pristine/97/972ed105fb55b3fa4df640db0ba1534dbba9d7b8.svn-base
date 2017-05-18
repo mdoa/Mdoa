@@ -1,0 +1,248 @@
+$(function(){
+	/*设置页面高100%*/
+	$('#goodstypemonthForm').css('height',$('#loadarea').height()-31+'px');
+	/*设置list的宽度*/
+	$('#goodstypemonthForm .listForm').css('width',$('#loadarea').width()-202+'px');
+	$('#goodstypemonthForm .listForm').css('height',$('#loadarea').height()-31+'px');
+	/*设置chart的宽度*/
+	$('#goodstypemonthForm .chartArea').css({
+		'width':$('#loadarea').width()+'px',
+		'height':$('#loadarea').height()-31+'px'
+	});
+	/*设置表格的高度*/
+	$('#goodstypemonthFormdg').css('height',$('#loadarea').height()-60+'px');
+	/*网格数据加载*/
+	$('#goodstypemonthFormdg').datagrid({
+		//url:'../../reportForms/findTypeMonthBalanceByCondition.do',
+		rownumbers:true,
+		pagination:true,
+		singleSelect:true,
+		toolbar:'#goodstypemonthForm .queryForm',
+		columns:[[
+	       {field:"goodsTypeName",title:"物品类别名称",fitColumns:true,resizable:true,align:"center",sortable:true,width:100},
+	       {field:"monthBalanceTimeStr",title:"月结日期",fitColumns:true,resizable:true,align:"center",sortable:true,width:80},
+	       {field:"startTimeStr",title:"开始日期",fitColumns:true,resizable:true,align:"center",sortable:true,width:80},
+	       {field:"endTimeStr",title:"结束日期",fitColumns:true,resizable:true,align:"center",sortable:true,width:80},
+	       {field:"lastBalanceAmount",title:"上期余额",fitColumns:true,resizable:true,align:"center",sortable:true,width:80},
+	       {field:"currentOutAmount",title:"本期出库金额",fitColumns:true,resizable:true,align:"center",sortable:true,width:80},
+	       {field:"currentInAmount",title:"本期入库金额",fitColumns:true,resizable:true,align:"center",sortable:true,width:80},
+	       {field:"currentBalanceAmount",title:"本期余额",fitColumns:true,resizable:true,align:"center",sortable:true,width:80},
+	       {field:"_op",title:"管理",width:65,resizable:true,align:"center",width:65,sortable:true,formatter:function(value,row,index){
+	    	   var url ="'"+row.goodsTypeUrl+"'";
+	    	   return '<span class="small-button look" onclick="lookTypeReportGraphic('+url+')" title="查看图"></span>'
+	       }}
+	    ]]
+	});
+	/*查询月结日期*/
+	$('#goodstypemonthForm .query').click(function(){
+		var monthBalanceTimeStr = $('#goodstypemonthForm .queryForm .monthBalanceTimeStr option:selected').val();
+		var info = {
+			monthBalanceTimeStr:monthBalanceTimeStr	
+		}
+		$('#goodstypemonthFormdg').datagrid({
+			url:'../../reportForms/findTypeMonthBalanceByCondition.do',
+			queryParams:info
+		})
+	});
+	/*返回*/
+	$('#goodstypemonthForm .goback').click(function(){
+		$('#goodstypemonthForm .listForm').css('display','block');
+		$('#goodstypemonthForm .treearea').css('display','block');
+		$('#goodstypemonthForm .chartArea').css('display','none');
+		$('#goodstypemonthForm .chartArea #goodstypemonth').html('');
+	});
+	/*--------------------------------tree------------------------------*/
+	var goodsTypeIds=[];
+	$('#goodstypemonthFormtg').tree({
+        url: "../../treeController/queryTree.do",
+        method:"post",
+        animate: false,
+       // checkbox : true,//是否显示复选框  
+        cascadeCheck: false,
+        dnd:true,
+        onClick: function(node){
+        	var goodsTypeUrl = $("#goodstypemonthForm .goodsTypeUrl").val(node.id);
+        },
+        onCollapse:function(node){
+        	$("#goodsTypeUrl").val(node.id);
+        	$.ajax({
+        		data:{goodsTypeUrl:$("#goodsTypeUrl").val(),state:"onCollapse"},
+    			url:"../../treeController/updateTreeState.do",
+    			method:"post"
+    		})
+        },
+        onExpand:function(node){
+        	$("#goodsTypeUrl").val(node.id);
+        	$.ajax({
+        		data:{goodsTypeUrl:$("#goodsTypeUrl").val(),state:"onExpand"},
+    			url:"../../treeController/updateTreeState.do",
+    			method:"post"
+    		})
+        },
+        onDrop: function(target,source,point){
+        	var targetUrl = $('#goodstypemonthFormtg').tree('getNode', target).id;
+        	var targetName = $('#goodstypemonthFormtg').tree('getNode', target).text;
+        	//console.log("targetId="+targetId+"source="+source.text+"point="+point);
+        	$.ajax({
+    			data:{targetUrl:targetUrl,targetName:targetName,sourceUrl:source.id,sourceName:source.text,point:point},
+    			url:"../../treeController/dragRepertoryType.do",
+    			method:"post",
+    			success: function(data){
+    				$('#goodstypemonthFormtg').tree('reload');
+    			}
+    		})
+        },
+        onCheck: function(node,checked){
+        	if(checked == true){
+        		goodsTypeIds.push(node.id);
+        	}else if(checked == false){
+        		for(var i=0;i<goodsTypeIds.length;i++){
+        			if(goodsTypeIds[i] == node.id){
+        				goodsTypeIds.splice(i,1);
+        			}
+        		}
+        	}
+        },
+       /* onContextMenu : function(e,node){
+        	e.preventDefault();
+        	var goodsTypeUrl = $('#goodstypemonthForm .goodsTypeUrl').val(node.id);
+        	$('#goodstypemonthFormtg').tree('select', node.target);
+    		$('#goodstypemonthFormmm').menu('show', {
+    			left: e.pageX,
+    			top: e.pageY
+    		});
+		}*/
+    });
+	
+	//点击确定添加物品类
+	/*$('#goodstypemonthForm .addWindow .quedingadd').click(function(){
+		var goodsTypeName = $('#goodstypemonthForm .addWindow .goodsTypeName').val();
+		var goodsTypeUrl = $("#goodstypemonthForm .goodsTypeUrl").val();
+		
+		if(goodsTypeName == null || goodsTypeName == ""){
+			alert("请输入新增类名");
+		}else{
+			$.ajax({
+				data:{goodsTypeUrl:goodsTypeUrl,goodsTypeName:goodsTypeName},
+				url:"../../treeController/addRepertoryType.do",
+				method:"post",
+				success: function(data){
+					$('#goodstypemonthFormtg').tree('reload');
+					$('#goodstypemonthForm .addWindow').css('display','none');
+					$('#goodstypemonthForm .addWindow input[type=text]').val('');
+				}
+			});
+		}
+	});
+	//点击确定删除物品类
+	$('#goodstypemonthForm .removeWindow .quedingremove').click(function(){
+		var goodsTypeUrl = $("#goodstypemonthForm .goodsTypeUrl").val();
+		$.ajax({
+			data:{goodsTypeUrl:goodsTypeUrl},
+			url:"../../treeController/removeRepertoryType.do",
+			method:"post",
+			success: function(data){
+				$('#goodstypemonthFormtg').tree('reload');
+				$('#goodstypemonthForm .removeWindow').css('display','none');
+				$('#goodstypemonthForm .removeWindow input[type=text]').val('');
+			}
+		})
+	});
+	//点击确定修改物品类
+	$('#goodstypemonthForm .editWindow .quedingedit').click(function(){
+		var goodsTypeUrl = $("#goodstypemonthForm .goodsTypeUrl").val();
+		var goodsTypeName = $('#goodstypemonthForm .editWindow .goodsTypeName').val();
+		$.ajax({
+			data:{goodsTypeUrl:goodsTypeUrl,goodsTypeName:goodsTypeName},
+			url:"../../treeController/editRepertoryType.do",
+			method:"post",
+			success: function(data){
+				$('#goodstypemonthFormtg').tree('reload');
+				$('#goodstypemonthForm .editWindow').css('display','none');
+				$('#goodstypemonthForm .editWindow input[type=text]').val('');
+			}
+		})
+	});*/
+});
+/*加载月结日期*/
+$.ajax({
+	data:{},
+	url:'../../reportForms/findMonthBalanceTime.do',
+	type:'post',
+	success:function(data){
+		var data = $.parseJSON(data);
+		var str = '<option></option>';
+		for(var i=0;i<data.length;i++){
+			str += '<option>'+data[i]+'</option>'
+		}
+		$('#goodstypemonthForm .monthBalanceTimeStr').append(str);
+	},
+	error:function(err){
+		windowControl(err.status);
+	}
+});
+/*---------------------------------tree函数-----------------------------------*/
+function add(){
+	$('#goodstypemonthForm .addWindow').css('display','block');
+}
+function remove(){
+	$('#goodstypemonthForm .removeWindow').css('display','block');
+}
+function edit(){
+	$('#goodstypemonthForm .editWindow').css('display','block');
+}
+/*查看走势图的函数*/
+function lookTypeReportGraphic(url){
+	$('#goodstypemonthForm .listForm').css('display','none');
+	$('#goodstypemonthForm .treearea').css('display','none');
+	$('#goodstypemonthForm .chartArea').css('display','block');
+	$.ajax({
+		url:'../../reportForms/findTypeReportByCondition.do',
+		data:{goodsTypeUrl:url},
+		success:function(data){
+			var jsonObject = JSON.parse(data);
+			var goodsTypeName = jsonObject.goodsName;
+			var categories = jsonObject.categories;
+			var series = jsonObject.series;
+			var chart = new Highcharts.Chart('goodstypemonth',{
+				credits: { 
+					enabled: false //不显示LOGO 
+					},
+			    title: {
+			        text: '物品类别领用数量走势报表',                                                                                      
+			        x: -20
+			    },
+			    subtitle: {
+			        text: '物品组别:'+goodsTypeName,
+			        x: -20
+			    },
+			    xAxis: {
+			        categories: categories
+			    },
+			    yAxis: {
+			        title: {
+			            text: '金额 (元)'
+			        },
+			        plotLines: [{
+			            value: 0,
+			            width: 1,
+			            color: '#808080'
+			        }]
+			    },
+			    tooltip: {
+			        valueSuffix: '元'
+			    },
+			    legend: {
+			        layout: 'vertical',
+			        align: 'right',
+			        verticalAlign: 'middle',
+			        borderWidth: 0
+			    },
+			    series:series
+			});
+		},
+		fail:function(){
+			window.control("无响应");
+		}
+	});
+}

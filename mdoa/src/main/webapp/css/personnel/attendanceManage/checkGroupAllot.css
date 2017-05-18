@@ -1,0 +1,25 @@
+#checkGroupAllot .checkGroupAllotMain{
+	overflow:hidden;
+}
+#checkGroupAllot .checkGroupName{
+	float:left;
+	width: 13%;
+	height: 100%;
+	margin-top:1px;
+}
+#checkGroupAllot .checkGroupAllotDetail{
+	float: right;
+	width: 87%;
+	height:100%
+}
+#checkGroupAllot .checkDetailTop{
+    height: 32px;
+    background: #74cad3;
+    padding: 4px 0;
+    padding-left: 12px;
+    margin-top: 1px;
+}
+#checkGroupAllot .imgBox{
+	width:20px;
+	margin:0 auto;
+}

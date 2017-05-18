@@ -1,0 +1,17 @@
+#pact .serBtn{
+	margin:0 5px;
+}
+#pact input[type=radio]{
+	width:13px;
+	margin:0px 6px;
+}
+#pact .saveAllPhoto .imgTable .preview{
+	width:600px;
+	margin:0 auto;
+}
+#pact .saveAllPhoto .imgTable .deletePhoto{
+	cursor:pointer;
+}
+#pact .saveAllPhoto .imgTable .deletePhoto:hover{
+	color:red;
+}

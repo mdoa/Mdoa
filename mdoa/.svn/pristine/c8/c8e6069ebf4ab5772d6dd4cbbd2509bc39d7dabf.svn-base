@@ -1,0 +1,359 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mdoa.admin.dao.FixedAssetsDao">
+	<select id="getuuid" resultType="java.lang.String">
+		select uuid() as uuid
+	</select>
+	<!-- ======================================折旧类型=========================================== -->
+	<!-- 插入折旧类型 -->
+	<insert id="insertDepreType" parameterType="com.mdoa.admin.model.DepreType">
+		INSERT INTO admin_depre_type(
+			depre_type_id,
+			depre_type_name,
+			depre_period,
+			type_desc,
+			cal_method,
+			create_time,
+			create_user_id,
+			create_user_name,
+			alive_flag
+		)VALUE(
+			UUID(),
+			#{depreTypeName},
+			#{deprePeriod},
+			#{typeDesc},
+			#{calMethod},
+			NOW(),
+			#{createUserId},
+			#{createUserName},
+			'1'
+		)
+	</insert>
+	<!-- 删除一条折旧类型 -->
+	<update id="deleteDepreType" parameterType="com.mdoa.admin.model.DepreType">
+		UPDATE
+			admin_depre_type 
+		SET
+			update_time = NOW(),
+			update_user_id = #{updateUserId},
+			update_user_name = #{updateUserName},
+			alive_flag = '0'
+		WHERE 
+			depre_type_id = #{depreTypeId}		
+	</update>
+	<!-- 修改折旧类型 -->
+	<update id="updateDepreType" parameterType="com.mdoa.admin.model.DepreType">
+		UPDATE
+			admin_depre_type 
+		SET
+			depre_type_name = #{depreTypeName},
+			depre_period = #{deprePeriod},
+			type_desc = #{typeDesc},
+			cal_method = #{calMethod},
+			update_time = NOW(),
+			update_user_id = #{updateUserId},
+			update_user_name = #{updateUserName}
+		WHERE 
+			depre_type_id = #{depreTypeId}		
+	</update>
+	<!-- 查询折旧类型 -->
+	<select id="selectDepreType" parameterType="com.mdoa.admin.model.DepreType" resultType="com.mdoa.admin.model.DepreType">
+		SELECT
+			depre_type_id AS depreTypeId,
+			depre_type_name AS depreTypeName,
+			depre_period AS deprePeriod,
+			type_desc AS typeDesc,
+			cal_method AS calMethod,
+			create_time AS createTime,
+			create_user_id AS createUserId,
+			create_user_name AS createUserName,
+			update_time AS updateTime,
+			update_user_id AS  updateUserId,
+			update_user_name AS updateUserName
+		FROM
+			admin_depre_type
+		<where>
+			alive_flag = '1'
+			<if test="depreTypeId != null and depreTypeId != ''">
+			AND depre_type_id = #{depreTypeId}</if>
+			<if test="depreTypeName != null and depreTypeName != ''">
+			AND depre_type_name LIKE ('${depreTypeName}')</if>
+			<if test="calMethod != null and calMethod != ''">
+			AND cal_method = #{calMethod}</if>
+		</where>
+		ORDER BY
+				create_time
+		DESC
+	</select>
+	<!-- ======================================固定资产=========================================== -->
+	<!--增加固定资产  -->
+	<insert id="insertFixedAssets" parameterType="com.mdoa.admin.model.FixedAssets">
+		INSERT INTO admin_fixed_assets(
+			assets_id, assets_no,assets_name,model,
+			assets_type_url,assets_type_id,manu_facturer,manu_date,
+			buy_date,be_dep,custodian,notes,
+			remain_val_rate,depre_type_id,start_depre,intend_term,
+			intend_work_gross,work_gross_unit,asset_value,asset_cur_value,
+			depre_rate,def_per_work_gross,create_time,create_user_id,
+			create_user_name,alive_flag
+		)VALUE(
+			UUID(),#{assetsNo},#{assetsName},#{model},
+			#{assetsTypeUrl},#{assetsTypeId},#{manuFacturer},str_to_date(#{manuDateStr}, '%Y-%m-%d %H:%i:%s'),str_to_date(#{buyDateStr}, '%Y-%m-%d %H:%i:%s'),
+			#{beDep},#{custodian},#{notes},#{remainValRate},
+			#{depreTypeId},str_to_date(#{startDepreStr}, '%Y-%m-%d %H:%i:%s'),#{intendTerm},#{intendWorkGross},#{workGrossUnit},#{assetValue},#{assetCurValue},#{depreRate},#{defPerWorkGross},
+			NOW(),#{createUserId},#{createUserName},'1'
+		)
+	</insert>
+	<!-- 删除固定资产 -->
+	<update id="deleteFixedAssets" parameterType="com.mdoa.admin.model.FixedAssets">
+		UPDATE
+			admin_fixed_assets 
+		SET
+			update_time = NOW(),
+			update_user_id = #{updateUserId},
+			update_user_name = #{updateUserName},
+			alive_flag = '0'
+		WHERE 
+			assets_id = #{assetsId}		
+	</update>
+	<!-- 修改固定资产的信息 -->
+	<update id="updateFixedAssets" parameterType="com.mdoa.admin.model.FixedAssets">
+		UPDATE
+			admin_fixed_assets 
+		SET
+			<if test="assetsNo != null and assetsNo != ''">
+			assets_no = #{assetsNo},
+			</if>
+			<if test="assetsName != null and assetsName != ''">
+			assets_name = #{assetsName},
+			</if>
+			<if test="model != null and model != ''">
+			model  = #{model},
+			</if>
+			<if test="assetsTypeUrl != null and assetsTypeUrl != ''">
+			assets_type_url = #{assetsTypeUrl},
+			</if>
+			<if test="assetsTypeId != null and assetsTypeId != ''">
+			assets_type_id = #{assetsTypeId},
+			</if>
+			<if test="manuFacturer != null and manuFacturer != ''">
+			manu_facturer = #{manuFacturer},
+			</if>
+			<if test="manuDateStr != null and manuDateStr != ''">
+			manu_date = str_to_date(#{manuDateStr}, '%Y-%m-%d %H:%i:%s'),
+			</if>
+			<if test="buyDateStr != null and buyDateStr != ''">
+			buy_date = str_to_date(#{buyDateStr}, '%Y-%m-%d %H:%i:%s'),
+			</if>
+			<if test="beDep != null and beDep != ''">
+			be_dep = #{beDep},
+			</if>
+			<if test="custodian != null and custodian != ''">
+			custodian = #{custodian},
+			</if>
+			<if test="notes != null and notes != ''">
+			notes = #{notes},
+			</if>
+			<if test="remainValRate != null and remainValRate != ''">
+			remain_val_rate = #{remainValRate},
+			</if>
+			<if test="depreTypeId != null and depreTypeId != ''">
+			depre_type_id = #{depreTypeId},
+			</if>
+			<if test="startDepreStr!= null and startDepreStr != ''">
+			start_depre = str_to_date(#{startDepreStr}, '%Y-%m-%d %H:%i:%s'),
+			</if>
+			<if test="intendTerm != null and intendTerm != ''">
+			intend_term = #{intendTerm},
+			</if>
+			<if test="intendWorkGross != null and intendWorkGross != ''">
+			intend_work_gross = #{intendWorkGross},
+			</if>
+			<if test="workGrossUnit != null and workGrossUnit != ''">
+			work_gross_unit = #{workGrossUnit},
+			</if>
+			<if test="assetValue != null and assetValue != ''">
+			asset_value = #{assetValue},
+			</if>
+			<if test="assetCurValue != null and assetCurValue != ''">
+			asset_cur_value = #{assetCurValue},
+			</if>
+			<if test="depreRate != null and depreRate != ''">
+			depre_rate = #{depreRate},
+			</if>
+			<if test="defPerWorkGross != null and defPerWorkGross != ''">
+			def_per_work_gross = #{defPerWorkGross},
+			</if>
+			<if test="updateUserId != null and updateUserId != ''">
+			update_user_id = #{updateUserId},
+			</if>
+			<if test="updateUserName != null and updateUserName != ''">
+			update_user_name = #{updateUserName},
+			</if>
+			update_time = NOW()
+		WHERE 
+			assets_id = #{assetsId}
+	</update>
+	<!-- 更新固定资产的资产当前量 -->
+	<update id="updateFixedAssetsCurValue" parameterType="com.mdoa.admin.model.FixedAssets">
+		UPDATE
+			admin_fixed_assets 
+		SET
+			<if test="assetCurValue != null and assetCurValue != ''">
+			asset_cur_value = #{assetCurValue},
+			</if>
+			<if test="updateUserId != null and updateUserId != ''">
+			update_user_id = #{updateUserId},
+			</if>
+			<if test="updateUserName != null and updateUserName != ''">
+			update_user_name = #{updateUserName},
+			</if>
+			update_time = NOW()
+		WHERE 
+			assets_id = #{assetsId}
+	</update>
+	
+	<!-- 查询固定资产 -->
+	<select id="selectFixedAssets" parameterType="com.mdoa.admin.model.FixedAssets" resultType="com.mdoa.admin.model.FixedAssets">
+		SELECT
+			a.assets_id AS assetsId,
+			a.assets_no AS assetsNo,
+			a.assets_name AS assetsName,
+			a.model AS model,
+			a.assets_type_url AS assetsTypeUrl,
+			a.assets_type_id AS assetsTypeId,
+			a.manu_facturer AS manuFacturer,
+			a.manu_date AS manuDate,
+			a.buy_date AS buyDate,
+			a.be_dep AS beDep,
+			a.custodian AS custodian,
+			a.notes AS notes,
+			a.remain_val_rate AS remainValRate,
+			a.depre_type_id AS depreTypeId,
+			b.depre_type_name AS depreTypeName,
+			b.cal_method AS calMethod,
+			b.depre_period AS deprePeriod,
+			a.start_depre AS startDepre,
+			a.intend_term AS intendTerm,
+			a.intend_work_gross AS intendWorkGross,
+			a.work_gross_unit AS workGrossUnit,
+			a.asset_value AS assetValue,
+			a.asset_cur_value AS assetCurValue,
+			a.depre_rate AS depreRate,
+			a.def_per_work_gross AS defPerWorkGross,
+			a.update_time AS updateTime,
+			a.update_user_id AS updateUserId,
+			a.update_user_name AS updateUserName
+		FROM
+			admin_fixed_assets a,
+		    admin_depre_type b
+		<where>
+			a.alive_flag = '1'
+			AND a.depre_type_id = b.depre_type_id
+			<if test="assetsTypeUrl != null and assetsTypeUrl != ''">
+			AND a.assets_type_url LIKE ('${assetsTypeUrl}')</if>
+			<if test="assetsId != null and assetsId != ''">
+			AND a.assets_id = #{assetsId}</if>
+			<if test="assetsName != null and assetsName != ''">
+			AND a.assets_name LIKE ('${assetsName}')</if>
+			<if test="beDep != null and beDep != ''">
+			AND a.be_dep LIKE ('${beDep}')</if>
+		</where>
+		ORDER BY
+				a.create_time
+		DESC
+	</select>
+	<!-- =============================折旧记录=============================================== -->
+	<!-- 插入折旧记录 -->
+	<insert id="insertDepreRecord" parameterType="com.mdoa.admin.model.DepreRecord">
+		INSERT INTO admin_depre_record(
+			record_id,
+			assets_id,
+			work_capacity,
+			work_gross_unit,
+			depre_amount,
+			cal_time,
+			create_time,
+			create_user_id,
+			create_user_name,
+			alive_flag	
+		)VALUE(
+			UUID(),
+			#{assetsId},
+			#{workCapacity},
+			#{workGrossUnit},
+			#{depreAmount},
+			#{calTime},
+			NOW(),
+			#{createUserId},
+			#{createUserName},
+			'1'
+		)
+	</insert>
+	<!-- 删除折旧记录 -->
+	<update id="deleteDepreRecord" parameterType="com.mdoa.admin.model.DepreRecord">
+		UPDATE
+			admin_depre_record 
+		SET
+			update_time = NOW(),
+			update_user_id = #{updateUserId},
+			update_user_name = #{updateUserName},
+			alive_flag = '0'
+		WHERE 
+			record_id = #{recordId}	
+	</update>
+	<!-- 修改折旧记录 -->
+	<update id="updateDepreRecord" parameterType="com.mdoa.admin.model.DepreRecord">
+		UPDATE
+			admin_depre_record 
+		SET
+			assets_id = #{assetsId},
+			work_capacity = #{workCapacity},
+			work_gross_unit = #{workGrossUnit},
+			depre_amount = #{depreAmount},
+			cal_time = #{calTime},
+			update_time = NOW(),
+			update_user_id = #{updateUserId},
+			update_user_name = #{updateUserName}
+		WHERE 
+			record_id = #{recordId}	
+	</update>
+	<!-- 查询折旧记录 -->
+	<select id="selectDepreRcord" parameterType="com.mdoa.admin.bo.FixedAssetsForm" resultType="com.mdoa.admin.bo.FixedAssetsForm">
+		SELECT
+			a.record_id AS recordId,
+			a.assets_id AS assetsId,
+			b.assets_name AS assetsName,
+			a.work_capacity AS workCapacity,
+			a.work_gross_unit AS workGrossUnit,
+			a.depre_amount AS depreAmount,
+			DATE_FORMAT(a.cal_time,'%Y-%m-%d') AS calTime,
+			c.depre_type_name AS deperTypeName
+		FROM
+			admin_depre_record a,
+			admin_fixed_assets b,
+			admin_depre_type c
+		<where>
+			a.assets_id = b.assets_id
+			AND c.depre_type_id = b.depre_type_id
+			AND a.alive_flag = '1'
+			AND b.alive_flag = '1'
+			<if test="assetsName != null and assetsName != ''">
+			AND b.assets_name LIKE ('${assetsName}')</if>
+			<if test="beginTime != null and beginTime != '' and endTime != null and endTime != ''">
+			AND a.cal_time &gt;= STR_TO_DATE(#{beginTime},'%Y-%m-%d')
+  			AND a.cal_time &lt;= STR_TO_DATE(#{endTime},'%Y-%m-%d')</if>
+		</where>
+		ORDER BY
+				a.create_time
+		DESC
+	</select>
+	<select id="selectMaxDate" parameterType="java.lang.String" resultType="java.util.Date">
+		SELECT
+			MAX(cal_time) AS calTime
+		FROM
+			admin_depre_record
+		WHERE
+			assets_id = #{assetsId}
+	</select>
+</mapper>

@@ -1,0 +1,124 @@
+<div id="welfarepay" title="福利信息">
+	<div class="maintop">
+		<div style="margin-right:6px;"><input type="button" value="将搜索结果导出到Excel" class="button write" /></div>
+	</div>
+	<div  class="invitetop">
+		请输入查询条件：
+		姓名：<input type="text" name="getUserName">
+		福利名称：<input type="text" name="welfareName">
+		福利编码：<input type="text" name="welfareCode">
+		领取状态：<select name="getFlag">
+					<option value=""></option>
+					<option value="0">未领取</option>
+					<option value="1">已领取</option>
+				</select>
+		<!-- 发放对象：<select name="objFlag">
+					<option value=""></option>
+					<option value="1">部门</option>
+					<option value="2">岗位</option>
+					<option value="3">退休</option>
+				</select> -->
+		<a class="easyui-linkbutton" iconCls="icon-search" name="queryWelfare" style="line-height:16px;">查询</a>
+		<input type="button" value="清空" name="clean">
+	</div>
+	<div>
+	 <table id="welfarepaydg"></table>
+	</div>
+	
+	
+	<div  class="popups" style="text-align: left;">
+	
+		<div class="popup writetoexcel" style="height: 300px;width: 415px;">
+		<h3>导出数据到Excel表格</h3>
+		<div class="popuparea" style="overflow-y:auto;height:240px;">
+			
+		</div>
+		<div class="btnarea">
+			<input type="button" name="ensure" class="button" style="margin-left:130px;" value="导出">
+			<input type="button" name="reset" class="button" value="重置">
+			<input type="button" name="cancel" class="button" value="取消">
+		</div>
+	</div>
+	<!-- 	<div class="popup savewelfarerecord" style="height: 300px;width: 400px;">
+			<h3>福利发放记录</h3>
+			<span class="turnoff"></span>
+			<div class="popuparea" style="padding: 10px 36px;">
+				<table style="text-align: right;width: 300px;height: 210px">
+					<tr>
+						<td>领取人姓名:</td>
+						<td><input type="text" style="width:220px;" name="invitePlan"/></td>
+					</tr>
+					<tr>
+						<td style="padding-bottom:24px;">福利内容:</td>
+						<td><textarea style="width: 216px" name="condition"/></textarea></td>
+					</tr>
+					<tr>
+						<td style="padding-bottom:24px;">申请理由:</td>
+						<td><textarea style="width: 216px" name="reason"></textarea></td>
+					</tr>
+					<tr>
+						<td>发放时间:</td>
+						<td><input type="text" style="width:220px;" name="planNumber"/></td>
+					</tr>
+					<tr>
+						<td>领取时间:</td>
+						<td><input type="text" style="width:220px;" name="alreadyNumber"//></td>
+					</tr>
+					<tr>
+						<td>是否领取:</td>
+						<td><input type="text" style="width:220px;" name="examineUserName" /></td>
+					</tr>
+				</table>
+			</div>
+			<div class="btnarea" style="text-align: center">
+				<input type="button" class="button confirm" value="确定"/>
+				<input type="button" class="button cannel" value="取消" style="margin-left: 20px;"/>
+			</div>
+		</div> -->
+		<div class="look popup">
+			<h3>福利发放记录</h3>
+			<span class="turnoff"></span>
+			<div class="popuparea" style="padding:10px 20px;">
+				<table style="text-align:right;">
+					<tr>
+						<td>领取人姓名:</td>
+						<td><input type="text" class="getUseName"/></td>
+					</tr>
+					<tr>
+						<td>福利名字:</td>
+						<td><input type="text" class="text"/></td>
+					</tr>
+					<tr>
+						<td>福利内容:</td>
+						<td><input type="text" class="text"/></td>
+					</tr>
+					<tr>
+						<td>申请理由:</td>
+						<td><input type="text" class="reason"/></td>
+					</tr>
+					<tr>
+						<td>发放时间:</td>
+						<td><input type="text" class="givetime"/></td>
+					</tr>
+					<tr class="flag">
+						<td>是否已领取:</td>
+						<td>
+							<input type="text">
+						</td>
+					</tr>
+					<tr class="huoqu">
+						<td>是否领取:</td>
+						<td>
+							<select class="get">
+							</select>
+						</td>
+					</tr>
+				</table> 
+			</div>
+			<div class="btnarea" style="text-align: center">
+				<input type="button" class="button confirm" value="确定"/>
+				<input type="button" class="button cannel" value="取消" style="margin-left: 8px;"/>
+			</div>
+		</div>
+	</div>
+</div> 

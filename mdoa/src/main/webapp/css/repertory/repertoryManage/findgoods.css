@@ -1,0 +1,21 @@
+#findgoods{
+	overflow:hidden;
+}
+#findgoods ._op{
+	margin-left:2px;
+}
+#findgoods ._op:hover{
+	color:blue;
+}
+#findgoods .popup .btnarea{
+	text-align:center;
+}
+#findgoods .popup .btnarea .cannel{
+	margin-left:8px;
+}
+#findgoods .rightarea .lump{
+	overflow-y:auto;
+}
+#findgoods .popups .popup table{
+	padding:10px 20px;
+}

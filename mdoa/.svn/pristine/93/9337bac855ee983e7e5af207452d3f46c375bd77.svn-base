@@ -1,0 +1,536 @@
+ <div id="findgoods">
+	<input class="goodsTypeUrl" type="hidden" style="display:none;">
+	<div class="treearea">
+		<h3>选择物品类别</h3>
+		<ul id="findgoodstg" data-options="region:'center',border: true"  
+         class="easyui-tree">  
+     	</ul>  
+	</div>
+	<div id="findgoodsmm" class="easyui-menu" style="width:120px;">
+		<div onclick="add()" data-options="iconCls:'icon-add'">添加子类</div>
+		<div onclick="edit()" data-options="iconCls:'icon-edit'">修改</div>
+		<div onclick="remove()" data-options="iconCls:'icon-remove'">删除</div>
+	</div>
+	<div class="listForm">
+		<div class="toolbar" >
+			<input type="button" class="button addGoods" value="添加物品"/>
+			<input type="button" class="button" value="导出到Excel" />
+		</div>
+		<div class="queryForm">
+			物品名称：<input type="text" class="goodsName"/>
+			物品规格：<input type="text" class="goodsSize"/>
+			物品数量：<input type="text" class="goodsNumSm"/> ~ <input type="text" class="goodsNumBg"/>
+			是否缺货：<select class="goodsLack">
+					<option></option>
+					<option>缺货</option>
+					<option>不缺货</option>
+				</select>
+			仓库：<select class="repertoryName"></select>	
+			<input type="button" class="button query" value="查询" />
+		</div>
+		<div>
+			<table id="findgoodsdg">
+			</table>
+		</div>
+		<!-- 汇总 -->
+		<div class="sumBar">
+		</div>
+		<input type="button" class="button controlSumBar" value="隐藏"/>
+	</div>
+	<div class="rightarea">
+		<div style="display:none">
+			<table class="temporary"></table>
+		</div>
+		<div class="lump">
+			<p style="padding-left:12px;"><input type="button" class="button newInsertBtn" value="新仓位入库"/></p>
+			<form  title="物品仓位" class="cangwei-list"></form>
+		</div>
+		<div class="lump">
+			<form  title="进出库流水（近七日）" class="inout-stream"></form>
+		</div>
+	</div>
+	<div class="popups">
+		<!-- 物品入库弹窗 -->
+		<div class="popup put">
+			<h3>物品入库</h3>
+			<span class="turnoff"></span>
+			<div class="popuparea">
+				<table>
+					<tr>
+						<td>制单人:</td>
+						<td><input type="text" name="peopleName" disabled="disabled"/></td>
+					</tr>
+					<tr>
+						<td>仓库:</td>
+						<td>					
+							<select class="repertoryId">
+							</select>
+						</td>
+						<td>仓位:</td>
+						<td><input type="text" name="goodsPositionName"/></td>
+					</tr>
+					<tr>
+						<td>物品:</td>
+						<td><input type="text" name="goodsName" disabled="disabled"/></td>
+						<td>规格:</td>
+						<td><input type="text" name="goodsSize" disabled="disabled"/></td>
+					</tr>
+					<tr>
+						<td>入库日期:</td>
+						<td><input type="text" class="jqdate" readonly="readonly" name="inTime" onclick="YMDHMS(this);"/></td>
+						<td>供应商:</td>
+						<td><select class="supplier"></select></td>
+					</tr>
+					<tr>
+						<td>入库数量:</td>
+						<td><input type="text" name="inNumber"/></td>
+						<td>单位:</td>
+						<td><input type="text" name="unit" disabled="disabled"/></td>
+					</tr>
+					<tr>
+						<td>单价(含税):</td>
+						<td><input type="text" name="pretaxAverPrice"/></td>
+						<td>金额:</td>
+						<td><input type="text" name="pretaxAmount"/></td>
+					</tr>
+					<tr>
+						<td>税率(%):</td>
+						<td><input type="text" name="taxRate" value="17"/></td>
+						<td>税额:</td>
+						<td><input type="text" name="taxAmount" disabled="disabled"/></td>
+					</tr>
+					<tr>
+						<td>单价(无税):</td>
+						<td><input type="text" name="taxAverPrice" disabled="disabled"/></td>
+						<td>经办人:</td>
+						<td><input type="text" name="putUserName"/></td>
+					</tr>
+					<tr>
+						<td class="popuptext">备注:</td>
+						<td colspan="3"><textarea name="record"></textarea></td>
+					</tr>
+				</table>
+			</div>
+			<div class="btnarea">
+				<input type="button" class="button confirm" value="保存"/>
+				<input type="button" class="button cannel" value="关闭" />
+			</div>
+		</div>
+		<!-- 物品出库弹窗 -->
+		<div class="popup get">
+			<h3>物品出库</h3>
+			<span class="turnoff"></span>
+			<div class="popuparea">
+				<table>
+					<tr>
+						<td>制单人:</td>
+						<td><input type="text" name="peopleName" disabled="disabled"></td>
+					</tr>
+			     	<tr>
+			     		<td>出库仓库:</td>
+			     		<td><input type="text" name="repertoryName"/></td>
+			     		<td>出库仓位:</td>
+			     		<td><input type="text" name="goodsPositionName"/></td>
+			     	</tr>
+			     	<tr>
+						<td>物品:</td>
+						<td><input type="text" name="goodsName" disabled="disabled"/></td>
+						<td>规格:</td>
+						<td><input type="text" name="goodsSize" disabled="disabled"/></td>
+					</tr>
+			     	<tr>
+			     		<td>出库日期:</td>
+						<td><input type="text" name="outTime" class="jqdate" readonly="readonly" onclick="YMDHMS(this);"/></td>
+						<td>出库部门:</td>
+						<td>
+							<select class="getDepartmentName">
+							</select>
+						</td>
+					</tr>
+					<tr>
+						<td>领用人:</td>
+						<td><input type="text" name="getUserName"/></td>
+						<td>领用用途:</td>
+						<td>
+							<select class="useType"></select>
+						</td>
+					</tr>
+					<tr>
+						<td>出库数量:</td>
+			     		<td><input type="text" name="outNumber"/></td>
+			     		<td>单位:</td>
+						<td><input type="text" name="unit" disabled="disabled"/></td>
+					</tr>
+					<tr>
+						<td>移动平均价:</td>
+						<td><input type="text" name="movingAverPrice" disabled="disabled"/></td>
+						<td>领用金额:</td>
+						<td><input type="text" name="taxAmount" readonly="readonly"/></td>
+					</tr>
+					<tr>
+						<td class="popuptext">备注:</td>
+						<td colspan="3"><textarea name="record"></textarea></td>
+					</tr>
+			     </table>
+			</div>
+			<div class="btnarea">
+				<input type="button" class="button confirm" value="保存"/>
+				<input type="button" class="button cannel" value="关闭" />
+			</div>
+		</div>
+		<!-- 新仓位入库 -->
+		<div class="popup newInsert">
+			<h3>物品新仓位入库</h3>
+			<span class="turnoff"></span>
+			<div class="popuparea">
+				<table>
+					<tr>
+						<td>制单人:</td>
+						<td><input type="text" name="peopleName" disabled="disabled"/></td>
+					</tr>
+					<tr>
+						<td>入库仓库:</td>
+						<td>					
+							<select class="repertoryId">
+							</select>
+						</td>
+						<td>入库仓位:</td>
+						<td><input type="text" name="goodsPositionName"/></td>
+					</tr>
+					<tr>
+						<td>物品:</td>
+						<td><input type="text" name="goodsName" disabled="disabled"/></td>
+						<td>规格:</td>
+						<td><input type="text" name="goodsSize" disabled="disabled"/></td>
+					</tr>
+					<tr>	
+						<td>入库时间:</td>
+						<td><input type="text" name="inTime" class="jqdate" readonly="readonly" onclick="YMDHMS(this);"/></td>
+						<td>供应商:</td>
+						<td><select class="supplier"></select></td>
+					</tr>
+					<tr>
+						<td>入库数量:</td>
+						<td><input type="text" name="inNumber"/></td>
+						<td>单位:</td>
+						<td><input type="text" name="unit" disabled="disabled"/></td>
+					</tr>
+					<tr>
+						<td>单价(含税):</td>
+						<td><input type="text" name="pretaxAverPrice"/></td>
+						<td>金额:</td>
+						<td><input type="text" name="pretaxAmount"/></td>
+					</tr>
+					<tr>
+						<td>税率(%):</td>
+						<td><input type="text" name="taxRate" value="17"/></td>
+						<td>税额:</td>
+						<td><input type="text"  name="taxAmount" disabled="disabled"/></td>
+					</tr>
+					<tr>
+						<td>单价(无税):</td>
+						<td><input type="text" name="taxAverPrice" disabled="disabled"/></td>
+						<td>经办人:</td>
+						<td><input type="text" name="putUserName"/></td>
+					</tr>
+					<tr>
+						<td class="popuptext">备注:</td>
+						<td colspan="3"><textarea name="record"></textarea></td>
+					</tr>
+				</table>
+			</div>
+			<div class="btnarea">
+				<input type="button" class="button confirm" value="保存"/>
+				<input type="button" class="button cannel" value="关闭" />
+			</div>
+		</div>
+		<!-- 物品移库弹窗 -->
+		<div class="popup move">
+			<h3>物品移库</h3>
+			<span class="turnoff"></span>
+			<div class="popuparea">
+				<table>
+					<tr>
+						<td>制单人:</td>
+						<td><input type="text" name="peopleName" disabled="disabled"/></td>
+					</tr>
+					<tr>
+						<td>当前仓库:</td>
+						<td><input type="text" name="repertoryName" disabled="disabled"/>
+						</td>
+						<td>当前仓位:</td>
+						<td><input type="text" name="goodsPositionName" disabled="disabled"/>
+						</td>
+					</tr>
+					<tr>
+						<td>物品:</td>
+						<td><input type="text" name="goodsName" disabled="disabled"/></td>
+						<td>规格:</td>
+						<td><input type="text" name="goodsSize" disabled="disabled"/></td>
+					</tr>
+					<tr>
+						<td>当前数量：</td>
+						<td>
+							<input type="text" name="totalNumber"/>
+						</td>
+						<td>单位:</td>
+						<td><input type="text" name="unit" disabled="disabled"/></td>
+					</tr>
+					<tr>
+						<td>目标仓位:</td>
+						<td>
+							<input type="text" name="newGoodsPositionName"/>
+						</td>
+						<td>目标仓库:</td>
+						<td><select class="repertoryName"></select></td>
+					</tr>
+					<tr>
+						<td>移动数量:</td>
+						<td><input type="text" name="moveNumber"/></td>
+						<td>移库时间:</td>
+						<td><input type="text" name="inTime" class="jqdate" readonly="readonly" onclick="YMDHMS(this);"/></td>
+					</tr>
+					<tr>
+						<td>经办人:</td>
+						<td><input type="text" name="putUserName"/></td>
+					</tr>
+					<tr>
+						<td class="popuptext">备注:</td>
+						<td colspan="3"><textarea class="record"></textarea></td>
+					</tr>
+				</table>
+			</div>
+			<div class="btnarea">
+				<input type="button" class="button confirm" value="确定"/>
+				<input type="button" class="button cannel" value="取消" />
+			</div>
+		</div>
+		<!-- 添加物品信息 -->
+		<div class="popup insert">
+			<h3>添加物品信息</h3>
+			<span class="turnoff"></span>
+			<div class="popuparea">
+				<table>
+					<tr>
+			     		<td>物品类别:</td>
+			     		<td><input type="text" class="goodsTypeName" readonly="readonly"/></td>
+			     	</tr>
+			     	<tr>
+			     		<td>物品名称:</td>
+			     		<td><input type="text" class="goodsName"/></td>
+			     	</tr>
+			     	<tr>
+			     		<td>物品规格:</td>
+			     		<td><input type="text" class="goodsSize"/></td>
+			     	</tr>
+			     	<tr>
+			     		<td>物品单位:</td>
+			     		<td><input type="text" class="unit"/></td>
+			     	</tr>
+			     	<tr>
+			     		<td>警示数量:</td>
+			     		<td><input type="text" class="warnNumber"/></td>
+			     	</tr>
+			     	<tr>
+			     		<td>物品备注:</td>
+			     		<td><textarea class="record"></textarea></td>
+			     	</tr>
+			     </table>
+			</div>
+			<div class="btnarea">
+				<input type="button" class="button confirm" value="保存"/>
+				<input type="button" class="button cannel" value="关闭" />
+			</div>
+		</div>
+		<!-- 修改物品信息 -->
+		<div class="popup update">
+			<h3>修改物品信息</h3>
+			<span class="turnoff"></span>
+			<div class="popuparea">
+				<table>
+					<tr>
+			     		<td>物品名称:</td>
+			     		<td><input type="text" class="goodsName"/></td>
+			     	</tr>
+			     	<tr>
+			     		<td>物品规格:</td>
+			     		<td><input type="text" class="goodsSize"/></td>
+			     	</tr>
+			     	<tr>
+			     		<td>物品单位:</td>
+			     		<td><input type="text" class="unit"/></td>
+			     	</tr>
+			     	<tr>
+			     		<td>警示数量:</td>
+			     		<td><input type="text" class="warnNumber"/></td>
+			     	</tr>
+			     	<tr>
+			     		<td>物品备注:</td>
+			     		<td><textarea class="record"></textarea></td>
+			     	</tr>
+				</table>
+			</div>
+			<div class="btnarea">
+				<input type="button" class="button confirm" value="保存"/>
+				<input type="button" class="button cannel" value="关闭" />
+			</div>
+		</div>
+		<!-- 修改物品出库明细 -->
+		<div class="popup update3">
+			<h3>修改物品出库记录</h3>
+			<span class="turnoff"></span>
+			<div class="popuparea">
+				<table>
+					<tr>
+						<td>出库仓库:</td>
+						<td><input type="text" disabled="disabled" class="repertoryName"/></td>
+						<td>出库仓位:</td> <!-- //自动获取 -->
+						<td><input type="text" disabled="disabled" class="goodsPositionName"/></td>
+					</tr>
+					<tr>
+						<td>物品:</td>
+						<td><input type="text" name="goodsName" disabled="disabled"/></td>
+						<td>规格:</td>
+						<td><input type="text" name="goodsSize" disabled="disabled"/></td>
+					</tr>
+					<tr>
+						<td>出库数量:</td>
+						<td><input type="text" class="outNumber"/></td>
+						<td>单位:</td>
+						<td><input type="text" name="unit" disabled="disabled"/></td>
+					</tr>
+					<tr>	
+						<td>领用人:</td>
+						<td><input type="text" class="getUserName"/></td>
+						<td>领用部门:</td>
+						<td><select class="getDepartmentName"></select></td>
+					</tr>
+					<tr>
+						<td>领用金额:</td>
+						<td><input type="text" class="taxAmount"/></td>
+						<td>领用用途:</td>
+						<td><select class="useType"/></select></td>
+					</tr>
+					<tr>
+						<td class="popuptext">备注:</td>
+						<td><textarea class="record"></textarea></td>
+						<td><input type="text" style="display:none" class="goodsId"/></td>
+					</tr>
+				</table>
+			</div>
+			<div class="btnarea">
+				<input type="button" class="button confirm" value="保存"/>
+				<input type="button" class="button cannel" value="关闭" />
+			</div>
+		</div>
+		<!-- 修改物品入库明细 -->
+		<div class="popup update4">
+			<h3>修改物品入库记录</h3>
+			<span class="turnoff"></span>
+			<div class="popuparea">
+				<table>
+					<tr>
+						<td>入库人:</td>
+						<td><input type="text" name="putUserName"/></td>
+						<td>仓库:</td>
+						<td><input type="text" name="repertoryName" disabled="disabled"/></td>
+					</tr>
+					<tr>
+						<td>仓位:</td>
+						<td><input type="text" name="goodsPositionName" disabled="disabled"/></td>
+						<td>总数量：</td>
+						<td>
+							<input type="text" name="totalNumber" disabled="disabled"/>
+						</td>
+					</tr>
+					<tr>
+						<td>物品:</td>
+						<td><input type="text" name="goodsName" disabled="disabled"/></td>
+						<td>规格:</td>
+						<td><input type="text" name="goodsSize" disabled="disabled"/></td>
+					</tr>
+					<tr>
+						<td>入库数量:</td>
+						<td><input type="text" name="inNumber"/></td>
+						<td>单位:</td>
+						<td><input type="text" name="unit" disabled="disabled"/></td>
+					</tr>
+					<tr>
+						<td>单价(含税):</td>
+						<td><input type="text" name="pretaxAverPrice"/></td>
+						<td>金额:</td>
+						<td><input type="text" name="pretaxAmount"/></td>
+					</tr>
+					<tr>
+						<td>税率(%):</td>
+						<td><input type="text" name="taxRate"/></td>
+						<td>税额:</td>
+						<td><input type="text" disabled="disabled" name="taxAmount"/></td>
+					</tr>
+					<tr>
+						<td>单价(无税):</td>
+						<td><input type="text" disabled="disabled" name="taxAverPrice"/></td>
+						<td>供应商:</td>
+						<td>
+							<select class="supplier"></select>
+							<input type="text" style="display:none" class="goodsId"/>
+							<input type="text" style="display:none" class="goodsPositionId"/>
+						</td>
+					</tr>
+					<tr>
+						<td class="popuptext">备注:</td>
+						<td colspan="3"><textarea name="record"></textarea></td>
+					</tr>
+				</table>
+			</div>
+			<div class="btnarea">
+				<input type="button" class="button confirm" value="保存"/>
+				<input type="button" class="button cannel" value="关闭" />
+			</div>
+		</div>
+		<!-- tree -->
+		 <div class="addWindow popup">
+		 	<h3>添加物品类名提示</h3>
+			<span class="turnoff"></span>
+			<div class="popuparea">
+				<table>
+					<tr>
+						<td>请输入要添加的物品类名：</td>
+						<td><input type="text" class="goodsTypeName"></td>
+					</tr>
+				</table>	
+			</div>
+			<div class="btnarea">
+				<input type="button" class="button quedingadd" value="确定"/>
+				<input type="button" class="button cannel" value="取消" />
+			</div>
+		</div>
+		<div class="removeWindow popup">
+			<h3>删除物品信息</h3>
+			<span class="turnoff"></span>
+			<div class="popuparea" style="padding:10px 20px;">
+				你确定要删除该物品类吗?	
+			</div>
+			<div class="btnarea">
+				<input type="button" class="button quedingremove" value="确定"/>
+				<input type="button" class="button cannel" value="取消" />
+			</div>
+		</div>
+		<div class="editWindow popup">
+			<h3>修改物品类别</h3>
+			<span class="turnoff"></span>
+			<div class="popuparea">
+				<table>
+					<tr>
+						<td>请输入修改后的物品类名：</td>
+						<td><input type="text" class="goodsTypeName"></td>
+					</tr>
+				</table>	
+			</div>
+			<div class="btnarea">
+				<input type="button" class="button quedingedit" value="确定"/>
+				<input type="button" class="button cannel" value="取消" />
+			</div>
+		</div>
+	</div>
+</div>

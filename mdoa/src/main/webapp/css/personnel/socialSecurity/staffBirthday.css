@@ -1,0 +1,26 @@
+#staffBirthday .dateBox form{
+	/* padding:4px 0; 
+	width:400px;
+	margin:0 auto; */
+	display:inline;
+}
+#staffBirthday .staffBtn{
+	margin-left:3px;
+} 
+#staffBirthday .resBox{
+	width:600px;height:300px;border:1px solid #000;margin-left:27%;
+}
+#staffBirthday .dateBox{
+	padding-left:12px;
+	line-height:26px;
+}
+#staffBirthday .dateBox input{
+	margin:0px 3px;
+}
+#staffBirthday .dateBox select{
+	margin:0px 3px;
+}
+#staffBirthday .dateBox .button{
+	width:38px;
+	text-align:center;
+}

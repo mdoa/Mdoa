@@ -1,0 +1,49 @@
+#inviterecords .staffRecord{
+	padding-left: 2%;
+	padding-right: 5%;
+	padding-top: 25px;
+	overflow:auto;
+}
+#inviterecords .staffRecord table input{
+	border:1px #A9A9A9 solid;
+	width: 99.5%;
+}
+#inviterecords .staffRecord table textarea{
+	border:1px #A9A9A9 solid;
+	width: 99.5%;
+}
+#inviterecords .staffRecord table select{
+	border:1px #A9A9A9 solid;
+	width: 100%;
+}
+#inviterecords .staffRecord .expleft{
+	padding-top:10px;
+	float: left;
+	width: 7%;
+	font-size: 20px;
+	font-weight: 600;
+}
+#inviterecords .staffRecord .expright{
+	float: right;
+	width: 93%;
+}
+#inviterecords .staffRecord .doc-button{
+	width: 150px;
+	height: 30px;
+	background-color: #64D8EA;
+	border-color: #64D8EA;
+	border-radius:5%;
+	margin-bottom: 20px;
+}
+#inviterecords .staffRecord .expsame{
+	float: left;
+	overflow:hidden;
+	width:100%;
+}
+
+#inviterecords .staffRecord .basicInformation .user-message img{
+	border: 1px #A9A9A9 solid;
+}
+#inviterecords .staffRecord table span{
+	color:red;	
+}

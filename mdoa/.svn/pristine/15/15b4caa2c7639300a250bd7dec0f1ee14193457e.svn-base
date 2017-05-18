@@ -1,0 +1,393 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mdoa.repertory.dao.GoodsDao" >
+	<select id="getuuid" resultType="java.lang.String">
+		select uuid() as uuid
+	</select>
+	<!-- 插入物品信息 -->
+	<insert id="insertGoods" parameterType="com.mdoa.repertory.model.RepertoryGoods">
+		INSERT INTO repertory_goods(
+			goods_id,
+			goods_type_id,
+			goods_name,
+			total_number,
+			goods_type_url,
+			goods_size,
+			unit,
+			record,
+			warn_number,
+			latest_unit_price,
+			moving_aver_price,
+			weighted_aver_price,
+			create_time,
+			create_user_id,
+			create_user_name,
+			alive_flag
+		)VALUE(
+			UUID(),
+			#{goodsTypeId},
+			#{goodsName},
+			'0',
+			#{goodsTypeUrl},
+			#{goodsSize},
+			#{unit},
+			#{record},
+			#{warnNumber},
+			#{latestUnitPrice},
+			#{movingAverPrice},
+			#{weightedAverPrice},
+			NOW(),
+			#{createUserId},
+			#{createUserName},
+			'1'
+		)
+	</insert>
+	<!-- 入库的时候修改物品的数量 -->
+	<update id="updateGoodsByIn" parameterType="com.mdoa.repertory.bo.GoodsForm">
+		UPDATE
+			repertory_goods 
+		<set>
+			<if test="totalNumber != null and totalNumber != ''">
+			total_number = #{totalNumber},</if>
+			<if test="inNumber != null and inNumber != '' ">
+			total_number = total_number + ${inNumber},</if>
+			<if test="updateUserId != null and updateUserId != ''">
+			update_user_id = #{updateUserId},</if>
+			<if test="updateUserName != null and updateUserName != '' ">
+			update_user_name = #{updateUserName},</if>
+			<if test="latestUnitPrice != null and latestUnitPrice != '' ">
+			latest_unit_price = #{latestUnitPrice},</if>
+			<if test="movingAverPrice != null and movingAverPrice != '' ">
+			moving_aver_price = #{movingAverPrice},</if>
+			update_time = NOW()
+		</set>
+		WHERE
+			goods_id = #{goodsId}	
+	</update>
+	<!-- 出库的时候修改物品的数量 -->
+	<update id="updateGoodsByOut" parameterType="com.mdoa.repertory.bo.GoodsForm">
+		UPDATE
+			repertory_goods 
+		<set>
+			<if test="outNumber != null and outNumber != ''">
+			total_number = total_number - ${outNumber},</if>
+			<if test="updateUserId != null and updateUserId != ''">
+			update_user_id = #{updateUserId},</if>
+			<if test="updateUserName != null and updateUserName != '' ">
+			update_user_name = #{updateUserName},</if>
+			update_time = NOW()
+		</set>
+		WHERE 
+			goods_id = #{goodsId}	
+	</update>
+	<!-- 修改入库记录的时候修改物品 -->
+	<update id="updateGoodsByUpdate" parameterType="com.mdoa.repertory.bo.GoodsForm">
+		UPDATE
+			repertory_goods 
+		<set>
+			<if test="totalNumber != null and totalNumber !='' ">
+			total_number = #{totalNumber},</if>
+			<if test="movingAverPrice != null and movingAverPrice != '' ">
+			moving_aver_price = #{movingAverPrice},</if>
+			<if test="updateUserId != null and updateUserId != ''">
+			update_user_id = #{updateUserId},</if>
+			<if test="updateUserName != null and updateUserName != '' ">
+			update_user_name = #{updateUserName},</if>
+			update_time = NOW()
+		 </set>
+		 WHERE 
+			goods_id = #{goodsId}	
+	</update>
+	<!-- 修改物品信息 -->
+	<update id="updateGoods" parameterType="com.mdoa.repertory.bo.GoodsForm">
+		UPDATE
+			repertory_goods 
+		<set>
+			<if test="goodsTypeId != null and goodsTypeId != '' ">
+			goods_type_id = #{goodsTypeId},</if>
+			<if test="goodsName != null and goodsName != '' ">
+			goods_name = #{goodsName},</if>
+			<if test="totalNumber != null and totalNumber !='' ">
+			total_number = #{totalNumber},</if>
+			<if test="goodsSize != null and goodsSize != '' ">
+			goods_size = #{goodsSize},</if>
+			<if test="unit != null and unit != '' ">
+			unit = #{unit},</if>
+			<if test="record != null and record != ''">
+			record = #{record},</if>
+			<if test="warnNumber != null and warnNumber != '' ">
+			warn_number = #{warnNumber},</if>
+			<if test="latestUnitPrice != null and latestUnitPrice != '' ">
+			latest_unit_price = #{latestUnitPrice},</if>
+			<if test="movingAverPrice != null and movingAverPrice != '' ">
+			moving_aver_price = #{movingAverPrice},</if>
+			<if test="updateUserId != null and updateUserId != ''">
+			update_user_id = #{updateUserId},</if>
+			<if test="updateUserName != null and updateUserName != '' ">
+			update_user_name = #{updateUserName},</if>
+			update_time = NOW()
+		</set>
+		WHERE 
+			goods_id = #{goodsId}	
+	</update>
+	<!-- 删除物品信息 -->
+	<update id="deleteGoods" parameterType="com.mdoa.repertory.bo.GoodsForm">
+		UPDATE
+			repertory_goods 
+		SET
+			update_time = NOW(),
+			update_user_id = #{updateUserId},
+			update_user_name = #{updateUserName},
+			alive_flag = '0'
+		WHERE 
+			goods_id = #{goodsId}	
+	</update>
+		<!-- 根据物品的信息查询商品 -->
+	<select id="selectGoodsByTime" parameterType="com.mdoa.repertory.bo.GoodsForm" resultType="com.mdoa.repertory.model.RepertoryGoods">
+		SELECT 
+			goods_id AS goodsId,
+			goods_type_id AS goodsTypeId,
+			goods_name AS goodsName,
+			total_number AS totalNumber,
+			goods_type_url AS goodsTypeUrl,
+			goods_size AS goodsSize,
+			unit AS unit,
+			record AS record,
+			warn_number AS warnNumber,
+			latest_unit_price AS latestUnitPrice,
+			moving_aver_price AS movingAverPrice,
+			weighted_aver_price AS weightedAverPrice,
+			create_time AS createTimeStr,
+			create_user_id AS createUserId,
+			create_user_name AS createUserName,
+			update_time AS updateTimeStr,
+			update_user_id AS updateUserId,
+			update_user_name AS updateUserName
+		FROM 
+			repertory_goods
+		<where>
+  			 alive_flag = '1'
+  			 <if test="goodsLack == 0">
+  			 AND total_number &gt; warn_number </if>
+  			 <if test="goodsLack == 1">
+  			 AND total_number &lt; warn_number</if>
+  			 <if test="goodsId  != null and goodsId != '' ">
+  			 AND goods_id = ${goodsId}</if>
+  			 <if test="goodsTypeUrl != null and goodsTypeUrl != ''">
+  			 AND goods_type_url LIKE ('${goodsTypeUrl}')</if>
+  			 <if test="goodsTypeId != null and goodsTypeId != ''">
+  			 AND goods_type_id = ${goodsTypeId}</if>
+  			 <if test="beginNumber != null and beginNumber != '' ">
+  			 AND total_number &gt;= ${beginNumber}</if>
+  			 <if test="endNumber != null and endNumber != ''">
+  			 AND total_number &lt;= ${endNumber}</if>
+  			 <if test="goodsName !=null and goodsName != ''">
+  			 AND goods_name LIKE ('${goodsName}')</if>
+  			 <if test="goodsSize != null and goodsSize !=''">
+  			 AND goods_size LIKE ('${goodsSize}')</if>
+  			 <if test="repertoryId != null and repertoryId != ''">
+  			 AND goods_id IN
+				(
+					SELECT
+							a.goods_id
+					FROM
+							repertory_goods_position a,
+							repertory_type b
+					WHERE
+							a.repertory_id = ${repertoryId}
+							AND b.repertory_id = ${repertoryId}
+					
+					)	
+			 </if>
+		
+  		</where> 
+  		ORDER BY
+				create_time
+		DESC
+	</select>
+	<!-- 根据物品的id去查询物品的信息 -->
+	<select id="selectGoodsById" parameterType="java.lang.String" resultType="com.mdoa.repertory.model.RepertoryGoods">
+		SELECT
+			goods_id AS goodsId,
+			goods_type_id AS goodsTypeId,
+			goods_name AS goodsName,
+			total_number AS totalNumber,
+			latest_unit_price AS latestUnitPrice,
+			moving_aver_price AS movingAverPrice,
+			weighted_aver_price AS weightedAverPrice
+		FROM 
+			repertory_goods
+		WHERE
+			goods_id = #{goodsId}
+			AND  alive_flag = '1'
+	</select>
+	<!-- 根据物品的id去查询入库出库的记录，以及仓库和仓位的信息 -->
+	<select id="selectRecordAndRepertoryById" parameterType="java.lang.String" resultType="com.mdoa.repertory.bo.GoodsForm">
+			SELECT 	
+				'inRecord' AS operation, 
+				in_record_id AS inRecordId,
+				repertory_id AS repertoryId,
+				repertory_name AS repertoryName,
+				goods_position_id AS goodsPositionId,
+				goods_position_name AS goodsPositionName,
+				in_number AS inNumber,
+				pretax_amount AS pretaxAmount,
+				operate_user_id AS operateUserId,
+				put_user_id AS putUserId,
+				in_time AS inTime,
+				put_user_name AS putUserName,
+				operate_user_name AS operateUserName,
+				record AS record
+			FROM
+					repertory_in_record
+			WHERE
+					goods_id = #{goodsId}
+					AND  alive_flag = '1'
+					AND  DATE_SUB(CURDATE(), INTERVAL 7 DAY)  &lt; date(in_time)
+			UNION 
+			SELECT
+				'outRecord' AS operation,
+				out_record_id AS outRecordId,
+				repertory_id AS repertoryId,
+				repertory_name AS repertoryName,
+				goods_position_id AS goodsPositionId,
+				goods_position_name AS goodsPositionName,
+				out_number AS outNumber,
+				pretax_amount AS pretaxAmount,
+				operate_user_id AS operateUserId,
+				operate_user_name AS operateUserName,
+				out_time AS outTime,
+				get_user_name AS getUserName,
+				get_department_name AS getDepartmentName,
+				record AS record
+			FROM
+					repertory_out_record
+			WHERE
+					goods_id = #{goodsId}
+					AND  alive_flag = '1'
+					AND  DATE_SUB(CURDATE(), INTERVAL 7 DAY)  &lt; date(out_time)
+			UNION 
+			SELECT
+				'repertory' AS operation,
+				a.text AS text,
+				b.repertory_id AS repertoryId,
+				a.repertory_name AS repertoryName,
+				b.goods_position_id AS goodsPositionId,
+				b.goods_position_name AS goodsPositionName,
+				b.goods_number AS goodsNumber,
+				b.goods_number AS goodsNumber,
+				a.area AS area,
+				b.create_user_id AS createUserId,
+				b.create_time AS createTime,
+				b.create_user_name AS createUserName,
+				b.update_user_name AS updateUserName,
+				b.record AS record
+			FROM	
+				repertory_type a
+				JOIN
+				repertory_goods_position b
+			ON
+				b.goods_id = #{goodsId}
+				AND a.repertory_id = b.repertory_id
+				
+	</select>	
+<!-- ======================================================物品类型信息======================================================================= -->	
+	<!-- 插入物品类型信息 -->
+	<insert id="insertGoodsType" parameterType="com.mdoa.repertory.model.RepertoryGoodsType">
+		INSERT INTO repertory_goods_type(
+			goods_type_id,
+			goods_type_name,
+			goods_type_url,
+			parent_type_id,
+			create_time,
+			create_user_id,
+			create_user_name,
+			alive_flag
+		)VALUE(
+			UUID(),
+			#{goodsTypeName},
+			#{goodsTypeUrl},
+			#{parentTypeId},
+			NOW(),
+			#{createUserId},
+			#{createUserName},
+			'1'
+		)
+	</insert>
+	<!-- 删除物品类型 -->
+	<update id="deleteGoodsType" parameterType="java.lang.String">
+		UPDATE 
+			repertory_goods_type
+		SET
+			update_time = NOW(),
+			update_user_id = #{updateUserId},
+			update_user_name = #{updateUserName},
+			alive_flag = '0'
+		WHERE 
+			goods_type_id = #{goodsTypeId}	
+	</update>
+	<!-- 修改物品类型 -->
+	<update id="updateGoodsType" parameterType="java.lang.String">
+		UPDATE 
+			repertory_goods_type
+		SET
+			goods_type_name = #{goodsTypeName},
+			goods_type_url = #{goodsTypeUrl},
+			parent_type_id = #{parentTypeId},
+			update_time = NOW(),
+			update_user_id = #{updateUserId},
+			update_user_name = #{updateUserName}
+		WHERE 
+			goods_type_id = #{goodsTypeId}	
+	</update>
+	<!-- 根据物品类型信息查询物品类型 -->
+	<select id="selectGoodsTypeByTime" parameterType="com.mdoa.repertory.model.RepertoryGoodsType" resultType="com.mdoa.repertory.model.RepertoryGoodsType">
+		SELECT
+			goods_type_id AS goodsTypeId,
+			goods_type_name AS goodsTypeName,
+			goods_type_url AS goodsTypeUrl,
+			parent_type_id AS parentTypeId,
+			create_time AS createTime,
+			create_user_id AS createUserId,
+			create_user_name AS createUserName,
+			update_time AS  updateTime,
+			update_user_id AS updateUserId,
+			update_user_name AS  updateUserName
+		FROM
+			repertory_goods_type
+		<where>
+			alive_flag = '1'
+			<if test="goodsTypeId != null and goodsTypeId != ''">
+			AND goods_type_id = ${goodsTypeId}</if>
+			<if test="goodsTypeName != null and goodsTypeName != ''">
+			AND goods_type_name LIKE ('${goodsTypeName}')</if>
+			<if test="goodsTypeUrl != null and goodsTypeUrl !=''">
+			AND goods_type_url LIKE ('${goodsTypeUrl}')</if>
+			<if test="parentTypeId != null and parentTypeId != ''">
+			AND parent_type_id = ${parentTypeId}</if>
+		</where>
+		ORDER BY
+				create_time
+		DESC
+	</select>
+	
+	<!-- 根据类别url查询该类物品总数量 -->
+	<select id="findSumByTypeUrl" parameterType="java.lang.String" resultType="com.mdoa.repertory.model.RepertoryGoods">
+		SELECT
+			SUM(total_number) as totalNumber
+		FROM
+			repertory_goods
+		WHERE
+			alive_flag = '1'
+		AND goods_type_id IN(
+				SELECT 
+					goods_type_id
+				FROM
+					repertory_goods_type
+				WHERE
+					goods_type_url LIKE CONCAT(#{goodsTypeUrl},'%')					
+			)
+	</select>
+	
+	
+</mapper>

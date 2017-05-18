@@ -1,0 +1,664 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mdoa.personnel.dao.WelfareDao">
+	<!-- 获取UUID -->
+	<select id="getuuid" resultType="java.lang.String">
+		select uuid() as uuid
+	</select>
+	
+	<!-- 查询所有福利名称 -->
+	<select id="queryWelfareNameAll" parameterType="com.mdoa.personnel.bo.WelfareApplyForm" resultType="com.mdoa.personnel.bo.WelfareApplyForm">
+		SELECT
+			welfare_id AS welfareId,
+			welfare_name AS welfareName
+		FROM
+			personnel_welfare
+		WHERE
+			alive_flag = '1'
+			<if test="welfareName != null and welfareName != ''">
+			AND welfare_name = #{welfareName}
+			</if>
+	</select>
+	<!-- 修改福利信息(计划中→申请中) -->
+	<update id="updateWelfareStatus" parameterType="com.mdoa.personnel.bo.WelfareApplyForm">
+		UPDATE
+			personnel_welfare
+		SET
+			examine_status = '1'
+		WHERE
+			alive_flag = '1'
+			AND welfare_id = #{welfareId}
+	</update>
+	<!-- 删除福利记录 -->
+	<update id="deleteRecordForGet" parameterType="com.mdoa.personnel.bo.WelfareApplyForm">
+		UPDATE 
+			personnel_welfare_record
+		SET
+			alive_flag = '0'
+		WHERE
+			alive_flag = '1'
+		<if test="welfareRecordId != '' and welfareRecordId != null">
+			AND welfare_record_id = #{welfareRecordId}
+		</if>
+		<if test="welfareId != '' and welfareId != null">
+			AND welfare_id = #{welfareId}
+		</if>
+	</update>
+	<!-- 添加福利记录 -->
+	<insert id="addWelfareRecord" parameterType="java.util.List">
+		INSERT INTO personnel_welfare_record(
+			welfare_record_id,
+			welfare_id,
+			get_user_id,
+			get_user_id_card,
+			get_user_name,
+			give_time,
+			get_flag,
+			create_time,
+			create_user_id,
+			create_user_name,
+			alive_flag,
+			finish_flag	
+		)VALUES
+			<foreach collection="list" item="obj"  separator=",">
+			(
+				UUID(),
+				#{obj.welfareApplyForm.welfareId},
+				#{obj.userId},
+				#{obj.idCard},
+				#{obj.userName},
+				#{obj.welfareApplyForm.giveTime},
+				'0',
+				NOW(),
+				#{obj.welfareApplyForm.createUserId},
+				#{obj.welfareApplyForm.createUserName},
+				'1',
+				'0'
+			)
+			</foreach>
+	</insert>
+	<!-- 查询人员信息 -->
+	<select id="queryPersonMessage" parameterType="com.mdoa.personnel.bo.WelfareApplyForm" resultType="com.mdoa.personnel.bo.WelfareApplyForm">
+		SELECT
+			user_id AS userId,
+			user_name AS userName,
+			id_card AS idCard
+		FROM
+			user_info
+		WHERE
+			alive_flag = '1'
+		<if test="userId != null and userId !=''">
+		 	AND user_id = #{userId}
+		</if>
+		<if test="userAccount != null and userAccount !=''">
+		 	AND user_account = #{userAccount}
+		</if>
+		<if test="userName != null and userName !=''">
+			AND user_name LIKE (${userName})
+		</if>
+		<if test="postName != null and postName !=''">
+			AND post_name LIKE (${postName})
+		</if>
+		<if test="postId != null and postId !=''">
+			AND post_id = #{postId}
+		</if>
+		<if test="departmentName != null and departmentName !=''">
+			AND department_name LIKE (${departmentName})
+		</if>
+		<if test="departmentUrl != null and departmentUrl !=''">
+			AND department_url LIKE (${departmentUrl})
+		</if>
+		<if test="idCard != null and idCard !=''">
+			AND id_card LIKE (${idCard})
+		</if>
+		<if test="sex != null and sex !=''">
+			AND sex = #{sex}
+		</if>
+		<if test="workTimeStartStr != null and workTimeStartStr !=''">
+			AND work_time &gt; STR_TO_DATE(#{workTimeStartStr},'%Y-%m-%d %H:%i:%s')
+		</if>
+		<if test="workTimeEndStr != null and workTimeEndStr !=''">
+			AND work_time &lt; STR_TO_DATE(#{workTimeEndStr},'%Y-%m-%d %H:%i:%s')		
+		</if>
+		<if test="inviteFlag != null and inviteFlag != ''">
+			AND invite_flag = #{inviteFlag}
+		</if>
+		<if test="inviteFlag == null or inviteFlag == ''">
+			AND (invite_flag = '1' OR invite_flag = '4')
+		</if>
+		<if test="retireFlag != null and retireFlag !=''">
+			AND retire_flag = #{retireFlag}
+		</if>
+		<if test="retireFlag == null and retireFlag ==''">
+			AND (retire_flag = '1' OR retire_flag = '3')
+		</if>
+		<if test="politicalStatus != null and politicalStatus !=''">
+			AND political_status = #{politicalStatus}
+		</if>
+		<if test="education != null and education !=''">
+			AND education = #{education}
+		</if>
+		<if test="marriageFlag != null and marriageFlag !=''">
+			AND marriage_flag = #{marriageFlag}
+		</if>
+		<if test="dormFlag != null and dormFlag != ''">
+			AND dorm_flag = #{dormFlag}
+		</if>
+		<if test="dorm != null and dorm!= ''">
+			AND dorm = #{dorm}
+		</if>
+		<if test="workTimeStr != null and workTimeStr !=''">
+			AND work_time = #{workTime}
+		</if>
+	</select>
+	
+	
+	
+	
+	
+	
+	<!-- 通过生日查询员工信息 -->
+	<select id="findUserInfoByBirth" parameterType="com.mdoa.personnel.bo.BirthForm"
+		resultType="com.mdoa.user.model.UserInfo">
+		SELECT
+			user_id AS userId,
+			user_name AS userName,
+			phone_num AS phoneNum,
+			accident_phone_num AS accidentPhoneNum,
+			birthday AS birthday,
+			id_card AS idCard,
+			sex AS sex,
+			work_time AS workTime,
+			address AS address,
+			kpi_group_id AS kpiGroupId,
+			leader_flag AS leaderFlag,
+			create_time AS createTime,
+			create_user_name AS createUserName,
+			update_time AS updateTime,
+			update_user_name AS updateUserName,
+			education AS education,
+			volk AS volk,
+			department_name AS departmentName,
+			post_id AS postId,
+			post_name AS postName,
+			invite_flag AS inviteFlag,
+			retire_flag AS retireFlag,
+			political_status AS policalStatus,
+			remark AS remark,
+			native_place AS nativePlace,
+			marriage_flag AS marriageFlag
+		FROM
+			user_info
+		WHERE
+			alive_flag = '1'
+			AND invite_flag in('1','4','5')
+			<if test="startDate != null and startDate != '' and endDate != null and endDate != ''">
+				AND (DATE_FORMAT(birthday, '%m-%d')  BETWEEN #{startDate} AND #{endDate}
+				<if test="spanYearStartDate != null and spanYearStartDate != '' and spanYearEndDate != null and spanYearEndDate != ''">
+					OR DATE_FORMAT(birthday, '%m-%d') BETWEEN #{spanYearStartDate} AND #{spanYearEndDate}
+				</if>
+				)
+			</if>
+			<if test="userId != null and userId != ''">
+				AND user_id = '${userId}'
+			</if>
+			<if test="politicalStatus != null and politicalStatus != ''">
+				AND political_status = '${politicalStatus}'
+			</if>
+			<if test="nativePlace != null and nativePlace != ''">
+				AND native_place = '${nativePlace}'
+			</if>
+			<if test="marriageFlag != null and marriageFlag != ''">
+				AND marriage_flag = '${marriageFlag}'
+			</if>
+			<if test="userName != null and userName != ''">
+				AND user_Name LIKE ${userName}
+			</if>
+			<if test="phoneNum != null and phoneNum != ''">
+				AND phone_num = '${phoneNum}'
+			</if>
+			<if test="accidentPhoneNum != null and accidentPhoneNum != ''">
+				AND accident_phone_num = '${accidentPhoneNum}'
+			</if>
+			<if test="idCard != null and idCard != ''">
+				AND id_card= '${idCard}'
+			</if>
+			<if test="sex != null and sex != ''">
+				AND sex = '${sex}'
+			</if>
+			<if test="address != null and address != ''">
+				AND address LIKE ${address}
+			</if>
+			<if test="kpiGroupId != null and kpiGroupId != ''">
+				AND kpi_group_id = '${kpiGroupId}'
+			</if>
+			<if test="leaderFlag != null and leaderFlag != ''">
+				AND leader_flag = '${leaderFlag}'
+			</if>
+			<if test="education != null and education != ''">
+				AND education = '${education}'
+			</if>
+			<if test="volk != null and volk != ''">
+				AND volk = '${volk}'
+			</if>
+			<if test="departmentName != null and departmentName != ''">
+				AND department_name LIKE ${departmentName}
+			</if>
+			<if test="postId != null and postId != ''">
+				AND post_id = '${postId}'
+			</if>
+			<if test="postName != null and postName != ''">
+				AND post_name LIKE ${postName}
+			</if>
+			<if test="inviteFlag != null and inviteFlag != ''">
+				AND invite_flag = '${inviteFlag}'
+			</if>
+			<if test="userId != null and userId != ''">
+				AND retire_flag = '${retireFlag}'
+			</if>
+			ORDER BY
+				department_name,post_name,work_time DESC
+	</select>
+	
+	<!-- 插入福利信息 -->
+	<insert id="insertWelfare" parameterType="com.mdoa.personnel.bo.WelfareApplyForm">
+		INSERT INTO personnel_welfare (
+			welfare_id,
+			welfare_name,
+			welfare_code,
+			text,
+			reason,
+			give_time,
+			examine_status,
+			create_time,
+			create_user_id,
+			create_user_name,
+			alive_flag,
+			budget_amount,
+			population
+		)
+		VALUES
+			(
+				#{welfareId},
+				#{welfareName},
+				DATE_FORMAT(NOW(),'%y%m%d%H%i%s'),
+				#{text},
+				#{reason},
+				#{giveTime},
+				'0',
+				NOW(),
+				#{createUserId},
+				#{createUserName},
+				'1',
+				#{budgetAmount},
+				#{population}
+			)
+	</insert>
+	
+	<!-- 插入福利流程信息 -->
+	<insert id="insertWelfareStream" parameterType="com.mdoa.personnel.bo.WelfareApplyForm">
+		INSERT INTO personnel_welfare_stream (
+			welfare_stream_id,
+			welfare_id,
+			examine_user_id,
+			examine_user_name,
+			examine_status,
+			create_time,
+			create_user_id,
+			create_user_name,
+			stream_type,
+			alive_flag
+		)
+		VALUES
+			(
+				UUID(),
+				#{welfareId},
+				#{examineUserId},
+				#{examineUserName},
+				'1',
+				NOW(),
+				#{createUserId},
+				#{createUserName},
+				'1',
+				'1'
+			)
+	</insert>
+	
+	
+	
+	
+	
+	<!-- 撤回福利流程信息 -->
+	<update id="withdrawWelfareStream" parameterType="com.mdoa.personnel.bo.WelfareApplyExamineForm">
+		UPDATE personnel_welfare_stream
+		SET
+			examine_status = '2',
+		 	update_time = NOW(),
+		 	update_user_id = '${updateUserId}',
+		 	update_user_name = '${updateUserName}'
+		WHERE
+			alive_flag = '1'
+		AND welfare_id = #{welfareId}
+	</update>
+	
+	<!-- 更新福利信息 -->
+	<update id="updateWelfare" parameterType="com.mdoa.personnel.bo.WelfareApplyExamineForm">
+		UPDATE personnel_welfare
+		SET
+			update_time = NOW(),
+			update_user_id = #{updateUserId},
+			update_user_name = #{updateUserName}
+			<if test="examineStatus != null and examineStatus != ''">
+				,examine_status = #{examineStatus}
+			</if>
+			<if test="recordUserId != null and recordUserId != '' and recordUserId != null and recordUserName != ''">
+				,record_user_id = #{recordUserId}
+				,record_user_name = #{recordUserName}
+				,record_time = NOW()
+			</if>
+			
+		WHERE
+			welfare_id = #{welfareId}
+	</update>
+	
+	
+	
+	<!-- 更新福利流程信息 -->
+	<update id="updateWelfareStream" parameterType="com.mdoa.personnel.bo.WelfareApplyExamineForm">
+		UPDATE personnel_welfare_stream
+		SET
+			update_time = NOW(),
+			update_user_id = #{updateUserId},
+			update_user_name = #{updateUserName}
+			<if test="examineStatus != null and examineStatus != ''">
+				,examine_status = #{examineStatus}
+				,examine_time = NOW()
+			</if>
+			<if test="examineIdea != null and examineIdea != ''">
+				,examine_idea = #{examineIdea}
+			</if>
+			<if test="examineUserId != null and examineUserId != '' and examineUserName != null and examineUserName != ''">
+				,examine_user_id = #{examineUserId}
+				,examine_user_name = #{examineUserName}
+			</if>
+			<if test="nextExamineUserName != null and nextExamineUserName != ''">
+				,next_examine_user_name = #{nextExamineUserName}
+			</if>			
+		WHERE
+			welfare_stream_id = #{welfareStreamId}
+	</update>
+	<!-- 修改福利记录 -->
+	<update id="updateWelfareRecord" parameterType="com.mdoa.personnel.bo.WelfareApplyExamineForm">
+		UPDATE 
+			personnel_welfare_record
+		SET
+			finish_flag = '1'
+		WHERE
+			alive_flag = '1'
+			AND welfare_id = #{welfareId}
+	</update>
+	<!-- 插入备案流程信息 -->
+	<insert id="insertRecordWelfareStream" parameterType="com.mdoa.personnel.bo.WelfareApplyExamineForm">
+		INSERT INTO personnel_welfare_stream (
+			welfare_stream_id,
+			welfare_id,
+			examine_status,
+			create_time,
+			create_user_id,
+			create_user_name,
+			stream_type,
+			alive_flag
+		)
+		VALUES
+			(
+				UUID(),
+				#{welfareId},
+				'1',
+				NOW(),
+				#{updateUserId},
+				#{updateUserName},
+				'2',
+				'1'
+			)
+	</insert>
+	
+
+	
+	<!-- 通过福利ID查询福利发放时间 -->
+	<select id="findGiveTimeByWelfareId" parameterType="java.lang.String" resultType="java.util.Date">
+		SELECT
+			give_time AS giveTime
+		FROM
+			personnel_welfare
+		WHERE
+			welfare_id = #{welfareId}
+		AND alive_flag = '1'
+	</select>
+	
+	
+	<!-- 批量插入福利记录信息 -->
+	<insert id="insertRecordByBatch" parameterType="java.util.List" >
+        INSERT INTO personnel_welfare_record (
+			welfare_record_id,
+			welfare_id,
+			get_user_id,
+			get_user_id_card,
+			get_user_name,
+			give_time,
+			get_flag,
+			create_time,
+			alive_flag
+		)
+		VALUES
+		<foreach collection="list" item="record" separator=",">
+			(
+           		UUID(),
+           		#{record.welfareId},
+           		#{record.getUserId},
+           		#{record.getUserIdCard},
+           		#{record.getUserName},
+           		#{record.giveTime},
+           		'0',
+           		NOW(),
+           		'1'
+           	)
+		</foreach>
+    </insert>
+    
+    <!-- 条件查询福利记录 -->
+    <select id="findRecordByCondition" parameterType="com.mdoa.personnel.bo.WelfareRecordForm" resultType="com.mdoa.personnel.bo.WelfareRecordForm">
+    	SELECT
+			a.welfare_record_id AS welfareRecordId,
+			a.welfare_id AS welfareId,
+			a.get_user_id AS getUserId,
+			a.get_user_id_card AS getUserIdCard,
+			a.get_user_name AS getUserName,
+			a.give_time AS giveTime,
+			a.get_time AS getTime,
+			a.get_flag AS getFlag,
+			a.create_time AS createTime,
+			a.create_user_id AS createUserId,
+			a.create_user_name AS createUserName,
+			a.update_time AS updateTime,
+			a.update_user_id AS updateUserId,
+			a.update_user_name AS updateUserName,
+			b.welfare_name AS welfareName,
+			b.welfare_code AS welfareCode,
+			b.text AS text,
+			b.reason AS reason,
+			c.department_name AS departmentName,
+			c.post_name AS postName
+		FROM
+			personnel_welfare_record a,
+			personnel_welfare b,
+			user_info c
+		WHERE
+			b.alive_flag = '1'
+			AND c.alive_flag = '1'
+			AND b.alive_flag = a.alive_flag
+			AND a.welfare_id = b.welfare_id
+			AND c.user_id = a.get_user_id
+		<if test="finishFlag != null and finishFlag != ''">
+			AND a.finish_flag = '${finishFlag}'
+		</if>
+		<if test="welfareRecordId != null and welfareRecordId != ''">
+			AND a.welfare_record_id = '${welfareRecordId}'
+		</if>
+		<if test="welfareId != null and welfareId != ''">
+			AND a.welfare_id = '${welfareId}'
+		</if>
+		<if test="getUserId != null and getUserId != ''">
+			AND a.get_user_id = '${getUserId}'
+		</if>
+		<if test="getUserIdCard != null and getUserIdCard != ''">
+			AND a.get_user_id_card = '${getUserIdCard}'
+		</if>
+		<if test="getUserName != null and getUserName != ''">
+			AND a.get_user_name LIKE (${getUserName})
+		</if>
+		<if test="getFlag != null and getFlag != ''">
+			AND a.get_flag = '${getFlag}'
+		</if>
+		<if test="welfareCode != null and welfareCode != ''">
+			AND b.welfare_code LIKE (${welfareCode})
+		</if>
+		<if test="welfareName != null and welfareName != ''">
+			AND b.welfare_name LIKE (${welfareName})
+		</if>
+		<if test="departmentName != null and departmentName != ''">
+			AND b.department_name LIKE (${departmentName})
+		</if>
+		<if test="postName != null and postName != ''">
+			AND b.post_name LIKE (${postName})
+		</if>
+		
+    </select>
+    
+    <!-- 福利领取后，福利记录的更新 -->
+    <update id="updateRecordForGet">
+    	UPDATE personnel_welfare_record
+		SET
+			get_time = NOW(),
+		 	get_flag = '1'
+		WHERE
+			welfare_id = #{welfareId}
+		<if test="getUserId != null and getUserId != ''">
+			AND get_user_id = #{getUserId}
+		</if>
+    </update>
+    
+    <!-- 查询福利流程信息 -->
+    <select id="findStreamByCondition" parameterType="com.mdoa.personnel.bo.WelfareApplyForm" resultType="com.mdoa.personnel.bo.WelfareStreamForm">
+    	SELECT
+			a.welfare_stream_id AS welfareStreamId,
+			a.welfare_id AS welfareId,
+			a.examine_user_id AS examineUserId,
+			a.examine_user_name AS examineUserName,
+			a.examine_idea AS examineIdea,
+			a.examine_status AS examineStatus,
+			a.next_examine_user_name AS nextExamineUserName,
+			a.examine_time AS examineTime,
+			a.create_time AS createTime,
+			a.update_time AS updateTime,
+			a.stream_type AS streamType,
+			b.text AS text,
+			b.reason AS reason,
+			b.create_User_id AS createUserId,
+			b.create_user_name AS createUserName,
+			b.welfare_name AS welfareName,
+			b.welfare_code AS welfareCode,
+			b.give_time AS giveTime,
+			b.population,
+			b.budget_amount AS budgetAmount
+		FROM
+			personnel_welfare_stream a,
+			personnel_welfare b
+		WHERE
+			a.alive_flag = '1'
+		AND b.alive_flag = '1'
+		AND a.welfare_id = b.welfare_id
+			<if test="welfareStreamId != null and welfareStreamId != ''">
+				AND a.welfare_stream_id = '${welfareStreamId}'
+			</if>
+			<if test="welfareId != null and welfareId != ''">
+				AND a.welfare_id = '${welfareId}'
+			</if>
+			<if test="examineUserId != null and examineUserId != ''">
+				AND a.examine_user_id = '${examineUserId}'
+			</if>
+			<if test="examineStatus != null and examineStatus != ''">
+				AND a.examine_status = '${examineStatus}'
+			</if>
+			<if test="streamType != null and streamType != ''">
+				AND a.stream_type = '${streamType}'
+			</if>
+			<if test="examineUserName != null and examineUserName != ''">
+				AND a.examine_user_name LIKE (${examineUserName})
+			</if>
+			<if test="welfareName != null and welfareName != ''">
+				AND b.welfare_name LIKE (${welfareName})
+			</if>
+			<if test="welfareCode != null and welfareCode != ''">
+				AND b.welfare_code = '${welfareCode}'
+			</if>
+			
+			<if test="createUserName != null and createUserName != ''">
+				AND b.create_user_name LIKE (${createUserName})
+			</if>
+    </select>
+    
+    <!-- 查询福利 -->
+    <select id="findWelfareByCondition" parameterType="com.mdoa.personnel.bo.WelfareApplyForm" resultType="com.mdoa.personnel.model.Welfare">
+		SELECT
+			welfare_id AS welfareId,
+			welfare_name AS welfareName,
+			welfare_code AS welfareCode,
+			text AS text,
+			reason AS reason,
+			give_time AS giveTime,
+			record_user_id AS recordUserId,
+			record_time AS recordTime,
+			examine_status AS examineStatus,
+			create_time AS createTime,
+			create_user_id AS createUserId,
+			create_user_name AS createUserName,
+			update_time AS updateTime,
+			update_user_id AS updateUserId,
+			update_user_name AS updateUserName,
+			budget_amount AS budgetAmount,
+			population,
+			alive_flag AS aliveFlag
+		FROM
+			personnel_welfare
+		WHERE
+			alive_flag = '1'			
+			<if test="welfareId != null and welfareId != ''">
+				AND welfare_id = '${welfareId}'
+			</if>
+			<if test="createUserId != null and createUserId != ''">
+				AND create_user_id = '${createUserId}'
+			</if>
+			<if test="createUserName != null and createUserName != ''">
+				AND create_user_name LIKE (${createUserName})
+			</if>
+			<if test="examineStatus != null and examineStatus != ''">
+				AND examine_status = '${examineStatus}'
+			</if>
+			<if test="welfareName != null and welfareName != ''">
+				AND welfare_name LIKE ${welfareName}
+			</if>
+			<if test="welfareCode != null and welfareCode != ''">
+				AND welfare_code LIKE ${welfareCode}
+			</if>
+			<if test="startCreateTimeStr != null and startCreateTimeStr != ''">
+				AND create_time &gt;= STR_TO_DATE(#{startCreateTimeStr},'%Y-%m-%d %H:%i:%s')
+			</if>
+			<if test="endCreateTimeStr != null and endCreateTimeStr != ''">
+				AND create_time &lt;= STR_TO_DATE(#{endCreateTimeStr},'%Y-%m-%d %H:%i:%s')
+			</if>
+		ORDER BY
+			create_time DESC
+	</select>
+    
+   
+</mapper>

@@ -1,0 +1,20 @@
+#invitelist .popup .popuparea{
+	width:306px;
+	height:150px;
+}
+#invitelist .popup .popuparea textarea{
+	width:300px;
+	height:144px;
+	border:none;
+	border-bottom:1px solid #a3c8f8;
+}
+#invitelist .pastWindow .popuparea{
+	height:184px;
+}
+#invitelist .nextExamine{
+	height:30px;
+	line-height:30px;
+}
+#invitelist .nextExamine input[type="text"]{
+	width:146px;
+}

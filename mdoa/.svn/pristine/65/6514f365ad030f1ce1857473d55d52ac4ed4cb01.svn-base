@@ -1,0 +1,52 @@
+$(function(){
+	//产生数据网格
+	$('#checkGroupAllotdg').datagrid({
+		   url:'../../userInfo/selectUserInfo.do',
+		   rownumbers:"true",
+		   singleSelect:true,
+		   pagination:true,
+		   toolbar:"#checkGroupAllot .invitetop",
+		   method:"post",
+		   fit: true, 
+		   columns:[[
+			   {field:"userAccount",title:"员工编号",fitColumns:true,sortable:true,align:"center",sortable:true,width:100},
+		       {field:"userName",title:"员工名字",fitColumns:true,sortable:true,align:"center",sortable:true,width:100 },
+		       {field:"idCard",title:"身份证号码",fitColumns:true,resizable:true,align:"center",sortable:true},
+		       {field:"sex",title:"性别",fitColumns:true,resizable:true,align:"center",width:50,sortable:true,formatter:function(value,row,index){
+		    	   var sex = row.sex;
+		    	   if(sex == 1){
+		    		   return '男';
+		    	   }else{
+		    		   return '女';
+		    	   }
+		       }},
+		       {field:"birthdayStr",title:"出生日期",fitColumns:true,resizable:true,align:"center",sortable:true},
+		       {field:"education",title:"学历",fitColumns:true,resizable:true,align:"center",sortable:true,formatter:function(value,row,index){
+		    	   var education = row.education;
+		    	   return getValueFromKey("education",education);
+		       }},
+		       {field:"workTimeStr",title:"入职时间",fitColumns:true,resizable:true,align:"center",sortable:true,formatter:status},
+		       {field:"departmentName",title:"所属部门",fitColumns:true,resizable:true,align:"center",sortable:true},
+		       {field:"postName",title:"所属岗位",fitColumns:true,resizable:true,align:"center",sortable:true},
+		       {field:"invite_flag",title:"在职状态",fitColumns:true,resizable:true,align:"center",sortable:true,formatter:function(value,row,index){
+		    	   var inviteFlag = row.inviteFlag;
+		    	   return getValueFromKey("invite_flag",inviteFlag);
+		       }},
+		       {field:"political_Status",title:"政治面貌",fitColumns:true,resizable:true,align:"center",sortable:true,formatter:function(value,row,index){
+		    	   var politicalStatus = row.politicalStatus;
+		    	  
+		       }},
+		       {field:"retire_flag",title:"退休状态",fitColumns:true,resizable:true,align:"center",sortable:true,formatter:function(value,row,index){
+		    	   var retireFlag = row.retireFlag;
+		    	   return getValueFromKey("retire_flag",retireFlag);
+		       }},
+		       {field:"phoneNum",title:"联系方式",fitColumns:true,resizable:true,align:"center",sortable:true},
+		       {field:"accidentPhoneNum",title:"紧急联系方式",fitColumns:true,resizable:true,align:"center",sortable:true},
+		       {field:"address",title:"地址",fitColumns:true,resizable:true,align:"center",sortable:true,formatter:status},
+		   ]],
+		})
+	
+	
+	
+	
+})

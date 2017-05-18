@@ -1,0 +1,100 @@
+package com.mdoa.admin.model;
+
+import java.util.Date;
+
+import com.mdoa.util.DateUtil;
+
+/**
+ * 消息中心
+ * @author Administrator
+ *
+ */
+public class Message {
+
+	private String messageId;
+	private String userId;
+	private String message;
+	private String sendUserId;
+	private String senduserName;
+	private String readFlag;
+	private String aliveFlag;
+	
+	private Date sendTime;
+	private String sendTimeStr;
+	private Date readTime;
+	private String readTimeStr;
+	public String getMessageId() {
+		return messageId;
+	}
+	public void setMessageId(String messageId) {
+		this.messageId = messageId;
+	}
+	public String getUserId() {
+		return userId;
+	}
+	public void setUserId(String userId) {
+		this.userId = userId;
+	}
+	public String getMessage() {
+		return message;
+	}
+	public void setMessage(String message) {
+		this.message = message;
+	}
+	public String getSendUserId() {
+		return sendUserId;
+	}
+	public void setSendUserId(String sendUserId) {
+		this.sendUserId = sendUserId;
+	}
+	public String getSenduserName() {
+		return senduserName;
+	}
+	public void setSenduserName(String senduserName) {
+		this.senduserName = senduserName;
+	}
+	public String getReadFlag() {
+		return readFlag;
+	}
+	public void setReadFlag(String readFlag) {
+		this.readFlag = readFlag;
+	}
+	public String getAliveFlag() {
+		return aliveFlag;
+	}
+	public void setAliveFlag(String aliveFlag) {
+		this.aliveFlag = aliveFlag;
+	}
+	
+	
+	public Date getSendTime() {
+		return sendTime;
+	}
+	public void setSendTime(Date sendTime) {
+		this.sendTime = sendTime;
+		this.sendTimeStr = DateUtil.dateToStr(sendTime);
+	}
+	public String getSendTimeStr() {
+		return sendTimeStr;
+	}
+	public void setSendTimeStr(String sendTimeStr) {
+		this.sendTimeStr = sendTimeStr;
+	}
+	public Date getReadTime() {
+		return readTime;
+	}
+	public void setReadTime(Date readTime) {
+		this.readTime = readTime;
+		this.readTimeStr = DateUtil.dateToStr(readTime);
+	}
+	public String getReadTimeStr() {
+		return readTimeStr;
+	}
+	public void setReadTimeStr(String readTimeStr) {
+		this.readTimeStr = readTimeStr;
+	}
+	
+	
+	
+	
+}

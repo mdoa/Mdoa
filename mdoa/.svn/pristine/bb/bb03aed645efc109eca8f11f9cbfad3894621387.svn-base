@@ -1,0 +1,70 @@
+ <div id="KPIstandard" title="KPI考核标准">
+	<div class="maintop">
+	</div>
+	<div  class="invitetop">
+		请输入查询条件：KPI名称：<input class="kpiName" type="text">
+		<a class="easyui-linkbutton selectByName" iconCls="icon-search" style="line-height:16px;">查询</a>
+		<input type="button" value="清空" >
+	</div>
+	<div>
+	 <table id="KPIstandarddg" width="100%" height="100%" ></table>	
+	</div>
+	<div  class="popups" style="text-align: left;">
+		<div class="popup saveKPIstandard" style="height: 300px;width: 400px;">
+			<h3>新建KPI考核标准</h3>
+			<span class="turnoff"></span>
+			<div class="popuparea" style="padding: 10px 36px;">
+				<table style="text-align: right;width: 300px;height: 210px">
+					<tr>
+						<td>KPI名字:</td>
+						<td><input type="text" style="width:220px;" class="kpiName"/></td>
+					</tr>
+					<tr>
+						<td>KPI组:</td>
+						<td><select class="kpiGroup"></select></td>
+					</tr>
+					<tr>
+						<td>标准分数:</td>
+						<td><input type="text" style="width:220px;" class="scoreStandard"/></td>
+					</tr>
+					<tr>
+						<td style="padding-bottom:24px;">描述:</td>
+						<td><textarea style="width: 216px" class="text"/></textarea></td>
+					</tr>
+				</table>
+			</div>
+			<div class="btnarea" style="text-align: center">
+				<input type="button" class="button confirm" value="确定"/>
+				<input type="button" class="button cannel" value="取消" style="margin-left: 20px;"/>
+			</div>
+		</div>
+		<div class="popup updateKPIstandard" style="height: 300px;width: 400px;">
+			<h3>修改KPI考核标准</h3>
+			<span class="turnoff"></span>
+			<div class="popuparea" style="padding: 10px 36px;">
+				<table style="text-align: right;width: 300px;height: 210px">
+					<tr>
+						<td>KPI名字:</td>
+						<td><input type="text" style="width:220px;" class="kpiName"/></td>
+					</tr>
+					<tr>
+						<td>KPI组:</td>
+						<td><select class="kpiGroup"></select></td>
+					</tr>
+					<tr>
+						<td>标准分数:</td>
+						<td><input type="text" style="width:220px;" class="scoreStandard"/></td>
+					</tr>
+					<tr>
+						<td style="padding-bottom:24px;">描述:</td>
+						<td><textarea style="width: 216px" class="text"/></textarea></td>
+					</tr>
+				</table>
+			</div>
+			<div class="btnarea" style="text-align: center">
+				<input type="button" class="button confirm" value="确定"/>
+				<input type="button" class="button cannel" value="取消" style="margin-left: 20px;"/>
+			</div>
+		</div>
+	</div>
+</div>

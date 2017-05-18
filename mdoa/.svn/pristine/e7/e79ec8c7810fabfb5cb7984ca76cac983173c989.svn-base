@@ -1,0 +1,15 @@
+<div class="flow" id="welfarelookflow">
+	<div class="flowplan">
+	</div>
+	<div class="showView">
+	</div>
+	<div class="inviteissue">
+		<h3><span>审批信息框</span> <span class="nextpeople"></span></h3>
+		<span class="turnoff"></span>
+		<form>	
+			<textarea></textarea>
+		</form>
+		<span class="save same">保存</span>
+		<span class="cancel same">取消</span>
+	</div>
+</div>

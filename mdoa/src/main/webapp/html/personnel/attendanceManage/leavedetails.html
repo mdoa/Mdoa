@@ -1,0 +1,38 @@
+<div class="details">
+	<div class="detailstab">
+		<h2>员工请假申请详情</h2>
+		<div class="detailsshow">
+			<p>	
+				<span class="detailstit">申请人：</span><span class="detailstxt"></span>
+				<span class="detailstit">所属部门：</span><span class="detailstxt"></span>
+				<span class="detailstit">岗位：</span><span class="detailstxt"></span>
+				<span class="detailstit">性别：</span><input type="radio" name="sex"/>男<input type="radio" name="sex"/>女
+			</p>
+			<p>	
+				<span class="detailstit">请假类型：</span>
+				<select name="" id="">
+					<option value="">婚假</option>
+					<option value="">病假</option>
+				</select>
+				<span class="detailstit">开始时间：</span><span class="detailstxt"><input class="jqdate" type="text" onblur="testDate(this)" onclick="testShow(this);"></span>
+				<span class="detailstit">结束时间：</span><span class="detailstxt"><input class="jqdate" type="text" onblur="testDate(this)" onclick="testShow(this);"></span>
+				<span class="detailstit">天数：</span><span class="detailstxt"><input type="text" /></span>
+			</p>
+			<div class="reasonbox">
+				<div class="detailstit ">请假原因：</div>
+				<div class="reasonarea">
+					<textarea name="" rows="4"></textarea>
+				</div>
+			</div>
+			<p>
+				<span class="detailstit">审批人：</span>
+				<select name="" id="">
+					<option value="">你</option>
+					<option value="">我</option>
+					<option value="">他</option>
+				</select>
+			</p>
+		</div>
+		<div class="buttonarea"><span>提交</span><span>重置</span></div>
+	</div>	
+</div>	

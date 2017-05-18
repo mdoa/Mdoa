@@ -1,0 +1,21 @@
+#socialSecurity .inviteissue h3{
+	background:url(../../../img/index/icon6.png) no-repeat 7px 6px;
+	background-size:17px;
+}
+.inviteissue{
+	height:360px;
+}
+.inviteissue form{
+	height:81%;
+}
+#socialSecurity .socChoose{
+	width:400px;height:50%;margin:auto;
+}
+#socialSecurity .inviteissue p{
+	margin:2% 9%;
+	padding-right:0;
+}
+#socialSecurity .inviteissue input{
+	width:124px;
+	margin-left: 0px;
+}

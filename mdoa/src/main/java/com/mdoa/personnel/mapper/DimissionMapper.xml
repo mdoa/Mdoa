@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mdoa.personnel.dao.DimissionDao">
+	<select id="getDimissionList" parameterType="com.mdoa.personnel.model.Dimission" resultType="com.mdoa.personnel.model.Dimission">
+		SELECT
+			a.user_id AS userId,
+			a.dimission_flag AS dimissionFlag,
+			a.remark AS remark,
+			DATE_FORMAT(a.dimission_time,'%Y-%m-%d') AS dimissionTime,
+			a.create_user_id AS createUserId,
+			a.create_user_name AS createUserName,
+			DATE_FORMAT(a.create_time,'%Y-%m-%d') AS createTime,
+			b.user_name As userName,
+			b.post_name AS postName,
+			b.department_name AS departmentName,
+			b.invite_flag AS inviteFlag
+		FROM
+			personnel_dimission a
+		LEFT JOIN
+			user_info b
+		ON
+			(a.user_id = b.user_id)
+		WHERE
+			a.alive_flag = '1'
+			<if test="userName != null and userName != ''">
+				AND b.user_name LIKE (${userName})
+			</if>
+			<if test="dimissionFlag != null and dimissionFlag != ''">
+				AND a.dimission_flag = #{dimissionFlag}
+			</if>
+			<if test="dimissionTimeStart != null and dimissionTimeStart != ''">
+			    AND a.dimission_time &gt;= str_to_date(#{dimissionTimeStart}, '%Y-%m-%d')
+			</if>
+			<if test="dimissionTimeEnd != null and dimissionTimeEnd != ''">
+			    AND a.dimission_time &lt;= str_to_date(#{dimissionTimeEnd}, '%Y-%m-%d')
+			</if>
+			<if test="departmentUrl != null and departmentUrl != ''">
+				AND	b.department_url LIKE (${departmentUrl})
+			</if>
+			<if test="postName != null and postName != ''">
+				AND b.post_name LIKE (${postName})
+			</if>
+			<if test="postId != null and postId != ''">
+				AND b.post_id = #{postId}
+			</if>
+			<if test="userId != null and userId != ''">
+				AND b.user_id = #{userId}
+			</if>
+			<if test="idCard != null and idCard != ''">
+				AND b.id_card = #{idCard}
+			</if>
+			<if test="inviteFlag != null and inviteFlag != ''">
+				AND b.invite_flag = #{inviteFlag}
+			</if>
+	</select>
+
+	<insert id="addDimissionRecord" parameterType="com.mdoa.personnel.model.Dimission">
+		INSERT INTO
+			personnel_dimission
+		(
+			dimission_id,
+			user_id,
+			id_card,
+			dimission_time,
+			dimission_flag,
+			remark,
+			create_time,
+			create_user_id,
+			create_user_name,
+			alive_flag
+		)VALUE(
+			UUID(),
+			#{userId},
+			#{idCard},
+			str_to_date(#{dimissionTime}, '%Y-%m-%d'),
+			#{dimissionFlag},
+			#{remark},
+			NOW(),
+			#{createUserId},
+			#{createUserName},
+			'1'
+		)
+	</insert>
+	
+	<update id="deleteDimissionRecord" parameterType="java.lang.String">
+		UPDATE	
+			personnel_dimission a,
+			(
+				SELECT 
+						user_id,
+						MAX(create_time) AS create_time
+				FROM
+					personnel_dimission
+				WHERE
+					user_id = #{userId}
+				GROUP BY user_id
+			) b
+		SET
+			a.alive_flag = '0'
+		WHERE
+			a.user_id = b.user_id
+			AND a.create_time = b.create_time
+	</update>
+	
+	<select id="checkOnJobUser" parameterType="java.lang.String" resultType="java.lang.Integer">
+		SELECT
+			COUNT(0)
+		FROM
+			user_info a,
+		(
+		SELECT
+			a.id_card
+		FROM
+			user_info a
+		WHERE
+			a.user_id = #{userId}
+		) b
+		WHERE
+			a.id_card = b.id_card
+			AND (a.invite_flag = '1' OR invite_flag = '4')
+			AND a.alive_flag = '1'
+	</select>
+</mapper>

@@ -1,0 +1,223 @@
+<div id="welfare" title="发起福利计划">
+ 	<input type="hidden" id="gotowelfarepay"/>
+ 	<div class="list">
+		<div class="maintop">
+		</div>
+		<div  class="invitetop">
+			请输入查询条件：
+			申请人：<input type="text" class="people">
+			福利名称：<input type="text" name="welfareName"><input type="button" value="选择" class="button welBtn"/>
+			编号：<input type="text" name="welfareCode">
+			审批状态：<select name="examineStatus">
+						<option value=""></option>
+						<option value="0">计划中</option>
+						<option value="1">待审</option>
+						<option value="2">撤回</option>
+						<option value="3">通过</option>
+						<option value="4">驳回</option>
+					</select>
+			<!-- 在职状态：
+				<select name="inviteFlag">
+					<option value="1">在职</option>
+					<option value="2">离职无手续</option>
+					<option value="3">离职有手续</option>
+					<option value="4">试用期</option>
+					<option value="5">工伤</option>
+				</select>
+			退休状态：
+				<select name="retireFlag">
+					<option value=""></option>
+					<option value="1">在职</option>
+					<option value="2">退休</option>
+					<option value="3">返聘</option>
+				</select> --> 
+			<!-- 发放对象：<select name="objFlag">
+						<option value=""></option>
+						<option value="1">部门</option>
+						<option value="2">岗位</option>
+						<option value="3">退休</option>
+					</select> -->
+			<input type="button" value="查询" name="queryWelfare">
+			<input type="button" value="清空" name="clean">
+		</div> 
+		<div>
+		 <table id="welfaredg"></table>	
+		</div>
+	</div>
+	<div class="welfareLookObj">
+		<div class="maintop">
+			<input type="button" class="button back" value="返回">
+		</div>
+		<!-- <div  class="invitetop">
+			请输入查询条件：
+		</div> -->
+		<div>
+			<table class="lookObjdg"></table>	
+		</div>
+	</div>
+	<div class="welfareGiveObj">
+		<div class="maintop">
+			<input type="button" class="button back" value="返回">
+		</div>
+		<!-- <div  class="invitetop">
+			请输入查询条件：
+		</div> -->
+		<div>
+			<table class="giveObjdg"></table>	
+		</div>
+	</div>
+	<!-- 发起福利流程弹窗 -->
+	<div class="popup initiateWelfare" style="display:none">
+		<h3>发起福利流程</h3>
+		<span class="turnoff"></span>
+		<div class="popuparea">
+			<table style="padding:10px 20px;">
+				<tr>
+					<td>审批人：</td>
+					<td><input type="text" disabled="disabled" style="width:166px;margin-right:12px;" name="examineUserName"/><input type="button" value="选择" class="button examBtn"/></td>
+				</tr>
+			</table>
+		</div>
+		<div class="btnarea" style="text-align: center">
+			<input type="button" class="button confirm" value="确定"/>
+			<input type="button" class="button cannel" value="取消" style="margin-left: 20px;"/>
+		</div>
+	</div>
+	<!-- 修改福利计划 -->
+	<div class="popup amendWelfarePlan" >
+		<h3>修改福利计划</h3>
+		<span class="turnoff"></span>
+		<div class="popuparea">
+			<table style="padding:10px 20px;">
+				<tr>
+					<tr>
+					<td>福利名称：</td>
+					<td><input type="text" style="width:218px;" name="welfareName" /></td>
+				</tr>
+				<tr>
+					<td style="padding-bottom:24px;">福利内容：</td>
+					<td><textarea style="width: 214px" name="welfareText"/></textarea></td>
+				</tr>
+				<tr>
+					<td>人数：</td>
+					<td><input type="text" style="width:218px;" name="population" /></td>
+				</tr>
+				<tr>
+					<td>预算总金额：</td>
+					<td><input type="text" style="width:218px;" name="budgetAmount" /></td>
+				</tr>
+				<tr>
+					<td style="padding-bottom:24px;">申请理由：</td>
+					<td><textarea style="width: 214px" name="welfareReason"></textarea></td>
+				</tr>
+				<tr>
+					<td>发放时间：</td>
+					<td><input type="text" class="jqdate" style="width:218px;" readonly="readonly" name="giveTime" onClick="YMD(this);"/></td>
+				</tr>
+				</tr>
+			</table>
+		</div>
+		<div class="btnarea" style="text-align: center">
+			<input type="button" class="button confirm" value="确定"/>
+			<input type="button" class="button cannel" value="取消" style="margin-left: 20px;"/>
+		</div>
+	</div>
+	<!-- 福利 选择器(单选)-->
+		<div class="popup" id="welfarechooseUser" style="height: 410px;width: 400px;z-index: 1000;display:none" >
+			<h3>请选择员工(单选)</h3>
+			<span class="turnoff"></span>
+			<div class="popuparea">
+				<div style="width: 374px; height: 340px;">
+					<div style="height: 340px;width: 182px;">
+						<div class="queryForm">
+							福利名称：<input name="welfareName" style="width: 50px;"/>
+							<input type="button" class="button" style="width: 40px" value="查询" name="query"/>
+						</div>
+						<table style="height: 340px;width: 180px" class="user"></table>
+					</div>
+				</div>
+			</div>
+			<div class="btnarea" style="text-align: center">
+				<input type="button" class="button confirm" value="确定"/>
+				<input type="button" class="button cannel" value="取消" style="margin-left: 20px;"/>
+			</div>
+		</div>
+	<div class="flow" style="display:none">
+		<div class="flowbar">
+				<input type="button" value="返回" class="back" /> 
+		</div>
+		<div class="flowplan">
+		
+			<p class="jiachu">福利名：</p>
+			<p><input type="text" class="planName" value="" readonly="true"/></p>
+			
+			<p class="jiachu">发起人：</p>
+			<p><input type="text" class="createUserName" value="" readonly="true"/></p>
+			
+			<p class="jiachu">发起时间：</p>
+			<p><input type="text" class="createTimeStr" value="" readonly="true"/></p>
+			
+			<p class="jiachu">发放时间：</p>
+			<p><input type="text" class="giveTime" value="" readonly="true"/></p>
+			
+			<p class="jiachu">流程状态：</p>
+			<p><input type="text" class="welfareStatus" value="" readonly="true"/></p>
+			
+			<p class="jiachu">福利描述：</p>
+			<div class="applyDescribe text"></div>
+			
+			<p class="jiachu">发放原因：</p>
+			<div class="applyDescribe reason"></div>
+		</div> 
+		<div class="showView"> </div>
+	</div>
+	<div class="popups" style="text-align: left;">
+		<div class="popup savewelfare" style="width: 450px;height:310px;">
+			<h3>福利详细信息</h3>
+			<span class="turnoff"></span>
+			<div class="popuparea" style="padding: 10px 36px;height:250px;">
+				<table style="text-align: right;width: 310px;">
+					<tr>
+						<td>福利名称：</td>
+						<td><input type="text" style="width:218px;" name="welfarename" /></td>
+					</tr>
+					<tr>
+						<td>福利对象：</td>
+						<td style="text-align:center;">
+						<input type="radio" name="department" class="radio"/>部门<input type="radio" name="department" class="radio"/>职位<input type="radio" name="department" class="radio"/>退休
+						<input type="button" class="button deptBtn" style="float:right;" value="选择"/>
+						</td>
+					</tr>
+					<tr class="showdepart" style="display:none;">
+						<td class="selectTishi">所择部门：</td>
+						<td>
+							<input type="text" style="width:218px;" name="selective" readonly="readonly"/>
+							<input type="text" style="display:none;" name="deptId"/>
+							<input type="text" style="display:none;" name="postId"/>
+						</td>
+					</tr>
+					<tr>
+						<td style="padding-bottom:24px;">福利内容：</td>
+						<td><textarea style="width: 214px" name="welfaretext"/></textarea></td>
+					</tr>
+					<tr>
+						<td style="padding-bottom:24px;">申请理由：</td>
+						<td><textarea style="width: 214px" name="welfarereason"></textarea></td>
+					</tr>
+					<tr>
+						<td>发放时间：</td>
+						<td><input type="text" class="jqdate" style="width:218px;" readonly="readonly" name="givetime" onClick="YMD(this);"/></td>
+					</tr>
+					<tr>
+						<td>审批人：</td>
+						<td><input type="text" style="width:166px;margin-right:12px;" name="examineUserName"/><input type="button" value="选择" class="button examBtn"/></td>
+					</tr>
+				</table>
+			</div>
+			<div class="btnarea" style="text-align: center">
+				<input type="button" class="button confirm" value="确定"/>
+				<input type="button" class="button cannel" value="取消" style="margin-left: 20px;"/>
+			</div>
+		</div>
+	</div>
+</div> 

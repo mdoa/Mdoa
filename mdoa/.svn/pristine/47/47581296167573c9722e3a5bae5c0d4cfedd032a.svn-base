@@ -1,0 +1,102 @@
+package com.mdoa.user.model;
+
+import java.util.Date;
+
+public class UserMessage {
+	private String messageId;//消息ID
+	private String sendUserId;//发件人ID
+	private String readUserId;//收件人ID
+	private String sendUserName;//发件人名
+	private String readUserName;//收件人名
+	private String message;//消息内容
+	private Date sendTime;//发送时间
+	private Date readTime;//读取时间
+	private String readFlag;//是否已读 0未读1已读
+	private String aliveFlag;//是否有效
+	
+	public UserMessage(){
+		
+	}
+
+	public String getMessageId() {
+		return messageId;
+	}
+
+	public void setMessageId(String messageId) {
+		this.messageId = messageId;
+	}
+
+	public String getSendUserId() {
+		return sendUserId;
+	}
+
+	public void setSendUserId(String sendUserId) {
+		this.sendUserId = sendUserId;
+	}
+
+	public String getReadUserId() {
+		return readUserId;
+	}
+
+	public void setReadUserId(String readUserId) {
+		this.readUserId = readUserId;
+	}
+
+	public String getMessage() {
+		return message;
+	}
+
+	public void setMessage(String message) {
+		this.message = message;
+	}
+
+	public Date getSendTime() {
+		return sendTime;
+	}
+
+	public void setSendTime(Date sendTime) {
+		this.sendTime = sendTime;
+	}
+
+	public Date getReadTime() {
+		return readTime;
+	}
+
+	public void setReadTime(Date readTime) {
+		this.readTime = readTime;
+	}
+
+	public String getReadFlag() {
+		return readFlag;
+	}
+
+	public void setReadFlag(String readFlag) {
+		this.readFlag = readFlag;
+	}
+
+	public String getAliveFlag() {
+		return aliveFlag;
+	}
+
+	public void setAliveFlag(String aliveFlag) {
+		this.aliveFlag = aliveFlag;
+	}
+
+	public String getSendUserName() {
+		return sendUserName;
+	}
+
+	public void setSendUserName(String sendUserName) {
+		this.sendUserName = sendUserName;
+	}
+
+	public String getReadUserName() {
+		return readUserName;
+	}
+
+	public void setReadUserName(String readUserName) {
+		this.readUserName = readUserName;
+	}
+	
+	
+}

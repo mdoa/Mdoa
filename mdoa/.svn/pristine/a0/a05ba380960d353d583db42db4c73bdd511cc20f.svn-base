@@ -1,0 +1,11 @@
+#checkGroupAllot .checkGroupName{
+	float:left;
+	width: 12%;
+	height: 100%;
+	border: 1px #95B8E7 solid;
+}
+#checkGroupAllot .checkGroupAllotDetail{
+	float: right;
+	width: 87.8%;
+	height:100%
+}

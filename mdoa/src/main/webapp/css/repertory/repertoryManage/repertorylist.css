@@ -1,0 +1,18 @@
+#repertorylist{
+	overflow:hidden;
+}
+#repertorylist .update .confirm{
+	margin-left:92px;
+}
+#repertorylist .update .cannel{
+	margin-left:8px;
+}
+#repertorylist .popups .popuparea table{
+	padding:20px 30px;
+}
+#repertorylist .popups .del .confirm{
+	margin-left:92px;
+}
+#repertorylist .popups .del .cannel{
+	margin-left:8px;
+}

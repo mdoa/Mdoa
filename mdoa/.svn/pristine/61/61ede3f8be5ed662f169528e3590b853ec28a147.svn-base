@@ -1,0 +1,16 @@
+<div id="depreciationRecord">
+	<div class="maintop">
+		<div class="add">
+		</div>
+	</div>
+	<div class="invitetop">
+		请输入查询条件: 资产名称:<input type="text" name="assetsName"/>
+		折旧时间:<input type="text"  class="jqdate" name="beginTime"  onblur="testDate(this)" onclick="testShow(this);"/>
+		~<input type="text"  class="jqdate" name="endTime" onblur="testDate(this)" onclick="testShow(this);"/>
+		<a class="easyui-linkbutton query" iconCls="icon-search" style="line-height:16px;">查询</a>
+			<input type="button" class="button" value="清空"/> 
+	</div>
+	<div>
+		<table id="depreciationRecorddg"></table>
+	</div>
+</div>

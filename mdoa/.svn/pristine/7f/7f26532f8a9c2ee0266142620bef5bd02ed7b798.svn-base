@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mdoa.admin.dao.MessageDao">
+	<!-- 增加一条系统消息 -->
+	<insert id="addSystemMessage" parameterType="com.mdoa.admin.model.Message">
+		INSERT INTO user_system_message(
+			message_id,
+			user_id,
+			message,
+			send_user_id,
+			send_user_name,
+			send_time,
+			read_flag,
+			alive_flag
+		)VALUE(
+			UUID(),
+			#{userId},
+			#{message},
+			#{sendUserId},
+			#{sendUserName},
+			NOW(),
+			'1',
+			'1'
+		)	
+	</insert>
+	<!-- 更改消息为已读 -->
+	<update id="updateMessageRead" parameterType="com.mdoa.admin.model.Message">
+		UPDATE user_system_message
+		SET
+			read_time = NOW(),
+			read_flag = '0'
+		WHERE	
+			message_id = #{messageId}
+	</update>
+	<!-- 查询消息 -->
+	<select id="selectMessageByUser" parameterType="com.mdoa.admin.model.Message" resultType="com.mdoa.admin.model.Message">
+		SELECT 
+			message_id AS messageId,
+			user_id AS userId,
+			message AS message,
+			send_user_id AS sendUserId,
+			send_user_name AS senduserName,
+			read_time AS readTimeStr,
+			send_time AS sendTimeStr,
+			read_flag AS readFlag
+		<where>
+			alive_flag = '1'
+			<if test="userId != null and userId != '' ">
+			AND user_id = #{userId}</if>
+			<if test="sendUserName != null and sendUserName != ''">
+			AND send_user_name LIKE (${sendUserName})</if>
+			<if test="readFlag != null and readFlag != ''">
+			AND read_flag = #{readFlag}</if>
+			<if test="messageId != null and messageId != ''">
+			AND message_id = #{messageId}</if>
+		</where>		
+	</select>
+</mapper>

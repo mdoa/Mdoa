@@ -1,0 +1,823 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<!-- 报表相关Mapper -->
+<mapper namespace="com.mdoa.repertory.dao.ReportFormsDao">
+
+
+	<!-- 查询所有部门的部门ID -->
+	<select id="queryAllReDepartment" resultType="com.mdoa.repertory.bo.AmountQueryForm">
+		SELECT
+			department_id AS departmentId
+		FROM
+			repertory_department
+	</select>
+
+	<!-- 查询部门领用各物品类的总金额 -->
+	<select id="selectAmountByDepartmentId" parameterType="java.lang.String" resultType="com.mdoa.repertory.bo.AmountQueryForm">
+		SELECT
+			SUM(d.tax_amount) AS sum,
+			d.goods_type_name AS goodsTypeName,
+			d.department_name AS departmentName
+		FROM
+			(SELECT
+			c.goods_type_name,
+			a.tax_amount,
+			c.goods_type_id,
+			e.department_name	
+		FROM
+			repertory_out_record a,
+			repertory_goods b,
+			repertory_goods_type c,
+			repertory_department e
+		WHERE
+			a.goods_id = b.goods_id
+			AND b.goods_type_id = c.goods_type_id
+			AND a.alive_flag = '1'
+			AND e.alive_flag = '1'
+			AND e.department_id = a.get_department_id
+			AND a.get_department_id = #{departmentId}
+			) AS d
+		GROUP BY
+			d.goods_type_id	
+			
+	</select>
+	
+
+	<!-- 获取价格走势数据 -->
+	<select id="getPriceTrendData" parameterType="com.mdoa.repertory.bo.GoodsPriceForm" resultType="com.mdoa.repertory.bo.GoodsPriceForm">
+		SELECT
+			weighted_aver_price AS weightedAverPrice,
+			month_balance_time AS monthBalanceTime
+		FROM
+			repertory_goods_month_balance
+		WHERE
+			goods_id = #{goodsId}
+			AND alive_flag = '1'
+			AND month_balance_time BETWEEN DATE_ADD(NOW(),INTERVAL -1 YEAR) AND NOW()
+		ORDER BY 
+			month_balance_time 
+		
+	</select>
+	
+	<!-- 根据条件查询物品领用报表数据 -->
+	<select id="findGoodsReportByCondition" parameterType="java.util.Map" resultType="com.mdoa.repertory.model.GoodsReportForms">
+		SELECT
+			a.goods_type_id AS goodsTypeId,
+			a.goods_type_name AS goodsTypeName,
+			c.get_department_id AS departmentId,
+			c.get_department_name AS departmentName,
+			SUM(c.tax_amount) AS taxAmount
+		FROM
+			repertory_goods_type a,
+			repertory_goods b,
+			repertory_out_record c
+		WHERE
+			a.alive_flag = '1'
+		AND b.alive_flag = '1'
+		AND c.alive_flag = '1'
+		<if test="goodsTypeIds != null and goodsTypeIds != '' and goodsTypeIds != null and goodsTypeIds != ''">
+			AND a.goods_type_id IN (
+				${goodsTypeIds}
+			)
+		</if>
+		<if test="goodsTypeUrls != null and goodsTypeUrls != '' and goodsTypeUrls != null and goodsTypeUrls != ''">
+			AND a.goods_type_url IN (
+				${goodsTypeUrls}
+			)
+		</if>
+		AND b.goods_type_url LIKE CONCAT(a.goods_type_url, '%')
+		AND b.goods_id = c.goods_id
+		<if test="departmentIds != null and departmentIds != ''">
+			AND c.get_department_id IN (
+				${departmentIds}
+			)
+		</if>
+		<if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
+			AND c.out_time BETWEEN '${startTime}'
+			AND '${endTime}'
+		</if>
+		GROUP BY
+			a.goods_type_id,
+			c.get_department_id
+	</select>
+	 
+	 <!-- 查询物品月结报表汇总 -->
+	 <select id="findSumGoodsMonthBalance" parameterType="com.mdoa.repertory.bo.GoodsMonthBalanceForm" resultType="com.mdoa.repertory.model.RepertoryGoodsMonthBalance">
+	 	SELECT
+			SUM(last_balance_number) AS lastBalanceNumber,
+			SUM(last_balance_amount) AS lastBalanceAmount,
+			SUM(current_balance_number) AS currentBalanceNumber,
+			SUM(current_balance_amount) AS currentBalanceAmount,
+			SUM(current_out_number) AS currentOutNumber,
+			SUM(current_out_amount) AS currentOutAmount,
+			SUM(current_in_number) AS currentInNumber,
+			SUM(current_in_amount) AS currentInAmount
+		FROM
+			repertory_goods_month_balance
+		WHERE
+			alive_flag = '1'
+			<if test="goodsId != null and goodsId != ''">
+				AND goods_id = '${goodsId}'
+			</if>
+			<if test="goodsName != null and goodsName != ''">
+				AND goods_name LIKE ${goodsName}
+			</if>
+			<if test="monthBalanceTimeStr != null and monthBalanceTimeStr != ''">
+				AND DATE_FORMAT(month_balance_time,'%Y-%m-%d') = '${monthBalanceTimeStr}'
+			</if>
+	 </select>
+	 
+	<!-- 根据条件查询物品月结报表数据 -->
+	<select id="findGoodsMonthBalanceByCondition" parameterType="com.mdoa.repertory.bo.GoodsMonthBalanceForm" resultType="com.mdoa.repertory.model.RepertoryGoodsMonthBalance">
+		SELECT
+			goods_id AS goodsId,
+			goods_name AS goodsName,
+			month_balance_time AS monthBalanceTime,
+			start_time AS startTime,
+			end_time AS endTime,
+			last_balance_number AS lastBalanceNumber,
+			last_balance_amount AS lastBalanceAmount,
+			current_balance_number AS currentBalanceNumber,
+			current_balance_amount AS currentBalanceAmount,
+			current_out_number AS currentOutNumber,
+			current_out_amount AS currentOutAmount,
+			current_in_number AS currentInNumber,
+			current_in_amount AS currentInAmount,
+			create_time AS createTime,
+			create_user_id AS createUserId,
+			create_user_name AS createUserName,
+			update_time AS updateTime,
+			update_user_id AS updateUserId,
+			update_user_name AS updateUserName,
+			alive_flag AS aliveFlag
+		FROM
+			repertory_goods_month_balance
+		WHERE
+			alive_flag = '1'
+			<if test="goodsId != null and goodsId != ''">
+				AND goods_id = '${goodsId}'
+			</if>
+			<if test="goodsName != null and goodsName != ''">
+				AND goods_name LIKE ${goodsName}
+			</if>
+			<if test="monthBalanceTimeStr != null and monthBalanceTimeStr != ''">
+				AND DATE_FORMAT(month_balance_time,'%Y-%m-%d') = '${monthBalanceTimeStr}'
+			</if>
+		ORDER BY
+			month_balance_time DESC
+	</select>
+	
+	<!-- 插入月结报表数据 -->
+	<insert id="insertMonthBalanceByBatch" parameterType="com.mdoa.repertory.model.RepertoryGoodsMonthBalance" >
+		INSERT INTO repertory_goods_month_balance
+		(
+			goods_month_balance_id,
+			goods_id,
+			goods_name,
+			goods_size,
+			month_balance_time,
+			start_time,
+			end_time,
+			last_balance_number,
+			last_balance_amount,
+			current_balance_number,
+			current_balance_amount,
+			current_out_number,
+			current_out_amount,
+			current_in_number,
+			current_in_amount,
+			weighted_aver_price,
+			create_time,
+			create_user_id,
+			create_user_name,
+			alive_flag
+		)
+		VALUES
+		<foreach collection="list" item="monthBalance" separator=",">
+			(
+				UUID(),
+				#{monthBalance.goodsId},
+				#{monthBalance.goodsName},
+				#{monthBalance.goodsSize},
+				#{monthBalance.endTime},
+				#{monthBalance.startTime},
+				#{monthBalance.endTime},
+				#{monthBalance.lastBalanceNumber},
+				#{monthBalance.lastBalanceAmount},
+				#{monthBalance.currentBalanceNumber},
+				#{monthBalance.currentBalanceAmount},
+				#{monthBalance.currentOutNumber},
+				#{monthBalance.currentOutAmount},
+				#{monthBalance.currentInNumber},
+				#{monthBalance.currentInAmount},
+				#{monthBalance.weightedAverPrice},
+				NOW(),
+				#{monthBalance.createUserId},
+				#{monthBalance.createUserName},
+				'1'
+			)
+		</foreach>
+	</insert>
+	
+	<!-- 根据条件统计月结报表数据 -->
+	<select id="countGoodsMonthBalance" parameterType="com.mdoa.repertory.bo.GoodsMonthBalanceForm" resultType="com.mdoa.repertory.model.RepertoryGoodsMonthBalance">
+		SELECT
+			a.goods_id AS goodsId,
+			a.goods_name AS goodsName,
+			a.goods_size AS goodsSize,
+			STR_TO_DATE(
+					#{startTime},
+					'%Y-%m-%d'
+				) AS startTime,
+			STR_TO_DATE(
+					#{endTime},
+					'%Y-%m-%d'
+				) AS endTime,
+			#{userId} AS createUserId,
+			#{userName} AS createUserName,
+			IFNULL(b.in_money, 0) / b.in_number AS weightedAverPrice,
+			IFNULL(a.moving_aver_price,0) AS movingAverPrice,
+			IFNULL(d.current_balance_number,0) AS lastBalanceNumber,
+			IFNULL(d.current_balance_amount,0) AS lastBalanceAmount,
+			IFNULL(b.in_number, 0) AS currentInNumber,
+			IFNULL(b.in_money, 0) AS currentInAmount,
+			IFNULL(c.out_number, 0) AS currentOutNumber,
+			IFNULL(c.out_money, 0) AS currentOutAmount,
+			IFNULL(d.current_balance_number,0) + IFNULL(b.in_number, 0) - IFNULL(c.out_number, 0) AS currentBalanceNumber,
+			IFNULL(d.current_balance_amount,0) + IFNULL(b.in_money, 0) - IFNULL(c.out_money, 0) AS currentBalanceAmount
+		FROM
+			repertory_goods a
+		LEFT JOIN (
+			SELECT
+				goods_id,
+				SUM(in_number) AS in_number,
+				SUM(tax_amount) AS in_money
+			FROM
+				repertory_in_record
+			WHERE
+				in_time > #{startTime}
+			AND in_time &lt;= #{endTime}
+			AND alive_flag = '1'
+			GROUP BY
+				goods_id
+		) b ON (a.goods_id = b.goods_id)
+		LEFT JOIN (
+			SELECT
+				goods_id,
+				SUM(out_number) AS out_number,
+				SUM(tax_amount) AS out_money
+			FROM
+				repertory_out_record 
+			WHERE
+				out_time > #{startTime}
+			AND out_time &lt;= #{endTime}
+			AND alive_flag = '1'
+			GROUP BY
+				goods_id
+		) c ON (a.goods_id = c.goods_id)
+		LEFT JOIN (
+			SELECT
+				goods_id,
+				current_balance_number,
+				current_balance_amount
+			FROM
+				repertory_goods_month_balance
+			WHERE
+				DATE_FORMAT(
+					month_balance_time,
+					'%Y-%m-%d'
+				) = #{lastBalanceTime}
+			AND alive_flag = '1'
+		) d ON (a.goods_id = d.goods_id)
+		WHERE 
+			a.alive_flag = '1'
+	</select>
+	
+	<!-- 根据条件查询物品分类月结报表数据 -->
+	<select id="findTypeMonthBalanceByCondition" parameterType="com.mdoa.repertory.bo.TypeMonthBalanceForm" resultType="com.mdoa.repertory.bo.TypeMonthBalanceForm">
+		SELECT
+			a.goods_type_id AS goodsTypeId,
+			a.goods_type_url AS goodsTypeUrl,
+			a.goods_type_name AS goodsTypeName,
+			c.month_balance_time AS monthBalanceTime,
+			c.start_time AS startTime,
+			c.end_time AS endTime,
+			SUM(c.last_balance_amount) AS lastBalanceAmount,
+			SUM(c.current_out_amount) AS currentOutAmount,
+			SUM(c.current_in_amount) AS currentInAmount,
+			SUM(c.current_balance_amount) AS currentBalanceAmount
+		FROM
+			repertory_goods_type a,
+			repertory_goods b,
+			repertory_goods_month_balance c
+		WHERE
+			a.alive_flag = '1'
+		AND b.alive_flag = '1'
+		AND c.alive_flag = '1'
+		<if test="goodsTypeUrls != null and goodsTypeUrls != ''">
+			AND a.goods_type_url = ${goodsTypeUrls}
+		</if>
+		AND b.goods_type_url LIKE CONCAT(a.goods_type_url, '%')
+		AND c.goods_id = b.goods_id
+		<if test="monthBalanceTimeStr != null and monthBalanceTimeStr != ''">
+			AND DATE_FORMAT(c.month_balance_time,'%Y-%m-%d') = #{monthBalanceTimeStr}
+		</if>
+		GROUP BY
+			a.goods_type_id,c.month_balance_time
+		ORDER BY 
+			c.month_balance_time DESC
+	</select>
+	
+	<!-- 根据条件查询分类物品领用入库走势图数据 -->
+	<select id="findTypeYearBalance" parameterType="java.lang.String" resultType="com.mdoa.repertory.bo.TypeMonthBalanceForm">
+		SELECT
+			a.goods_type_id AS goodsTypeId,
+			a.goods_type_url AS goodsTypeUrl,
+			a.goods_type_name AS goodsTypeName,
+			c.month_balance_time AS monthBalanceTime,
+			c.start_time AS startTime,
+			c.end_time AS endTime,
+			SUM(c.last_balance_amount) AS lastBalanceAmount,
+			SUM(c.current_out_amount) AS currentOutAmount,
+			SUM(c.current_in_amount) AS currentInAmount,
+			SUM(c.current_balance_amount) AS currentBalanceAmount
+		FROM
+			repertory_goods_type a,
+			repertory_goods b,
+			repertory_goods_month_balance c
+		WHERE
+			b.alive_flag = '1'
+		AND c.alive_flag = '1'
+		AND a.goods_type_url = #{goodsTypeUrl}
+		AND b.goods_type_url LIKE CONCAT(a.goods_type_url, '%')
+		AND c.goods_id = b.goods_id
+		AND month_balance_time BETWEEN DATE_SUB(NOW(),INTERVAL 1 YEAR) AND NOW()
+		GROUP BY
+			a.goods_type_id,c.month_balance_time
+		ORDER BY 
+			c.month_balance_time DESC
+	</select>
+	
+	<!-- 查询月结日期 -->
+	<select id="findMonthBalanceTime" resultType="java.lang.String">
+		SELECT
+			DATE_FORMAT(month_balance_time,'%Y-%m-%d')
+		FROM
+			repertory_month_balance_time
+		ORDER BY 
+			month_balance_time DESC
+	</select>
+	
+	<!-- 插入月结日期 -->
+	<insert id="insertMonthBalanceTime" parameterType="java.lang.String">
+		INSERT INTO repertory_month_balance_time
+		(
+			month_balance_time
+		)
+		VALUES
+		(
+			#{monthBalanceTime}
+		)
+	</insert>
+	
+	<!-- 查询最后月结日期 -->
+	<select id="findLastMonthBalanceTime" resultType="java.lang.String">
+		SELECT
+			month_balance_time
+		FROM
+			repertory_month_balance_time
+		ORDER BY 
+			month_balance_time DESC
+		LIMIT 1;
+	</select>
+	
+	
+	<!-- 计算动态报表汇总数据 -->
+	<select id="findSumDynamicBalance" parameterType="com.mdoa.repertory.bo.DynamicBalanceForm" resultType="com.mdoa.repertory.model.RepertoryGoodsMonthBalance">
+		SELECT
+			SUM(a.total_number - IFNULL(b.in_number,0) + IFNULL(c.out_number,0) - IFNULL(d.in_number,0) + IFNULL(e.out_number,0)) AS lastBalanceNumber,
+			SUM(a.total_number * a.moving_aver_price - IFNULL(b.in_money,0) + IFNULL(c.out_money,0) - IFNULL(d.in_money,0) + IFNULL(e.out_money,0)) AS lastBalanceAmount,
+			SUM(IFNULL(b.in_number,0) - IFNULL(d.in_number,0)) AS currentInNumber,
+			SUM(IFNULL(b.in_money,0) - IFNULL(d.in_money,0)) AS currentInAmount,
+			SUM(IFNULL(c.out_number,0) + IFNULL(e.out_number,0)) AS currentOutNumber,
+			SUM(IFNULL(c.out_money,0) + IFNULL(e.out_money,0)) AS currentOutAmount,
+			SUM(a.total_number - IFNULL(d.in_number,0) + IFNULL(e.out_number,0)) AS currentBalanceNumber,
+			SUM(a.total_number * a.moving_aver_price - IFNULL(d.in_money,0) + IFNULL(e.out_money,0)) AS currentBalanceAmount
+		FROM
+			repertory_goods a
+		LEFT JOIN (
+				SELECT
+					goods_id,
+					SUM(in_number) AS in_number,
+					SUM(tax_amount) AS in_money
+				FROM
+					repertory_in_record
+				WHERE
+					alive_flag = '1'
+					<if test="startTime != null and startTime != ''">
+						AND in_time > #{startTime}
+					</if>
+					<if test="endTime != null and endTime != ''">
+						AND in_time &lt;= #{endTime}
+					</if>
+				GROUP BY
+					goods_id
+			) b 
+		ON (a.goods_id = b.goods_id)
+		LEFT JOIN(
+			SELECT
+				goods_id,
+				SUM(out_number) AS out_number,
+				SUM(tax_amount) AS out_money
+			FROM
+				repertory_out_record
+			WHERE
+				alive_flag = '1'
+				<if test="startTime != null and startTime != ''">
+					AND out_time > #{startTime}
+				</if>
+				<if test="endTime != null and endTime != ''">
+					AND out_time &lt;= #{endTime}
+				</if>
+			GROUP BY
+				goods_id
+		) c
+		ON(a.goods_id = c.goods_id)
+		LEFT JOIN (
+			SELECT
+				goods_id,
+				SUM(in_number) AS in_number,
+				SUM(tax_amount) AS in_money
+			FROM
+				repertory_in_record
+			WHERE
+				alive_flag = '1'
+			AND	in_time &lt;= NOW()
+				<if test="endTime != null and endTime != ''">
+					AND in_time > #{endTime}
+				</if>
+			GROUP BY
+				goods_id
+		) d
+		ON (a.goods_id = d.goods_id)
+		LEFT JOIN(
+			SELECT
+				goods_id,
+				SUM(out_number) AS out_number,
+				SUM(tax_amount) AS out_money
+			FROM
+				repertory_out_record
+			WHERE
+				alive_flag = '1'
+			AND	out_time &lt;= NOW()
+				<if test="endTime != null and endTime != ''">
+					AND out_time > #{endTime}
+				</if>
+			GROUP BY
+				goods_id
+		) e
+		ON(a.goods_id = e.goods_id)
+		WHERE 
+			1 = 1
+			<if test="goodsTypeUrls != null and goodsTypeUrls != ''">
+				AND a.goods_type_id IN(
+					SELECT 
+						g.goods_type_id
+					FROM
+						repertory_goods_type f,
+						repertory_goods_type g
+					WHERE
+						g.alive_flag = '1'
+					AND f.goods_type_url IN (${goodsTypeUrls})
+					AND g.goods_type_url LIKE CONCAT(f.goods_type_url, '%')
+				)
+			</if>
+			<if test="goodsSize != null and goodsSize != ''">
+				AND a.goods_size = #{goodsSize}
+			</if>
+			<if test="goodsName != null and goodsName != ''">
+				AND a.goodsName LIKE
+			</if>
+	</select>
+	
+	<!-- 计算动态报表数据 -->
+	<select id="countDynamicBalance" parameterType="com.mdoa.repertory.bo.DynamicBalanceForm" resultType="com.mdoa.repertory.model.RepertoryGoodsMonthBalance">
+		SELECT
+			a.goods_id AS goodsId,
+			a.goods_name AS goodsName,
+			a.goods_size AS goodsSize,
+			IFNULL(b.in_money,0) / b.in_number AS weightedAverPrice,
+			a.moving_aver_price AS movingAverPrice,
+			a.total_number - IFNULL(b.in_number,0) + IFNULL(c.out_number,0) - IFNULL(d.in_number,0) + IFNULL(e.out_number,0) AS lastBalanceNumber,
+			a.total_number * a.moving_aver_price - IFNULL(b.in_money,0) + IFNULL(c.out_money,0) - IFNULL(d.in_money,0) + IFNULL(e.out_money,0) AS lastBalanceAmount,
+			IFNULL(b.in_number,0) - IFNULL(d.in_number,0) AS currentInNumber,
+			IFNULL(b.in_money,0) - IFNULL(d.in_money,0) AS currentInAmount,
+			IFNULL(c.out_number,0) + IFNULL(e.out_number,0) AS currentOutNumber,
+			IFNULL(c.out_money,0) + IFNULL(e.out_money,0) AS currentOutAmount,
+			a.total_number - IFNULL(d.in_number,0) + IFNULL(e.out_number,0) AS currentBalanceNumber,
+			a.total_number * a.moving_aver_price - IFNULL(d.in_money,0) + IFNULL(e.out_money,0) AS currentBalanceAmount
+		FROM
+			repertory_goods a
+		LEFT JOIN (
+				SELECT
+					goods_id,
+					SUM(in_number) AS in_number,
+					SUM(tax_amount) AS in_money
+				FROM
+					repertory_in_record
+				WHERE
+					alive_flag = '1'
+					<if test="startTime != null and startTime != ''">
+						AND in_time > #{startTime}
+					</if>
+					<if test="endTime != null and endTime != ''">
+						AND in_time &lt;= #{endTime}
+					</if>
+				GROUP BY
+					goods_id
+			) b 
+		ON (a.goods_id = b.goods_id)
+		LEFT JOIN(
+			SELECT
+				goods_id,
+				SUM(out_number) AS out_number,
+				SUM(tax_amount) AS out_money
+			FROM
+				repertory_out_record
+			WHERE
+				alive_flag = '1'
+				<if test="startTime != null and startTime != ''">
+					AND out_time > #{startTime}
+				</if>
+				<if test="endTime != null and endTime != ''">
+					AND out_time &lt;= #{endTime}
+				</if>
+			GROUP BY
+				goods_id
+		) c
+		ON(a.goods_id = c.goods_id)
+		LEFT JOIN (
+			SELECT
+				goods_id,
+				SUM(in_number) AS in_number,
+				SUM(tax_amount) AS in_money
+			FROM
+				repertory_in_record
+			WHERE
+				alive_flag = '1'
+			AND	in_time &lt;= NOW()
+				<if test="endTime != null and endTime != ''">
+					AND in_time > #{endTime}
+				</if>
+			GROUP BY
+				goods_id
+		) d
+		ON (a.goods_id = d.goods_id)
+		LEFT JOIN(
+			SELECT
+				goods_id,
+				SUM(out_number) AS out_number,
+				SUM(tax_amount) AS out_money
+			FROM
+				repertory_out_record
+			WHERE
+				alive_flag = '1'
+			AND	out_time &lt;= NOW()
+				<if test="endTime != null and endTime != ''">
+					AND out_time > #{endTime}
+				</if>
+			GROUP BY
+				goods_id
+		) e
+		ON(a.goods_id = e.goods_id)
+		WHERE 
+			1 = 1
+			<if test="goodsTypeUrls != null and goodsTypeUrls != ''">
+				AND a.goods_type_id IN(
+					SELECT 
+						g.goods_type_id
+					FROM
+						repertory_goods_type f,
+						repertory_goods_type g
+					WHERE
+						g.alive_flag = '1'
+					AND f.goods_type_url IN (${goodsTypeUrls})
+					AND g.goods_type_url LIKE CONCAT(f.goods_type_url, '%')
+				)
+			</if>
+			<if test="goodsSize != null and goodsSize != ''">
+				AND a.goods_size = #{goodsSize}
+			</if>
+			<if test="goodsName != null and goodsName != ''">
+				AND a.goodsName LIKE
+			</if>
+	</select>
+	
+	<!-- 查询部门  用途  物品领用信息 -->
+	<select id="goodsDeptGetUseForm" resultType="com.mdoa.repertory.model.crosstab.TypeUseDataModel" 
+		parameterType="com.mdoa.repertory.form.DepartmentUseDataForm">
+		SELECT
+			SUM(c.tax_amount) AS amount,
+			b.goods_type_name AS goodsTypeName,
+			b.goods_type_id AS goodsTypeId,
+			c.get_department_id AS departmentId,
+			c.get_department_name AS departmentName,
+			c.use_type_key AS useTypeKey,
+			c.use_type_value AS useTypeValue
+		FROM
+			repertory_goods a
+		RIGHT JOIN repertory_goods_type b ON (
+			b.goods_type_id = a.goods_type_id
+			<if test="goodsTypeIds != null and goodsTypeIds !=''">
+				AND b.goods_type_id IN (${goodsTypeIds})
+			</if>
+		)
+		INNER JOIN (
+			SELECT
+				a.get_department_id,
+				b.department_name AS get_department_name,
+				a.use_type AS use_type_key,
+				a.tax_amount,
+				a.goods_id,
+				a.out_time,
+				c.option_value AS use_type_value
+			FROM
+				repertory_out_record a
+			LEFT JOIN repertory_department b
+			ON (a.get_department_id = b.department_id)
+			LEFT JOIN dictionary c
+			ON (c.select_key = 'use_type' AND a.use_type = c.option_key)
+			WHERE 
+				a.alive_flag = '1'
+		) c 
+		ON (
+			a.goods_id = c.goods_id
+			<if test="startTime != null and startTime != ''">
+				AND c.out_time &gt;= STR_TO_DATE(#{startTime},'%Y-%m-%d')
+			</if>
+			<if test="endTime != null and endTime !=''">
+				AND c.out_time &lt;= STR_TO_DATE(#{endTime},'%Y-%m-%d')
+			</if>
+			<if test="departments != null and departments != ''">
+				AND	c.get_department_id in (${departments})
+			</if>
+		)
+		GROUP BY
+			departmentId,
+			goodsTypeId,
+			useTypeKey
+		ORDER BY goodsTypeName
+	</select>
+	
+	<!-- 查询部门物品领用信息 -->
+	<select id="goodsDeptGetForm" resultType="com.mdoa.repertory.model.crosstab.TypeUseDataModel" 
+		parameterType="com.mdoa.repertory.form.DepartmentUseDataForm">
+		SELECT
+			SUM(c.tax_amount) AS amount,
+			b.goods_type_name AS goodsTypeName,
+			b.goods_type_id AS goodsTypeId,
+			c.get_department_id AS departmentId,
+			c.get_department_name AS departmentName
+		FROM
+			repertory_goods a
+		RIGHT JOIN repertory_goods_type b ON (
+			b.goods_type_id = a.goods_type_id
+			<if test="goodsTypeIds != null and goodsTypeIds !=''">
+				AND b.goods_type_id IN (${goodsTypeIds})
+			</if>
+		)
+		INNER JOIN (
+			SELECT
+				a.get_department_id,
+				b.department_name AS get_department_name,
+				a.use_type AS use_type_key,
+				a.tax_amount,
+				a.goods_id,
+				a.out_time
+			FROM
+				repertory_out_record a
+			LEFT JOIN repertory_department b
+			ON (a.get_department_id = b.department_id)
+			WHERE 
+				a.alive_flag = '1'
+		) c 
+		ON (
+			a.goods_id = c.goods_id
+			<if test="startTime != null and startTime != ''">
+				AND c.out_time &gt;= STR_TO_DATE(#{startTime},'%Y-%m-%d')
+			</if>
+			<if test="endTime != null and endTime !=''">
+				AND c.out_time &lt;= STR_TO_DATE(#{endTime},'%Y-%m-%d')
+			</if>
+			<if test="departments != null and departments != ''">
+				AND	c.get_department_id in (${departments})
+			</if>
+		)
+		GROUP BY
+			departmentId,
+			goodsTypeId
+		ORDER BY goodsTypeName
+	</select>
+	
+	<!-- 查询物品领用信息分类统计 -->
+	<select id="goodsGetForm" resultType="com.mdoa.repertory.model.crosstab.TypeUseDataModel" 
+		parameterType="com.mdoa.repertory.form.DepartmentUseDataForm">
+		SELECT
+			SUM(c.tax_amount) AS amount,
+			b.goods_type_name AS goodsTypeName,
+			b.goods_type_id AS goodsTypeId
+		FROM
+			repertory_goods a
+		RIGHT JOIN repertory_goods_type b ON (
+			b.goods_type_id = a.goods_type_id
+			<if test="goodsTypeIds != null and goodsTypeIds !=''">
+				AND b.goods_type_id IN (${goodsTypeIds})
+			</if>
+		)
+		INNER JOIN (
+			SELECT
+				a.get_department_id,
+				a.use_type AS use_type_key,
+				a.tax_amount,
+				a.goods_id,
+				a.out_time
+			FROM
+				repertory_out_record a
+			WHERE 
+				a.alive_flag = '1'
+		) c 
+		ON (
+			a.goods_id = c.goods_id
+			<if test="startTime != null and startTime != ''">
+				AND c.out_time &gt;= STR_TO_DATE(#{startTime},'%Y-%m-%d')
+			</if>
+			<if test="endTime != null and endTime !=''">
+				AND c.out_time &lt;= STR_TO_DATE(#{endTime},'%Y-%m-%d')
+			</if>
+			<if test="departments != null and departments != ''">
+				AND	c.get_department_id in (${departments})
+			</if>
+		)
+		GROUP BY
+			goodsTypeId
+		ORDER BY goodsTypeName
+	</select>
+	
+	<!-- 获取查询物品领用报表所需要的部门信息 -->
+	<select id="getDataDept" parameterType="com.mdoa.repertory.form.DepartmentUseDataForm" 
+		resultType="com.mdoa.repertory.model.crosstab.DepartmentModel">
+		SELECT
+			department_id AS departmentId,
+			department_name AS departmentName
+		FROM
+			repertory_department
+		WHERE
+			alive_flag = '1'
+		<if test="departments != null and departments != ''">
+			AND department_id in (#{departments})
+		</if>
+	</select>
+	
+	<!-- 获取查询物品领用报表所需要的 部门加用途  -->
+	<select id="getDeptUse" parameterType="com.mdoa.repertory.form.DepartmentUseDataForm" 
+		resultType="com.mdoa.repertory.model.crosstab.DepartmentUseModel" >
+		SELECT
+			a.get_department_id AS departmentId,
+			a.get_department_name AS departmentName,
+			a.use_type AS useTypeKey,
+			b.option_value AS useTypeValue
+		FROM
+			repertory_out_record a
+		LEFT JOIN
+			dictionary b
+		ON(
+			b.select_key = 'use_type' 
+			AND b.option_key = a.use_type)
+		WHERE
+			a.alive_flag = '1'
+			<if test="startTime != null and startTime != ''">
+				AND a.out_time &gt;= STR_TO_DATE(#{startTime},'%Y-%m-%d')
+			</if>
+			<if test="endTime != null and endTime !=''">
+				AND a.out_time &lt;= STR_TO_DATE(#{endTime},'%Y-%m-%d')
+			</if>
+		GROUP BY 
+			a.get_department_id , a.use_type
+		ORDER BY 
+			a.get_department_name
+	</select>
+	
+	<!-- 获取物品的第一级大类别 -->
+	<select id="getGoodsFirstType" resultType="com.mdoa.repertory.model.RepertoryGoodsType">
+		SELECT
+			goods_type_id AS goodsTypeId,
+			goods_type_name AS goodsTypeName
+		FROM
+			repertory_goods_type
+		WHERE
+			parent_type_id = '0'
+			AND alive_flag = '1'
+		ORDER BY 
+			goods_type_name
+	</select>
+</mapper>

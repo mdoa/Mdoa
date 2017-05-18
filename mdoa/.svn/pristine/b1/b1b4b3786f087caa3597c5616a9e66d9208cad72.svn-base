@@ -1,0 +1,16 @@
+ <div id="myCheckInfo">
+ 	<div class="Calendar"></div>
+ 	
+ 	<div class="myCheckInfoDetail">
+ 		<div>
+ 			<h2>2017年05月02日</h2>
+ 			<span>的考勤信息</span>
+ 		</div>
+ 		<p>当日考勤状态：正常打卡</p>	
+ 		<ul>
+ 			<li>早上几点几时正常打卡</li>
+ 			<li>傍晚几点几时正常打卡</li>
+ 		</ul>
+ 	</div>
+ 	
+ </div>

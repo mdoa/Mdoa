@@ -1,0 +1,167 @@
+<div id="train" title="培训信息">
+	
+	<!-- 数据网格主体页面 -->
+	<div class="main">
+		<!-- 上方添加按钮 -->
+		<div class="maintop">
+		</div>
+		<!-- 上方筛选栏 -->
+		<div class="invitetop">
+			请输入查询条件： 申请人：<input type="text" name="createUserName">
+			 培训名称：<input type="text" name="trainName"> 
+			 <a class="easyui-linkbutton query" iconCls="icon-search" style="line-height:16px;">查询</a>
+			<input type="button" value="清空">
+		</div>
+		<!-- 主体数据网格 -->
+		<div>
+			<table class="traindg"></table>
+		</div>
+	</div>
+	
+	<!-- 培训流程记录页面 -->
+	<div class="flow" style="display:none">
+		<div class="flowbar">
+			<input type="button" value="返回" class="back" /> 
+		</div>
+		<div class="flowplan">
+		
+			<p class="jiachu">培训名：</p>
+			<p><input type="text" class="trainName" value="" /></p>
+			
+			<p class="jiachu">发起人：</p>
+			<p><input type="text" class="createUserName" value="" /></p>
+			
+			<p class="jiachu">发起时间：</p>
+			<p><input type="text" class="createTime" value="" /></p>
+			
+			<p class="jiachu">培训开始时间：</p>
+			<p><input type="text" class="startTime" value="" /></p>
+			
+			<p class="jiachu">培训结束时间：</p>
+			<p><input type="text" class="endTime" value="" /></p>
+			
+			<p class="jiachu">审批状态：</p>
+			<p><input type="text" class="examineStatus" value="" /></p>
+			
+			<p class="jiachu">培训描述：</p>
+			<div class="applyDescribe detail"></div>
+			
+			<p class="jiachu">发起理由：</p>
+			<div class="applyDescribe reason"></div>
+		</div>
+		<div class="showView">
+		</div>
+	</div>
+	
+	<div  class="popups" style="text-align: left;">
+		<div class="popup addTrainPlan" style="height: 270px;width: 380px;">
+			<h3>发起培训信息</h3>
+			<span class="turnoff"></span>
+			<div class="popuparea" style="padding: 10px 26px;">
+				<table style="text-align: right;width: 300px;">
+					<tr>
+						<td style="width: 100px">培训计划名：</td>
+						<td style="width: 200px;"><input type="text" style="width:192px;" name="trainName"/></td>
+					</tr>
+					<tr>
+						<td>开始时间：</td>
+						<td>
+							<input style="width:194px;" name="startTime" class="jqdate date_picker beginTime" type="text" 
+								onblur="testDate(this)" onclick="testShow(this);"/>
+						</td>
+					</tr>
+					<tr>
+						<td>结束时间：</td>
+						<td>
+							<input class="jqdate date_picker endTime" name="endTime" style="width: 194px"
+								type="text" onblur="testDate(this)" onclick="testShow(this);">
+						</td>
+					</tr>
+					<tr>
+						<td>审批人:</td>
+						<td>
+							<input type="text" style="width:142px;" name="examineUserName" readonly="readonly"/>
+							<input type="button" class="button chooseUser" value="选择"  style="width: 46px"/>
+							<input style="display: none" name="examineUserId"/>
+						</td>
+					</tr>
+					<tr>
+						<td>培训原因：</td>
+						<td>
+							<textarea name="trainReason" style="width: 190px"></textarea>
+						</td>
+					</tr>
+					<tr>
+						<td>培训描述：</td>
+						<td>
+							<textarea name="trainDetail" style="width: 190px"></textarea>
+						</td>
+					</tr>
+				</table>
+			</div>
+			<div class="btnarea" style="text-align: center">
+				<input type="button" class="button confirm" value="确定"/>
+				<input type="button" class="button cannel" value="取消" style="margin-left: 20px;"/>
+			</div>
+		</div>
+		
+		<!-- 查看培训详情弹窗 -->
+		<div class="popup selectTrainPlan" style="height: 297px;width: 483px;">
+			<h3>查看培训详情</h3>
+			<span class="turnoff"></span>
+			<div class="popuparea" style="overflow: hidden;">
+				<table style="text-align: right;width: 300px;height:230px;float: left;padding: 8px 8px 8px 0px;border-right: 1px #a3c8f8 solid;">
+					<tr>
+						<td style="width: 85px">培训计划名：</td>
+						<td style="width: 200px;"><input type="text" style="width:192px;" name="trainName"/></td>
+					</tr>
+					<tr>
+						<td>开始时间：</td>
+						<td>
+							<input style="width:194px;" name="startTime" class="jqdate date_picker beginTime" type="text" 
+								readonly="readonly"/>
+						</td>
+					</tr>
+					<tr>
+						<td>结束时间：</td>
+						<td>
+							<input class="jqdate date_picker endTime" name="endTime" style="width: 194px"
+								type="text" readonly>
+						</td>
+					</tr>
+					<tr>
+						<td>审批人：</td>
+						<td>
+							<input type="text" style="width:192px;" name="createUserName"/>
+						</td>
+					</tr>
+					<tr>
+						<td style="padding-bottom: 22px;">培训原因：</td>
+						<td>
+							<textarea name="trainReason" style="width: 190px;"></textarea>
+						</td>
+					</tr>
+					<tr>
+						<td style="padding-bottom: 22px;">培训描述：</td>
+						<td>
+							<textarea name="trainDetail" style="width: 190px;"></textarea>
+						</td>
+					</tr>
+				</table>
+				<div class="right" style="width: 150px;height:230px;padding: 8px; float: right;border-left: 1px #a3c8f8 solid;overflow-y:auto;">
+					<div style="font-weight: 800">
+						培训目标类型：<span style="font-weight: 500;color:red"></span>
+					</div>
+					<div style="margin: 8px 0px;">
+						目标名：
+					</div>
+					<table style="border: 1px #dedede solid;border-collapse: collapse;width: 113px;text-align: center;">
+					</table>
+				</div>
+			</div>
+			<div class="btnarea" style="text-align: center;">
+				<input type="button" class="button cannel" value="关闭"/>
+			</div>
+		</div>
+	</div>
+</div>

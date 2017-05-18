@@ -1,0 +1,93 @@
+<div id="repertoryBatchOut">
+	<div class="outPut">
+		<div class="box">
+			<input type="button" value="添加物品" class="button delArticle" />
+			<input type="button" value="保存" class="button batchOut" />
+		</div>
+	</div>
+	<div class="listBody">
+		<div class="filtCondition">
+			<ul>
+				<li>
+					<span>领用人:</span>
+					<input type="text" name="getUserName"/>
+				</li>
+				<li>
+					<span>制单人:</span>
+					<input type="text" name="peopleName" disabled="disabled"/>
+				</li>
+				<li>
+					<span>出库仓库:</span>
+					<select class="repertoryId"></select>
+				</li>
+				<li>
+					<span>出库时间:</span>
+					<input class="jqdate" type="text" name="outTime" readonly="readonly" onclick="YMDHMS(this);" />
+				</li>
+				<li>
+					<span>出库部门:</span>
+					<select class="getDepartmentName"></select>
+				</li>
+				<li>
+					<span>领用用途:</span>
+					<select class=useType></select>
+				</li>					
+			</ul>			
+		</div>
+		<table border="0" cellspacing="0" cellpadding="0" class="list">
+			<thead>
+				<tr>
+					<th>物品名</th>
+					<th>规格</th>
+					<th>单位</th>
+					<th>仓位现有数量</th>
+					<th>出库仓位</th>
+					<th>出库数量</th>
+					<th>单价</th>
+					<th>领用金额</th>
+					<th>出库备注</th>
+					<th>操作</th>
+				</tr>
+			</thead>
+			<tbody id="waitSubmitIn">
+			</tbody>
+		</table>
+		<div class="rigthH"></div>
+	</div>
+	
+	
+	<div class="popups">
+		<!--添加物品弹窗-->
+		<div class="popup" id="delArticle" style="height:410px;width:718px;z-index:999">
+			<h3>请选择物品(单选)</h3>
+			<span class="turnoff"></span>
+			<div class="popuparea">
+				<div style="width:716px; height:340px;">
+					<div style="float: left;height:338px;width:192px;border:1px #95B8E7 solid;overflow-y:auto;">
+						<div class="title">选择物品类别</div>
+						<div style="height:311px;width:190px" class="articleClumn">
+						
+						</div>
+					</div>
+					<div class="listForm" style="float:right;height:338px;width:515px;border:1px #95B8E7 solid;overflow:auto;">
+						<div class="queryForm">
+							物品名称：<input type="text" class="goodsName"/>
+							物品规格：<input type="text" class="goodsSize"/>
+							<input type="button" class="button query" value="查询" />
+						</div>
+						<div>
+							<table id="findGoodsdg" style="height:338px;">
+							</table>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="btnarea" style="text-align: center">
+				<input type="button" class="button confirm" value="确定"/>
+				<input type="button" class="button cannel" value="取消" style="margin-left: 20px;"/>
+			</div>
+		</div>
+		
+	</div>
+	
+</div>

@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mdoa.repertory.dao.TreeDao">
+
+<!-- 物品类下面是否有物品 -->
+<select id="isGoodsBelowType" parameterType="com.mdoa.repertory.model.RepertoryGoodsType" resultType="com.mdoa.repertory.model.RepertoryGoodsType">
+	SELECT
+		a.goods_id AS goodsId
+	FROM
+		repertory_goods a,
+		repertory_goods_type b
+	WHERE
+		a.alive_flag = '1'
+		AND b.alive_flag = '1'
+		AND b.goods_type_id = a.goods_type_id
+		AND b.goods_type_id = #{goodsTypeId}
+</select>
+ <!-- 获取UUID -->
+ <select id="getuuid" resultType="java.lang.String">
+ 	select uuid() as uuid
+ </select>
+ <!-- 查询符合条件的记录 -->
+ <select id="list" parameterType="java.lang.String" resultType="com.mdoa.repertory.model.TreeModel">  
+     SELECT
+     	goods_type_id AS thisId,
+     	goods_type_url AS id,
+		goods_type_name AS text
+     FROM
+		 repertory_goods_type
+	 WHERE
+	 	 parent_type_id = #{pid}
+	 	 AND alive_flag = '1'
+ </select> 
+ <!-- 添加物 品类 -->
+ <insert id="addRepertoryType">
+ 	INSERT INTO repertory_goods_type(
+ 		goods_type_id,
+		goods_type_name,
+		goods_type_url,
+		parent_type_id,
+		create_time,
+		create_user_id,
+		create_user_name,
+		alive_flag
+ 	)VALUES(
+ 		#{goodsTypeId},
+ 		#{goodsTypeName},
+ 		#{goodsTypeUrl},
+ 		#{parentTypeId},
+ 		NOW(),
+ 		#{createUserId},
+ 		#{createUserName},
+ 		'1'
+ 	)
+ 	
+ </insert>
+ <!-- 根据选择的ID查询其url -->
+ <select id="selectUrlByparentTypeId" parameterType="java.lang.String" resultType="com.mdoa.repertory.model.RepertoryGoodsType">
+ 	SELECT 
+ 		goods_type_url AS goodsTypeUrl,
+ 		parent_type_id AS parentTypeId
+ 	FROM
+ 		repertory_goods_type
+ 	WHERE
+ 		goods_type_id = #{parentTypeId}
+ 		AND alive_flag = '1'
+ </select>
+ <select id="selectUrlByGoodsTypeId" parameterType="java.lang.String" resultType="com.mdoa.repertory.model.RepertoryGoodsType">
+ 	SELECT 
+ 		goods_type_url AS goodsTypeUrl,
+ 		parent_type_id AS parentTypeId
+ 	FROM
+ 		repertory_goods_type
+ 	WHERE
+ 		goods_type_id = #{goodsTypeId}
+ 		AND alive_flag = '1'
+ </select>
+ <!-- 根据父ID删除该ID以及下面的所有物品类 -->
+ <update id="removeRepertoryType" parameterType="com.mdoa.repertory.model.RepertoryGoodsType">
+ 	UPDATE repertory_goods_type
+ 	SET
+ 		alive_flag = '0',
+ 		update_time = NOW(),
+ 		update_user_id = #{updateUserId},
+ 		update_user_name = #{updateUserName}
+ 	WHERE
+ 		goods_type_url LIKE (${goodsTypeUrl})
+ </update>
+ <!-- 根据ID修改相应的物品类Name -->
+ <update id="editRepertoryType" parameterType="com.mdoa.repertory.model.RepertoryGoodsType">
+ 	UPDATE repertory_goods_type
+ 	SET
+ 		goods_type_name = '${goodsTypeName}',
+ 		update_time = NOW(),
+ 		update_user_id = '${updateUserId}',
+ 		update_user_name = '${updateUserName}'
+ 	WHERE
+ 		goods_type_id = '${goodsTypeId}'
+ </update>
+ <!-- 根据ID修改Url(append) -->
+ <update id="updateDragSourceGoodsUrl" parameterType="com.mdoa.repertory.model.DragModel">
+ 	UPDATE repertory_goods_type
+ 	SET
+ 		goods_type_url = #{sourceUrlo},
+ 		parent_type_id = #{targetId},
+ 		update_time = NOW(),
+ 		update_user_id = #{updateUserId},
+ 		update_user_name = #{updateUserName}
+ 	WHERE
+ 		goods_type_id = #{sourceId}
+ </update>
+ <!-- 根据ID修改Url(bottom,top) -->
+ <update id="updateDragSourceGoodsUrlBt" parameterType="com.mdoa.repertory.model.DragModel">
+ 	UPDATE repertory_goods_type
+ 	SET
+ 		goods_type_url = #{sourceUrlo},
+ 		parent_type_id = #{targetParentId},
+ 		update_time = NOW(),
+ 		update_user_id = #{updateUserId},
+ 		update_user_name = #{updateUserName}
+ 	WHERE
+ 		goods_type_id = #{sourceId}
+ </update>
+ <!-- 拖动的时候下面的物品类url全部更改 -->
+ <update id="updateDragLaterUrl" parameterType="com.mdoa.repertory.model.DragModel">
+ 	UPDATE repertory_goods_type
+ 	SET
+ 		goods_type_url = REPLACE(goods_type_url,${previousUrl},${replaceUrl}),
+ 		update_time = NOW(),
+ 		update_user_id = '${updateUserId}',
+ 		update_user_name = '${updateUserName}'
+ 	WHERE
+ 		goods_type_url LIKE (${queryUrl})
+ </update>
+ <!-- 根据货物ID查询货物信息 -->
+ <select id="selectGoodsInformationById" parameterType="java.lang.String" resultType="com.mdoa.repertory.model.RepertoryGoodsType">
+ 	SELECT 
+		goods_type_name AS goodsTypeName,
+		goods_type_url AS goodsTypeUrl,
+		parent_type_id AS parentTypeId,
+		create_time AS createTime,
+		create_user_id AS createUserId,
+		create_user_name AS createUserName,
+		update_time AS updateTime,
+		update_user_id AS updateUserId,
+		update_user_name AS updateUserName,
+		alive_flag AS aliveFlag
+ 	FROM
+ 		repertory_goods_type
+ 	WHERE
+ 		goods_type_Id = #{sourceId}
+ </select>
+ 
+</mapper>

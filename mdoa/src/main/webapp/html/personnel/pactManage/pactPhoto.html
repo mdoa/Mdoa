@@ -1,0 +1,30 @@
+ <div id="pactPhoto" title="修改合同图片信息">
+	<div class="maintop">
+		<span class="maintopicon mainicon1"></span>
+		<div>
+		    <span class="maintopicon mainicon2"></span>
+			<span class="add">添加</span>
+		</div>
+	</div>
+	<div  class="invitetop">
+		请输入查询条件：创建时间：<input type="text" class="createTime"> 
+		<input type="button" value="查询" class="serBtn">
+		<input type="button" value="清空" class="close">
+		<input type="button" value="下载" class="downBtn">
+	</div> 
+	<div id="pactPhotodg"><!-- style="width:100%;height:100%" -->
+	     
+	</div>
+	<div class="inviteissue">
+		<h3>合同信息</h3>
+		<span class="turnoff"></span>
+		<form action="">
+		    <p><span>员工姓名：</span><input type="text"></p>
+		    <p><span>合同Id：</span><input type="text" class="pt"></p>
+			<p><span>开始时间：</span><input type="text" class="jqdate" onblur="testDate(this)" onclick="testShow(this);"></p>
+			<p><span>结束时间：</span><input type="text" class="jqdate" onblur="testDate(this)" onclick="testShow(this);"></p>
+			<p><span>图片路径：</span><input type="file" class="pht" name="test"></p>
+		</form>
+		<button class="submit" onclick="ajaxSubmit()">上传</button>
+	</div>
+</div>

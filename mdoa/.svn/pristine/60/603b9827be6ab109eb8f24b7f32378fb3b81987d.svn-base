@@ -1,0 +1,24 @@
+package com.mdoa.user.service;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.mdoa.user.model.UserMessage;
+
+@Service
+@Transactional
+public class UserMessageService {
+	
+	/**
+	 * 调用此方法，来实现对消息的发送
+	 * @param userMessage 需要填写用户发件人，收件人，以及信件内容
+	 * @param messageType 01 系统消息 02 个人消息
+	 * @return 消息是否发送成功
+	 */
+	public boolean sendMessage(UserMessage userMessage, String messageType){
+		System.out.println("发件人:"+userMessage.getSendUserName());
+		System.out.println("收件人:"+userMessage.getReadUserName());
+		System.out.println(userMessage.getMessage());
+		return true;
+	}
+}	

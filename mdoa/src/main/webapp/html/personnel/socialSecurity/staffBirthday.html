@@ -1,0 +1,51 @@
+ <div id="staffBirthday" title="员工生日">
+	<!-- <div class="dateBox">
+	   <form name="reg_testdate">
+	        <select id="startMonth" name="firstMonth" onChange="MMDD(this.value)">
+	             <option value="">选择 月</option>
+	         </select>
+	         <select id="startDate" name="firstDate">
+	             <option value="">选择 日</option>
+	         </select>
+	         <span>至</span>
+	         <select id="endMonth" name="secondMonth" onChange="MMDDs(this.value)">
+	             <option value="">选择 月</option>
+	         </select>
+	         <select id="endDate" name="secondDate">
+	             <option value="">选择 日</option>
+	         </select> 
+	         <input type="button" value="查询" class="staffBtn" onClick="findByBirth();">
+	     </form>
+   </div> -->
+   <div class="dateBox">
+   	部门：<input type="text"/><input type="hidden"/><input tupe="button" class="button" value="选择"/>
+   	岗位：<input type="text"/><input type="hidden"/><input tupe="button" class="button" value="选择"/>
+   	生日间隔：<!-- <input type="text" id="startBirthday" class="jqdate"  onblur="testDate(this)" onclick="testShow(this);"/><span>至</span>
+    <input type="text" id="endBirthday" class="jqdate"  onblur="testDate(this)" onclick="testShow(this);"/> -->
+   	<form name="reg_testdate">
+        <select id="startMonth" name="firstMonth">
+         </select>
+         <select id="startDate" name="firstDate">
+         </select>
+         <span>至</span>
+         <select id="endMonth" name="secondMonth">
+         </select>
+         <select id="endDate" name="secondDate">
+         </select> 
+         <a class="easyui-linkbutton staffBtn" iconCls="icon-search" onClick="findByBirth();" style="line-height:16px;">查询</a>
+     </form>
+   	<span style="margin-left:12px;">选择距离今天天数：</span>
+   	<select>
+   		<option></option>
+   		<option value="7">最近7天</option>
+   		<option selected="selected" value="10">最近10天</option>
+   		<option value="15">最近15天</option>
+   		<option value="30">最近30天</option>
+   		<option value="60">最近60天</option>
+   	</select>
+   	<input type="button" value="查询" class="staffBtn button" onClick="findByBirth();">
+   </div>
+   <div>
+	 <table id="staffBirthdaydg"></table>
+	</div>
+</div> 

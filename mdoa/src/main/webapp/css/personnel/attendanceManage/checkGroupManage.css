@@ -1,0 +1,119 @@
+#checkGroupManage .imgBox{
+	width:40px;
+	margin:0 auto;
+}
+
+
+/************时间控件样式************/
+#checkGroupManage .rightTime{
+	float:left;
+	width:70%;
+	overflow-y:auto;
+}
+#checkGroupManage .rightTime .Calendar{
+	width:80%;
+	float:left;
+}
+#checkGroupManage .Calendar .calendarTitle{
+	position: relative;
+	width: 100%;
+	height:50px;
+	line-height:50px;
+	border-bottom: 1px solid #95B8E7;
+}
+#checkGroupManage .Calendar .calendarTitle .yearsSelect{
+	float:left;
+	width:80px;
+	height:23px;
+	margin:10px 10px 0 15px;
+	border:1px solid #999;
+}
+#checkGroupManage .Calendar .calendarTitle .monthsSelect{
+	float:left;
+  	width:60px;
+	height:23px;
+	margin-top:10px;
+	border:1px solid #999;
+}
+#checkGroupManage .Calendar .prevMonth,#checkGroupManage .Calendar .nextMonth{
+	float:left;
+	width:15px;
+	height:21px;
+	line-height:21px;
+	border:1px solid #999;
+	font-size:16px;
+	cursor: pointer;
+	margin-top:10px;
+	text-align:center;
+}
+#checkGroupManage .Calendar .prevMonth{
+	border-right:0px;
+}
+#checkGroupManage .Calendar .nextMonth{
+	border-left:0px;
+}
+/* 设置日历表格样式 */
+#checkGroupManage .calendarTable{
+	width: 100%;
+	border-collapse: collapse;
+	text-align:center;
+}
+/* 表格行高 */
+#checkGroupManage .calendarTable tr{
+	font-size:14px;
+	height:50px;
+	line-height:50px;
+}
+#checkGroupManage .calendarTable tr th{
+	height:50px;
+	line-height:50px;
+}
+#checkGroupManage .calendarTable tr td{
+	border:1px solid #ccc;
+}
+#checkGroupManage .calendarTable tr td input[type=text]{
+	width:70px;
+	text-align:center;
+	cursor: pointer;
+}
+/* 当前天 颜色特殊显示 */
+#checkGroupManage .calendarTable .currentDay {
+	color:blue;
+	font-weight:bold;
+}
+/* 本月 文字颜色 */
+#checkGroupManage .calendarTable .currentMonth {
+	color: #666;
+	font-weight:bold;
+}
+/*#checkGroupManage .calendarTable tr td.currentMonth:hover{
+	color:#000;
+	background-color:#eee;
+}
+ 其他月颜色 */
+#checkGroupManage .calendarTable .otherMonth{
+	color: #ccc;
+	visibility:hidden;
+}
+#checkGroupManage .calendarTable td{
+	cursor:pointer;
+}
+#checkGroupManage .calendarTable .dateNumber{
+	display:inline-block;
+	width:30px;
+	height:25px;
+	line-height:25px;
+	overflow:hidden;
+}
+#checkGroupManage .calendarTable .workTime{
+	overflow:hidden;
+	line-height:20px;
+	margin:-20px 0 0 0;
+}
+#checkGroupManage .calendarTable .workTime input[type=text]{
+	width:100%;
+	border:none;
+	border-top:1px solid #ccc;
+}
+
+

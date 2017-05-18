@@ -1,0 +1,67 @@
+#welfarepay .inviteissue{
+	width:587px;
+}
+#welfarepay .inviteissue h3{
+	background:url(../../../img/index/icon6.png) no-repeat 7px 6px;
+	background-size:17px;
+}
+#welfarepay .inviteissue .department{
+	margin:10px 5px;height:14px;width:10px;
+}
+#welfarepay .inviteissue .out{
+	margin-right:20px;
+}
+#welfarepay .inviteissue .more{
+	color:#F93535;
+}
+#welfarepay .inviteissue p{
+	margin-left:5%;line-height:35px;padding-right:0%;
+}
+#welfarepay .inviteissue .choose{
+	width:483px;height:25px;border:1px solid #A9A9A9;margin-left:6%;margin-bottom:15px;
+}
+#welfarepay .inviteissue .apply{
+	margin-left:8px;
+}
+#welfarepay .inviteissue select{
+	width:100px;
+}
+#welfarepay .inviteissue .submit{
+	margin-left:45%;
+}
+#welfarepay .invitetop .serBtn{
+	margin-right:5px;
+}
+#welfarepay .popups .writetoexcel table select{
+	border:1px #A9A9A9 solid;
+	width:138px;
+	text-align:center;
+}
+
+#welfarepay .popups .writetoexcel table input[type="text"]{
+	border:1px #A9A9A9 solid;
+	width:144px;
+}
+#welfarepay .popups .writetoexcel table input[type="checkbox"]{
+	width:13px;
+}
+#welfarepay .popups .writetoexcel table input[type="button"]{
+	width:42px;
+	height:26px;
+	color:#444444;
+	background-color:#4DFFFF;
+	border-color:#4DFFFF;
+	border-radius:6px;
+	margin-top:5px;
+	margin-bottom:5px;
+	margin-left:15px;
+	margin-right:15px;
+	text-align:center;
+}
+#welfarepay .popups .writetoexcel .hidden{
+	display:none;
+	width:0px;
+}
+#welfarepay .popups .writetoexcel .btnarea .button{
+	margin-left:8px;
+}

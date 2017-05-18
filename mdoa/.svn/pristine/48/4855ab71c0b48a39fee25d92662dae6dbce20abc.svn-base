@@ -1,0 +1,106 @@
+<div id="repertorylist">
+	<input class="goodsTypeUrl" type="hidden" style="display:none;">
+	<div class="treearea">
+		<h3>选择物品类别</h3>
+		<ul id="repertorylisttg" data-options="region:'center',border: true"  
+         class="easyui-tree">  
+     	</ul>  
+	</div>
+	<!-- <div id="repertorylistmm" class="easyui-menu" style="width:120px;">
+		<div onclick="add()" data-options="iconCls:'icon-add'">添加子类</div>
+		<div onclick="edit()" data-options="iconCls:'icon-edit'">修改</div>
+		<div onclick="remove()" data-options="iconCls:'icon-remove'">删除</div>
+	</div> -->
+	<div class="listForm">
+		<div class="toolbar" >
+			<input type="button" class="button" value="导出到Excel" />
+		</div>
+		<div class="queryForm">
+			物品名称：<input type="text" class="goodsName"/>
+			物品规格：<input type="text" class="goodsSize"/>
+			物品数量：<input type="text" class="goodsNumSm"/> ~ <input type="text" class="goodsNumBg"/>
+			仓位：<input type="text" class="goodsPosition"/>
+			仓库：<select class="repertoryName"></select>	
+			<input type="button" class="button query" value="查询" />
+		</div>
+		<div>
+			<table id="repertorylistdg">
+			</table>
+		</div>
+	</div>
+	<div class="popups">
+	<!-- 修改仓位 -->
+		<div class="popup update">
+			<h3>修改仓位信息</h3>
+			<span class="turnoff"></span>
+			<div class="popuparea">
+				<table>
+					<tr>
+						<td>仓位：</td>
+						<td><input type="text" class="gpName"/></td>
+					</tr>
+					<tr>
+						<td>物品名称：</td>
+						<td><input type="text" class="gName" disabled="disabled"/></td>
+					</tr>
+					<tr>
+						<td>数量：</td>
+						<td><input type="text" class="num" disabled="disabled"/></td>
+					</tr>
+					<tr>
+						<td>仓库：</td>
+						<td><input type="text" class="rName" disabled="disabled"/></td>
+					</tr>
+				</table>
+			</div>
+			<div class="btnarea">
+				<input type="button" class="button confirm" value="确定"/>
+				<input type="button" class="button cannel" value="取消" />
+			</div>
+		</div>
+		<!-- tree -->
+		<!--  <div class="addWindow popup">
+		 	<h3>添加物品类名提示</h3>
+			<span class="turnoff"></span>
+			<div class="popuparea">
+				<table>
+					<tr>
+						<td>请输入要添加的物品类名：</td>
+						<td><input type="text" class="goodsTypeName"></td>
+					</tr>
+				</table>	
+			</div>
+			<div class="btnarea">
+				<input type="button" class="button quedingadd" value="确定"/>
+				<input type="button" class="button cannel" value="取消" />
+			</div>
+		</div>
+		<div class="removeWindow popup">
+			<h3>删除物品信息</h3>
+			<span class="turnoff"></span>
+			<div class="popuparea">
+				你确定要删除该物品类吗?	
+			</div>
+			<div class="btnarea">
+				<input type="button" class="button quedingremove" value="确定"/>
+				<input type="button" class="button cannel" value="取消" />
+			</div>
+		</div>
+		<div class="editWindow popup">
+			<h3>修改物品类别</h3>
+			<span class="turnoff"></span>
+			<div class="popuparea">
+				<table>
+					<tr>
+						<td>请输入修改后的物品类名：</td>
+						<td><input type="text" class="goodsTypeName"></td>
+					</tr>
+				</table>	
+			</div>
+			<div class="btnarea">
+				<input type="button" class="button quedingedit" value="确定"/>
+				<input type="button" class="button cannel" value="取消" />
+			</div>
+		</div> -->
+	</div>
+</div>

@@ -1,0 +1,272 @@
+<div id="assetsManage">
+	<div class="treearea">
+		<h3>资产类型</h3>
+		<div>
+			<input type="hidden" id="assetTypeUrl"/>
+			<ul id="assetTypetg" data-options="region:'center',border: true" class="easyui-tree tree">
+			</ul>
+		</div>
+	</div>
+	<div id="addAssetType" class="easyui-menu" style="width:120px;">
+		<div onclick="addAssetType()" data-options="iconCls:'icon-add'">添加</div>
+	</div>
+	<div id="editAssetType" class="easyui-menu" style="width:120px;">
+		<div onclick="addAssetType()" data-options="iconCls:'icon-add'">添加</div>
+		<div onclick="editAssetType()" data-options="iconCls:'icon-edit'">修改</div>
+		<div onclick="deleteAssetType()" data-options="iconCls:'icon-remove'">删除</div>
+	</div>
+	<div class="listForm">
+		<div class="maintop">
+			<div class="add">
+				<span class="maintopicon mainicon2"></span>
+				<span>创建固定资产项</span>
+			</div>
+		</div>
+		<div class="invitetop">
+			请输入查询条件:资产名:<input type="text" name=""/>
+			折算类型<select name="depreciationType">
+				<option></option>
+				<option>算法1</option>
+				<option>算法2</option>
+			</select>
+			<a class="easyui-linkbutton query" iconCls="icon-search" style="line-height:16px;">查询</a>
+			<input type="button" class="button" value="清空"/> 
+		</div>
+		<div>
+			<table id="assetsManagedg"></table>
+		</div>
+	</div>
+	<!--添加资产类型-->
+	<div class="addAssetType popup">
+		<h3>资产分类详情</h3>
+		<span class="turnoff"></span>
+		<div class="popuparea">
+			<table>
+				<tr>
+					<td>分类名称：</td>
+					<td><input type="text" class="assetsTypeName"></td>
+				</tr>
+			</table>
+		</div>
+		<div class="btnarea" style="text-align: center">
+			<input type="button" class="button confirm" value="确定">
+			<input type="button" class="button cannel" value="取消" style="margin-left: 8px;">
+		</div>
+	</div>
+	<!--修改资产类型-->
+	<div class="editAssetType popup">
+		<h3>资产分类详情</h3>
+		<span class="turnoff"></span>
+		<div class="popuparea">
+			<table>
+				<tr>
+					<td>分类名称：</td>
+					<td><input type="text" class="assetsTypeName"></td>
+				</tr>
+			</table>
+		</div>
+		<div class="btnarea" style="text-align: center">
+			<input type="button" class="button confirm" value="确定">
+			<input type="button" class="button cannel" value="取消" style="margin-left: 8px;">
+		</div>
+	</div>
+	<div class="removeAssetType popup">
+			<h3>删除物品信息</h3>
+			<span class="turnoff"></span>
+			<div class="popuparea">
+				你确定要删除该物品类吗?	
+			</div>
+			<div class="btnarea">
+				<input type="button" class="button confirm" value="确定"/>
+				<input type="button" class="button cannel" value="取消" />
+			</div>
+		</div>
+	<!-- 固定资产类型 -->
+	<div class="popup addAssets">
+		<h3>添加资产详细信息</h3>
+		<span class="turnoff"></span>
+		<div class="popuparea">
+			<table>
+				<tr>
+					<td><span>*</span>资产名称:</td>
+					<td><input type="text" class="assetsName"/></td>
+					<td><span>*</span>资产编号:</td>
+					<td><input type="text" class="assetsNo"/></td>
+				</tr>
+				<tr>
+					<td><span>*</span>资产类别:</td>
+					<td><input type="text" class="assetsTypeName" disabled="disabled">
+					<input type="hidden" class="assetsTypeId" ></td>
+					<td><span>*</span>置办日期:</td>
+					<td><input class="jqdate" name="buyDate" type="text" readonly="readonly" onclick="YMDHMS(this);"></td>
+				</tr>
+				<tr>
+					<td><span>*</span>所属部门：</td>
+					<td>
+						<input type="text" class="beDep" disabled="disabled" style="width:104px;"/>
+						<input type="text" name="departmentUrl" style="display: none"/>
+						<input type="button" class="button chooseDepartment" value="选择" style="width:40px;height: 19px"/>
+					</td>
+					<td><span>*</span>保管人:</td>
+					<td>
+						<input type="text" class="custodian" disabled="disabled" style="width:104px;"/>
+						<input type="text" name="leadId" style="display: none"/>
+						<input type="button" class="button chooseUser" value="选择" style="width:40px;height: 19px"/>
+					</td>
+				</tr>
+				<tr>
+					<td><span>*</span>折旧类型:</td>
+					<td>
+						<select  class="depreTypeName"></select>
+					</td>
+					<td><span>*</span>开始折旧日期:</td>
+					<td><input class="jqdate" name="startDepre" type="text" readonly="readonly" onclick="YMDHMS(this);"></td>
+				</tr>
+				<tr class="workLoad">
+					<td><span>*</span>预计使用总工作量(年):</td>
+					<td><input type="text" class="intendWorkGross"/></td>
+					<td><span>*</span>单位:</td>
+					<td><input type="text" class="workGrossUnit"/></td>
+				</tr>
+				<tr class="workLoad">
+					<td><span>*</span>默认周期工作量(年):</td>
+					<td><input type="text" class="defPevWorkGross"/></td>
+					<td><span>*</span>残值率(%):</td>
+					<td><input type="text" class="remainValRate"/></td>
+				</tr>
+				<tr class="serviceLife">
+					<td><span>*</span>预计使用年限(年):</td>
+					<td><input type="text" class="intendTerm"/></td>
+					<td><span>*</span>残值率(%):</td>
+					<td><input type="text" class="remainValRate"/></td>
+				</tr>
+				<tr>
+					<td><span>*</span>资产值:</td>
+					<td><input type="text" class="assetValue"/></td>
+					<td><span>*</span>资产当前值:</td>
+					<td><input type="text" class="assetCurValue"/></td>
+				</tr>
+				<tr>
+					<td>规格型号:</td>
+					<td><input type="text" class="model"/></td>
+					<td>制造厂商:</td>
+					<td><input type="text" class="manuFacturer"/></td>
+				</tr>
+				<tr>
+					<td>出厂日期:</td>
+					<td><input class="jqdate" name="manuDate" type="text" readonly="readonly" onclick="YMDHMS(this);"></td>
+				</tr>
+				<tr>
+					<td>备注:</td>
+					<td colspan="3"><textarea class="notes"></textarea></td>
+				</tr>
+			</table>
+		</div>
+		<div class="btnarea" style="text-align: center">
+			<input type="button" class="button confirm" value="确定">
+			<input type="button" class="button cannel" value="取消" style="margin-left: 8px;">
+		</div>
+	</div>
+	<!-- 修改资产详细信息 -->
+	<div class="popup editAssets">
+		<h3>修改资产详细信息</h3>
+		<span class="turnoff"></span>
+		<div class="popuparea">
+			<table>
+				<tr>
+					<td><span>*</span>资产名称:</td>
+					<td><input type="text" class="assetsName"/></td>
+					<td><span>*</span>资产编号:</td>
+					<td><input type="text" class="assetsNo"/></td>
+				</tr>
+				<tr>
+					<td><span>*</span>置办日期:</td>
+					<td><input class="jqdate" name="buyDate" type="text" readonly="readonly" onclick="YMDHMS(this);"></td>
+					<td><span>*</span>所属部门：</td>
+					<td>
+						<input type="text" class="beDep" readonly="readonly" style="width:104px;"/>
+						<input type="text" name="departmentUrl" style="display: none"/>
+						<input type="button" class="button chooseDepartment" value="选择" style="width: 40px;height: 19px"/>
+					</td>
+				</tr>
+				<tr>
+					<td><span>*</span>保管人:</td>
+					<td>
+						<input type="text" class="custodian" readonly="readonly" style="width:104px;"/>
+						<input type="text" name="leadId" style="display: none"/>
+						<input type="button" class="button chooseUser" value="选择" style="width: 40px;height: 19px"/>
+					</td>
+					<td><span>*</span>折旧类型:</td>
+					<td>
+						<select  class="depreTypeName"></select>
+					</td>
+				</tr>
+				<tr>
+					<td><span>*</span>开始折旧日期:</td>
+					<td><input class="jqdate" name="startDepre" type="text" readonly="readonly" onclick="YMDHMS(this);"></td>
+					<td class="normal"><span>*</span>预计使用年限(年):</td>
+					<td class="normal"><input type="text" class="intendTerm"/></td>
+					<td class="workLoad"><span>*</span>预计使用总工作量(年):</td>
+					<td class="workLoad"><input type="text" class="intendWorkGross"/></td>
+				</tr>
+				<tr class="workLoad">
+					<td><span>*</span>单位:</td>
+					<td><input type="text" class="workGrossUnit"/></td>
+					<td><span>*</span>默认周期工作量(年):</td>
+					<td><input type="text" class="defPevWorkGross"/></td>
+				</tr>
+				<tr>
+					<td><span>*</span>残值率(%):</td>
+					<td><input type="text" class="remainValRate"/></td>
+					<td><span>*</span>资产值:</td>
+					<td><input type="text" class="assetValue"/></td>
+				</tr>
+				<tr>
+					<td><span>*</span>资产当前值:</td>
+					<td><input type="text" class="assetCurValue"/></td>
+					<td>规格型号:</td>
+					<td><input type="text" class="model"/></td>
+				</tr>
+				<tr>
+					<td>制造厂商:</td>
+					<td><input type="text" class="manuFacturer"/></td>
+					<td>出厂日期:</td>
+					<td><input class="jqdate" name="manuDate" type="text" readonly="readonly" onclick="YMDHMS(this);"></td>
+				</tr>
+				<tr>
+					<td>备注:</td>
+					<td colspan="3"><textarea class="notes"></textarea></td>
+				</tr>
+			</table>
+		</div>
+		<div class="btnarea" style="text-align: center">
+			<input type="button" class="button confirm" value="确定">
+			<input type="button" class="button cannel" value="取消" style="margin-left: 8px;">
+		</div>
+	</div>
+	<div class="popup addDepreRecord">
+		<h3>当前折算工作量</h3>
+		<span class="turnoff"></span>
+		<div class="popuparea">
+			<table>
+				<tr>
+					<td><span>*</span>开始折旧日期:</td>
+					<td><input class="jqdate" name="startDepre" type="text" readonly="readonly" onclick="YMDHMS(this);"></td>
+				</tr>
+				<tr>
+					<td><span>*</span>当前折算时间:</td>
+					<td><input type="text" class="assetsName"/></td>
+				</tr>
+				<tr>
+					<td><span>*</span>该段时间总工作量:</td>
+					<td><input type="text" class="intendWorkGross"/></td>
+				</tr>
+			</table>
+		</div>
+		<div class="btnarea" style="text-align: center">
+			<input type="button" class="button confirm" value="确定">
+			<input type="button" class="button cannel" value="取消" style="margin-left: 8px;">
+		</div>
+	</div>
+	
+</div>

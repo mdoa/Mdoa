@@ -1,0 +1,24 @@
+<div id="checkGroupAllot">
+	<div class="maintop">
+		<div class="add">
+			<span class="maintopicon mainicon2"></span> 
+			<span>添加</span>
+		</div>
+	</div>
+	<div class="invitetop">
+		请输入查询条件：
+		部门名：<input type="text" name="departmentName" style="width: 100px" readOnly="readOnly" /> 
+		<input type="button" class="button departmentChooseObj" value="选择"  style="width: 55px"/> 
+		岗位名：<input type="text" name="postName" style="width: 100px" /> 
+		<input type="button" class="button postChooseObj" value="选择"  style="width: 55px"/> 
+		<input class="selectUserInfo" type="button" value="查询" /> 
+		<input class="advancedQueryBtn" type="button" value="高级查询" />
+		<input type="button" class="clean-query" value="清空" />
+	</div>
+	<div>
+		<table id="checkGroupAllotdg"></table>
+	</div>
+
+
+
+</div>
