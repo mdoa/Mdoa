@@ -8,6 +8,7 @@ import com.mdoa.base.model.BaseModel;
 
 public class FixedAssetsForm extends BaseModel{
 
+	
 	private String assetsName;
 	private String recordId;
 	private String assetsId;
